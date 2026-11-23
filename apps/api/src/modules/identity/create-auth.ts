@@ -5,6 +5,7 @@ import { getAuthTables } from 'better-auth/db';
 import { bearer, organization, twoFactor } from 'better-auth/plugins';
 import type { Database } from '../../database/index.js';
 import type { AuthEnv } from './auth-env.js';
+import { inviteOnlyHooks } from './invite-only.js';
 import type { Mailer } from './mailer.js';
 import { type ModelMapping, snakeCaseSchema } from './snake-case-schema.js';
 
@@ -104,6 +105,7 @@ export function createAuth(db: Database, env: AuthEnv, mailer: Mailer) {
   return betterAuth({
     ...authOptions(env, mailer),
     database: { db: db.withoutPlugins(), type: 'postgres' },
+    databaseHooks: inviteOnlyHooks(db),
   });
 }
 
