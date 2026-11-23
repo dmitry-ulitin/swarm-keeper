@@ -1,0 +1,19 @@
+{
+  "name": "@swarm-keeper/web-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "typescript": "catalog:",
+    "@angular/core": "catalog:"
+  },
+  "peerDependencies": {
+    "@angular/core": "catalog:"
+  }
+}

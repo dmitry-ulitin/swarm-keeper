@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+    "emitDecoratorMetadata": true,
+    // Own paths: tsc-alias resolves inherited paths relative to this folder.
+    // Only packages the backend may use are listed here.
+    "paths": {
+      "@swarm-keeper/permissions": ["../../libs/shared/permissions/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "vitest.config.ts"]
+}

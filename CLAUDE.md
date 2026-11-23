@@ -26,21 +26,41 @@ Guidance for Claude Code in this repository.
 - Russian appears only in `ru` translation files and in the bilingual glossary.
 - The owner may write to you in Russian. Reply in the language of the message.
 
-## Planned layout
+## Layout
 
-The monorepo uses pnpm workspaces. Module boundaries are enforced by Sheriff.
+The monorepo uses pnpm workspaces (Node 26, pnpm 12). Module boundaries are enforced by Sheriff (`sheriff.config.ts`, checked by ESLint).
 
 ```
-apps/api       NestJS (Express adapter)
-apps/worker    same codebase, worker mode (pg-boss jobs)
-apps/web       Angular 22
-libs/shared/permissions   Better Auth access control: roles + statements, used by api and web
-libs/shared/design-tokens generated from docs/design/tokens.json (Style Dictionary)
-libs/web/api-client       generated from the OpenAPI spec — never edit by hand
-libs/web/core, libs/web/ui, libs/web/features/*
+apps/api       @swarm-keeper/api      NestJS (Express adapter), routes under /api/v1
+apps/worker    @swarm-keeper/worker   same codebase, worker mode: imports API modules from @swarm-keeper/api
+apps/web       @swarm-keeper/web      Angular 22, zoneless, no SSR
+libs/shared/permissions   @swarm-keeper/permissions    Better Auth access control: roles + statements, used by api and web
+libs/shared/design-tokens @swarm-keeper/design-tokens  generated from docs/design/tokens.json (Style Dictionary)
+libs/web/api-client       @swarm-keeper/api-client     generated from the OpenAPI spec — never edit by hand
+libs/web/core             @swarm-keeper/web-core
+libs/web/ui               @swarm-keeper/web-ui
+libs/web/features/<name>  @swarm-keeper/feature-<name>  layers in src/{data-access,feature,ui}
 ```
 
-Add build, test and lint commands here once the workspace is scaffolded.
+- Libraries are source-only: `exports` points at `src/index.ts`, and the apps compile them. Aliases live in `tsconfig.base.json`.
+- `apps/api` and `apps/worker` declare their own `paths` in `tsconfig.json`, listing only the packages the backend may use. Add a new shared library there too.
+- `libs/shared/*` are compiled into the API and worker under `nodenext`, so their relative imports use `.js` suffixes (their tsconfig enforces it).
+- Every app keeps an `index.ts` in `src/`: without it Sheriff does not treat the app as a module and skips its rules. Boundary regression tests live in `tools/boundaries`.
+- API modules live in `apps/api/src/modules/<name>` and are reachable from other modules only through their `index.ts`.
+- Dependency versions are pinned exactly; shared ones go in the `catalog:` of `pnpm-workspace.yaml`.
+
+## Commands
+
+```
+pnpm install                                  install everything
+pnpm build                                    build all apps
+pnpm typecheck                                type-check every package
+pnpm test                                     unit tests (Vitest) in every package
+pnpm lint                                     ESLint + Sheriff boundary rules
+pnpm format                                   Prettier
+pnpm --filter @swarm-keeper/<pkg> <script>    run one package's script, e.g. start or test
+pnpm exec sheriff list <api|worker|web>       show modules and their tags
+```
 
 ## Invariants (do not break without updating the docs)
 
