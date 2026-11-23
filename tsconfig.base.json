@@ -13,7 +13,6 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "types": [],
     "paths": {
       "@swarm-keeper/api": ["./apps/api/src/index.ts"],

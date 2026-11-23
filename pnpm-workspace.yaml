@@ -6,13 +6,25 @@ packages:
 
 # Exact versions shared across packages. Never use ^ or ~.
 allowBuilds:
+  '@parcel/watcher': false
   '@swc/core': true
+  esbuild: false
+  lmdb: false
+  msgpackr-extract: false
 
 catalog:
   '@types/node': 26.6.6
   typescript: 6.0.3
   vitest: 5.1.1
+  '@angular/common': 22.3.0
+  '@angular/compiler': 22.3.0
   '@angular/core': 22.3.0
+  '@angular/forms': 22.3.0
+  '@angular/platform-browser': 22.3.0
+  '@angular/router': 22.3.0
+  '@angular/build': 22.3.0
+  '@angular/cli': 22.3.0
+  '@angular/compiler-cli': 22.3.0
   '@nestjs/common': 12.6.0
   '@nestjs/core': 12.6.0
   '@nestjs/platform-express': 12.6.0
