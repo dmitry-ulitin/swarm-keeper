@@ -1,0 +1,23 @@
+# Local development infrastructure only: apps run on the host via pnpm.
+# Not a deployment stack. Start with `pnpm infra:up`.
+name: swarm-keeper-dev
+
+services:
+  postgres:
+    image: postgres:18.7-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-swarm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-swarm}
+      POSTGRES_DB: ${POSTGRES_DB:-swarm_keeper}
+    ports:
+      - 127.0.0.1:${POSTGRES_PORT:-5432}:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  postgres-data:
