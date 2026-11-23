@@ -48,17 +48,18 @@ check_garage() {
   trap 'rm -rf "$tmp"' EXIT
   echo "roundtrip $(date +%s)" > "$tmp/in.txt"
   key="s3://$S3_BUCKET/check/roundtrip.txt"
-  # aws-cli runs on the compose network and reaches Garage by its service name.
-  docker run --rm --network swarm-keeper-dev_default -v "$tmp:/work" -w /work \
+  # Go through this stack's published host port, the same path the API uses.
+  endpoint="http://$(docker compose port garage 3900)"
+  docker run --rm --network host -v "$tmp:/work" -w /work \
     -e AWS_ACCESS_KEY_ID="$S3_ACCESS_KEY_ID" -e AWS_SECRET_ACCESS_KEY="$S3_SECRET_ACCESS_KEY" \
     -e AWS_DEFAULT_REGION="$S3_REGION" --entrypoint sh amazon/aws-cli:2.42.1 -c "
       set -e
-      aws --endpoint-url http://garage:3900 s3 cp in.txt $key --only-show-errors
-      aws --endpoint-url http://garage:3900 s3 cp $key out.txt --only-show-errors
-      aws --endpoint-url http://garage:3900 s3 rm $key --only-show-errors
+      aws --endpoint-url $endpoint s3 cp in.txt $key --only-show-errors
+      aws --endpoint-url $endpoint s3 cp $key out.txt --only-show-errors
+      aws --endpoint-url $endpoint s3 rm $key --only-show-errors
     " || fail "S3 round trip through bucket $S3_BUCKET"
   cmp -s "$tmp/in.txt" "$tmp/out.txt" || fail "S3 object content differs after round trip"
-  ok "S3 round trip through bucket $S3_BUCKET"
+  ok "S3 round trip through bucket $S3_BUCKET at $endpoint"
 }
 
 check_proxy() {
