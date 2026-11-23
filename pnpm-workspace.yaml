@@ -39,3 +39,4 @@ catalog:
   kysely: 0.29.9
   pg: 8.23.1
   '@types/pg': 8.23.1
+  '@better-auth/passkey': 1.7.27

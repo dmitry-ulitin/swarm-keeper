@@ -10,9 +10,13 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@better-auth/passkey": "catalog:",
     "@nestjs/common": "catalog:",
     "@nestjs/core": "catalog:",
     "@swarm-keeper/api": "workspace:*",
+    "@swarm-keeper/permissions": "workspace:*",
+    "@thallesp/nestjs-better-auth": "2.8.0",
+    "better-auth": "catalog:",
     "kysely": "catalog:",
     "pg": "catalog:",
     "reflect-metadata": "catalog:",
