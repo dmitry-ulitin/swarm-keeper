@@ -61,5 +61,12 @@ check_garage() {
   ok "S3 round trip through bucket $S3_BUCKET"
 }
 
+check_proxy() {
+  body=$(curl -s --max-time 5 http://localhost:4200/api/v1/health) || fail "dev server on :4200 is not reachable"
+  [ "$body" = '{"status":"ok"}' ] || fail "ng serve does not proxy /api to the API (got: $(echo "$body" | head -c 60))"
+  ok "ng serve proxies /api to the API"
+}
+
 check_postgres
 check_garage
+if [ "${CHECK_PROXY:-0}" = 1 ]; then check_proxy; fi
