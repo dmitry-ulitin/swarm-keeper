@@ -3,4 +3,137 @@
  * Please do not edit it manually.
  */
 
-export interface DB {}
+import type { ColumnType } from 'kysely';
+
+export type Generated<T> =
+  T extends ColumnType<infer S, infer I, infer U>
+    ? ColumnType<S, I | undefined, U>
+    : ColumnType<T, T | undefined, T>;
+
+export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>;
+
+export type Timestamp = ColumnType<Date, Date | string, Date | string>;
+
+export interface Account {
+  accessToken: string | null;
+  accessTokenExpiresAt: Timestamp | null;
+  accountId: string;
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  idToken: string | null;
+  password: string | null;
+  providerId: string;
+  refreshToken: string | null;
+  refreshTokenExpiresAt: Timestamp | null;
+  scope: string | null;
+  updatedAt: Timestamp;
+  userId: string;
+}
+
+export interface Invitation {
+  createdAt: Generated<Timestamp>;
+  email: string;
+  expiresAt: Timestamp;
+  id: Generated<string>;
+  inviterId: string;
+  locale: string | null;
+  organizationId: string;
+  role: string | null;
+  status: string;
+  uiSize: string | null;
+}
+
+export interface Member {
+  createdAt: Timestamp;
+  id: Generated<string>;
+  organizationId: string;
+  role: string;
+  userId: string;
+}
+
+export interface Organization {
+  createdAt: Timestamp;
+  id: Generated<string>;
+  logo: string | null;
+  metadata: string | null;
+  name: string;
+  slug: string;
+}
+
+export interface Passkey {
+  aaguid: string | null;
+  backedUp: boolean;
+  counter: number;
+  createdAt: Timestamp | null;
+  credentialId: string;
+  deviceType: string;
+  id: Generated<string>;
+  name: string | null;
+  publicKey: string;
+  transports: string | null;
+  userId: string;
+}
+
+export interface RateLimit {
+  count: number;
+  id: Generated<string>;
+  key: string;
+  lastRequest: Int8;
+}
+
+export interface Session {
+  activeOrganizationId: string | null;
+  createdAt: Generated<Timestamp>;
+  expiresAt: Timestamp;
+  id: Generated<string>;
+  ipAddress: string | null;
+  token: string;
+  updatedAt: Timestamp;
+  userAgent: string | null;
+  userId: string;
+}
+
+export interface TwoFactor {
+  backupCodes: string;
+  failedVerificationCount: number | null;
+  id: Generated<string>;
+  lockedUntil: Timestamp | null;
+  secret: string;
+  userId: string;
+  verified: boolean | null;
+}
+
+export interface User {
+  createdAt: Generated<Timestamp>;
+  email: string;
+  emailVerified: boolean;
+  id: Generated<string>;
+  image: string | null;
+  locale: string;
+  name: string;
+  twoFactorEnabled: boolean | null;
+  uiSize: string;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface Verification {
+  createdAt: Generated<Timestamp>;
+  expiresAt: Timestamp;
+  id: Generated<string>;
+  identifier: string;
+  updatedAt: Generated<Timestamp>;
+  value: string;
+}
+
+export interface DB {
+  account: Account;
+  invitation: Invitation;
+  member: Member;
+  organization: Organization;
+  passkey: Passkey;
+  rateLimit: RateLimit;
+  session: Session;
+  twoFactor: TwoFactor;
+  user: User;
+  verification: Verification;
+}
