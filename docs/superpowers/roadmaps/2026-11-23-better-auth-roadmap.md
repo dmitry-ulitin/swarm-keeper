@@ -47,7 +47,8 @@ Steps 1, 2 and 5 are independent and can be done in any order. The proposed orde
 - Integration tests against a real Postgres (never skipped): sign-up without an invitation is rejected; an unverified email can't accept an invitation; a viewer can't upload; another family's data is inaccessible. Until uploads exist, the last two use a small protected endpoint guarded by `@RequirePermission('asset', 'create')` and scoped to the active family.
 - Error responses are `{ code, params }`.
 - Better Auth telemetry is disabled (`telemetry: { enabled: false }`): a family archive sends nothing to third parties.
-- Ownership transfer is a service rule (only an owner can grant the owner role), not a permission statement.
+- Ownership transfer relies on Better Auth's `creatorRole` rule (1.7.27: only a member with the creator role, default `owner`, can grant or change the owner role, on role change and on invitation). Keep `creatorRole` at its default and pin the rule with an integration test; do not duplicate it in the service layer.
+- One role per member: Better Auth accepts role lists (`"admin,member"`), but the matrix assumes a single role. Reject multiple roles on invitation and role change; `isFamilyRole` already returns `false` for a list.
 - **Decided:** tests use a separate `swarm_keeper_test` database in the dev Postgres, recreated by the test setup.
 
 ### 4. Email

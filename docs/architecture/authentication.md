@@ -94,7 +94,7 @@ Sign-up without an invitation is rejected by the `user.create.before` hook: if t
 
 ## Roles and permissions
 
-The plugin has owner, admin and member roles. We add a viewer role and our own resources (`asset`, `album`) via `createAccessControl`, so all checks go through one mechanism.
+The plugin has owner, admin and member roles. We add a viewer role and our own resources (`asset`, `album`, `archive`) via `createAccessControl`, so all checks go through one mechanism.
 
 | Action | owner | admin | member | viewer |
 | --- | --- | --- | --- | --- |

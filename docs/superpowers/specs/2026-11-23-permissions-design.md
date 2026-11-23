@@ -55,5 +55,5 @@ There is one sensible way: the spec already fixes A, and B would duplicate the m
 ## Calls made here
 
 - **Favorites** have no statement: they are personal, and every role may mark them, so family membership is enough.
-- **Ownership transfer** is a service rule (only an owner grants the owner role), handled in step 3, not a statement.
+- **Ownership transfer** is not a statement: Better Auth's `creatorRole` rule already lets only an owner grant or change the owner role (on role change and on invitation). Step 3 keeps `creatorRole` at its default and pins this with an integration test.
 - The `team` and `ac` defaults stay as inherited from the Better Auth base roles; teams and dynamic access control are not used.
