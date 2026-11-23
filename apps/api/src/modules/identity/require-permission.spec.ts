@@ -30,6 +30,16 @@ class GuardedController {
   }
 }
 
+/** The decorator on the class must carry the 2FA rule as well as the role check. */
+@Controller('test-class')
+@RequirePermission('archive', 'purge-trash')
+class ClassGuardedController {
+  @Post('purge')
+  purge() {
+    return { ok: true };
+  }
+}
+
 describe('RequirePermission', () => {
   let app: INestApplication;
   let db: Database;
@@ -37,7 +47,7 @@ describe('RequirePermission', () => {
   let family: { familyId: string; ownerId: string };
 
   beforeAll(async () => {
-    ({ app, db, auth } = await startAuthApp([GuardedController]));
+    ({ app, db, auth } = await startAuthApp([GuardedController, ClassGuardedController]));
     family = await createFamily(db);
   });
 
@@ -94,6 +104,13 @@ describe('RequirePermission', () => {
 
       await enableTwoFactor(db, user.id);
       await post('/test/purge', await sessionFor(auth, db, user.id, family.familyId)).expect(201);
+    });
+
+    it('applies the 2FA rule when the decorator is on the controller class', async () => {
+      const { user, authorization } = await memberSession('owner');
+      await givePassword(db, user.id);
+      const res = await post('/test-class/purge', authorization).expect(403);
+      expect(res.body).toMatchObject({ code: 'TWO_FACTOR_REQUIRED' });
     });
 
     it('does not ask a passkey-only admin', async () => {

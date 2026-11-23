@@ -157,6 +157,54 @@ describe('family admin routes (Better Auth organization)', () => {
       expect(res.body.code).toBe('TWO_FACTOR_REQUIRED');
     });
 
+    // Regression: the hook must not depend on guessing the family the way Better Auth does.
+    it.each([
+      ['an empty organizationId', { organizationId: '' }],
+      ['another family’s id', { organizationId: '00000000-0000-7000-8000-000000000001' }],
+      ['a malformed organizationId', { organizationId: 'nope' }],
+    ])('cannot be bypassed with %s', async (_name, extra) => {
+      const { authorization } = await ownerWithoutTwoFactor();
+      const invite = await post('invite-member', authorization, {
+        email: uniqueEmail('bypass'),
+        role: 'member',
+        ...extra,
+      });
+      expect(invite.body.code).toBe('TWO_FACTOR_REQUIRED');
+      const rename = await post('update', authorization, { data: { name: 'Pwned' }, ...extra });
+      expect(rename.body.code).toBe('TWO_FACTOR_REQUIRED');
+      const promote = await post('update-member-role', authorization, {
+        memberId: await memberId('viewer'),
+        role: 'admin',
+        ...extra,
+      });
+      expect(promote.body.code).toBe('TWO_FACTOR_REQUIRED');
+      const remove = await post('remove-member', authorization, {
+        memberIdOrEmail: await memberId('viewer'),
+        ...extra,
+      });
+      expect(remove.body.code).toBe('TWO_FACTOR_REQUIRED');
+    });
+
+    it('cannot cancel an invitation by pointing organizationId elsewhere', async () => {
+      const { user, authorization } = await ownerWithoutTwoFactor();
+      const invitation = await createInvitation(db, {
+        familyId,
+        inviterId: user.id,
+        email: uniqueEmail('cx'),
+      });
+      const res = await post('cancel-invitation', authorization, {
+        invitationId: invitation.id,
+        organizationId: '00000000-0000-7000-8000-000000000001',
+      });
+      expect(res.body.code).toBe('TWO_FACTOR_REQUIRED');
+      const row = await db
+        .selectFrom('invitation')
+        .select('status')
+        .where('id', '=', invitation.id)
+        .executeTakeFirstOrThrow();
+      expect(row.status).toBe('pending');
+    });
+
     it('answers a member with Better Auth’s refusal, not a 2FA prompt', async () => {
       const user = await createMember(db, familyId, 'member');
       await givePassword(db, user.id);

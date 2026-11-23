@@ -22,22 +22,6 @@ const ROLE_PATHS = new Set(['/organization/invite-member', '/organization/update
 
 type Body = Record<string, unknown>;
 
-/** The family the request acts on: explicit, through the invitation, or the active one. */
-async function targetFamily(db: Database, body: Body, activeFamilyId: string | null | undefined) {
-  if (typeof body['organizationId'] === 'string') {
-    return body['organizationId'];
-  }
-  if (typeof body['invitationId'] === 'string') {
-    const invitation = await db
-      .selectFrom('invitation')
-      .select('organizationId')
-      .where('id', '=', body['invitationId'])
-      .executeTakeFirst();
-    return invitation?.organizationId;
-  }
-  return activeFamilyId ?? undefined;
-}
-
 /** Resolves the caller's session the way any request would, bearer tokens included. */
 export type SessionLookup = (headers: Headers) => Promise<{
   session: { activeOrganizationId?: string | null };
@@ -47,6 +31,7 @@ export type SessionLookup = (headers: Headers) => Promise<{
 /**
  * Before Better Auth handles a family admin route. The organization plugin still checks
  * the role matrix and `creatorRole` (only an owner grants the owner role); this adds our rules.
+ * Someone who is a plain member everywhere is refused by Better Auth, never asked for 2FA.
  *
  * The session comes from `lookupSession` (auth.api.getSession), not from the hook context:
  * user hooks run before plugin hooks and never see the headers bearer() rewrites, so a mobile
@@ -70,24 +55,20 @@ export function organizationHooks(db: Database, lookupSession: SessionLookup) {
     if (!session) {
       return; // Better Auth answers 401 itself
     }
-    const familyId = await targetFamily(db, body, session.session.activeOrganizationId);
-    if (!familyId) {
-      return;
-    }
-    const member = await db
+    // Fail closed: the rule applies to anyone who is an owner or admin in any family, so it
+    // never depends on guessing which family Better Auth will act on (body.organizationId,
+    // the invitation's family or the active one; an empty or foreign id falls through there).
+    const adminSomewhere = await db
       .selectFrom('member')
-      .select('role')
+      .select('id')
       .where('userId', '=', session.user.id)
-      .where('organizationId', '=', familyId)
+      .where('role', 'in', ['owner', 'admin'])
+      .limit(1)
       .executeTakeFirst();
-    const actsAsAdmin = member?.role === 'owner' || member?.role === 'admin';
     if (
-      actsAsAdmin &&
+      adminSomewhere &&
       twoFactorRequired(
-        {
-          twoFactorEnabled:
-            (session.user as { twoFactorEnabled?: boolean | null }).twoFactorEnabled ?? null,
-        },
+        { twoFactorEnabled: session.user.twoFactorEnabled ?? null },
         await hasPassword(db, session.user.id),
       )
     ) {

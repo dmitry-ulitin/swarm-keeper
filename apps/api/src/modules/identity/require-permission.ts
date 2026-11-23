@@ -40,7 +40,12 @@ export class TwoFactorGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    if (!this.reflector.get<boolean>(ADMIN_ACTION, context.getHandler())) {
+    if (
+      !this.reflector.getAllAndOverride<boolean>(ADMIN_ACTION, [
+        context.getHandler(),
+        context.getClass(),
+      ])
+    ) {
       return true;
     }
     const user = context
