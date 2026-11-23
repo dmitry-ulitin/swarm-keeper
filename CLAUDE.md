@@ -44,6 +44,8 @@ libs/web/features/<name>  @swarm-keeper/feature-<name>  layers in src/{data-acce
 
 - Libraries are source-only: `exports` points at `src/index.ts`, and the apps compile them. Aliases live in `tsconfig.base.json`.
 - `apps/api` and `apps/worker` declare their own `paths` in `tsconfig.json`, listing only the packages the backend may use. Add a new shared library there too.
+- `libs/shared/*` are compiled into the API and worker under `nodenext`, so their relative imports use `.js` suffixes (their tsconfig enforces it).
+- Every app keeps an `index.ts` in `src/`: without it Sheriff does not treat the app as a module and skips its rules. Boundary regression tests live in `tools/boundaries`.
 - API modules live in `apps/api/src/modules/<name>` and are reachable from other modules only through their `index.ts`.
 - Dependency versions are pinned exactly; shared ones go in the `catalog:` of `pnpm-workspace.yaml`.
 

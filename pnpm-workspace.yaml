@@ -3,6 +3,7 @@ packages:
   - libs/shared/*
   - libs/web/*
   - libs/web/features/*
+  - tools/*
 
 # Exact versions shared across packages. Never use ^ or ~.
 allowBuilds:

@@ -1,4 +1,10 @@
 {
   "extends": "../../../tsconfig.base.json",
+  // Compiled into the API and worker under nodenext as well:
+  // relative imports need .js suffixes.
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext"
+  },
   "include": ["src/**/*.ts"]
 }
