@@ -39,6 +39,14 @@ describe('app authentication', () => {
   });
 
   it('closes every other route without a session', async () => {
-    await request(app.getHttpServer()).get('/api/v1/protected-check').expect(401);
+    await request(app.getHttpServer())
+      .get('/api/v1/protected-check')
+      .expect(401, { code: 'UNAUTHENTICATED', params: {} });
+  });
+
+  it('serves GET /me under /api/v1', async () => {
+    await request(app.getHttpServer())
+      .get('/api/v1/me')
+      .expect(401, { code: 'UNAUTHENTICATED', params: {} });
   });
 });

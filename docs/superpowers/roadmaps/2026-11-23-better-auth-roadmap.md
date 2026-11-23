@@ -12,7 +12,7 @@ The spec targets Better Auth 1.6; the current release is 1.7.27. Every step chec
 | --- | --- | --- | --- |
 | 1 | Permissions library | — | Role matrix is code and unit-tested |
 | 2 | Database layer and migrations | — | Migrations run against the dev Postgres from `pnpm`; API tests use a migrated test database |
-| 3 | Auth core in the API | 1, 2 | Seeded owner invites a person; they sign up via API; the four security tests pass |
+| 3 | Auth core in the API (done: 3a, 3b) | 1, 2 | Seeded owner invites a person; they sign up via API; the four security tests pass |
 | 4 | Email | 3 | Invitation, verification and reset emails in en/ru land in a dev mailbox |
 | 5 | Web foundations | — | Transloco, Material theme and generated design tokens in the web app |
 | 6 | Web sign-in and invitation screens | 3, 4, 5 | `/login`, `/invite/:token`, `/settings/security` work end to end |
@@ -37,7 +37,7 @@ Steps 1, 2 and 5 are independent and can be done in any order. The proposed orde
 
 ### 3. Auth core in the API
 
-Delivered in two PRs. **3a** (`docs/superpowers/specs/2026-11-23-auth-core-design.md`): tables, configuration, Nest integration, invite-only sign-up, mailer interface, seed, and the tests for sign-up without an invitation and an unverified email. **3b**: `@RequirePermission`, the 2FA rule, `GET /me`, `{ code, params }` errors, and the tests for viewer upload, another family, `creatorRole` and one role per member.
+Delivered in two PRs. **3a** (`docs/superpowers/specs/2026-11-23-auth-core-design.md`): tables, configuration, Nest integration, invite-only sign-up, mailer interface, seed, and the tests for sign-up without an invitation and an unverified email. **3b** (`docs/superpowers/specs/2026-11-23-auth-permissions-design.md`): `@RequirePermission`, the 2FA rule (by account), one role per member, the active family at sign-in, `GET /me`, `{ code, params }` errors, and the tests for viewer upload, another family, `creatorRole` and one role per member.
 
 - Better Auth tables: generated with its CLI from `auth.ts` and committed as our migration, so the whole schema history lives in one place.
 - `auth.ts` per the spec skeleton: email + password with required verification, sessions 30 days / extended daily, `cookieCache` off, rate limiting in the database, only the organization, passkey, twoFactor and bearer plugins, `allowUserToCreateOrganization: false`, `user.locale` / `user.uiSize` and `invitation.locale` / `invitation.uiSize`.

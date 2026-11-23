@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { DatabaseModule } from './database/index.js';
+import { ErrorFilter } from './error.filter.js';
 import { HealthController } from './health/health.controller.js';
 import { AlbumsModule } from './modules/albums/index.js';
 import { AssetsModule } from './modules/assets/index.js';
@@ -21,5 +23,6 @@ import { SearchModule } from './modules/search/index.js';
     JobsModule,
   ],
   controllers: [HealthController],
+  providers: [{ provide: APP_FILTER, useClass: ErrorFilter }],
 })
 export class AppModule {}
