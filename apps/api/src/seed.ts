@@ -25,7 +25,7 @@ try {
   logger.log(
     created
       ? `Created owner ${input.email} and family "${input.familyName}"`
-      : `${input.email} already exists; nothing changed`,
+      : 'A family already exists; nothing changed',
   );
 } finally {
   await db.destroy();

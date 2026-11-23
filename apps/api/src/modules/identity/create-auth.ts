@@ -48,8 +48,9 @@ function buildOptions(env: AuthEnv, mailer: Mailer, map: Mapping) {
     rateLimit: { ...map['rateLimit'], enabled: true, storage: 'database' },
     advanced: {
       database: { generateId: 'uuid' }, // Postgres fills ids with uuidv7() (see the migration)
-      useSecureCookies: process.env['NODE_ENV'] === 'production',
-      ipAddress: { ipAddressHeaders: ['x-forwarded-for'] },
+      useSecureCookies: env.secureCookies,
+      // The client IP comes only from x-forwarded-for; see AuthEnv.trustedProxies.
+      ipAddress: { trustedProxies: env.trustedProxies },
     },
 
     plugins: [

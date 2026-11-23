@@ -9,7 +9,7 @@ import { LoggingMailer } from './mailer.js';
 // Runs against swarm_keeper_test, migrated to latest by test/global-setup.ts.
 describe('Better Auth tables', () => {
   const db = createDatabase(databaseUrl());
-  const auth = createAuth(db, authEnv({}), new LoggingMailer());
+  const auth = createAuth(db, authEnv({ NODE_ENV: 'test' }), new LoggingMailer());
 
   afterAll(() => db.destroy());
 

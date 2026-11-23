@@ -19,7 +19,7 @@ function slugify(name: string): string {
 /**
  * The first owner and their family, created once at deployment.
  * Writes the rows directly instead of signing up, so the invite-only hook stays strict.
- * Does nothing when a user with this email already exists.
+ * Does nothing once any family exists.
  */
 export async function seedOwner(
   auth: Auth,
@@ -27,12 +27,10 @@ export async function seedOwner(
   input: SeedOwnerInput,
 ): Promise<{ created: boolean }> {
   const email = input.email.toLowerCase();
-  const existing = await db
-    .selectFrom('user')
-    .select('id')
-    .where('email', '=', email)
-    .executeTakeFirst();
-  if (existing) {
+  // Once per installation: any existing family means the seed already ran (perhaps with
+  // another email), and a second owner would be one nobody meant to create.
+  const family = await db.selectFrom('organization').select('id').limit(1).executeTakeFirst();
+  if (family) {
     return { created: false };
   }
 

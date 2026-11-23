@@ -10,3 +10,14 @@ export function configureApp<T extends INestApplication>(app: T): T {
   app.enableShutdownHooks();
   return app;
 }
+
+/**
+ * Where the API listens: loopback unless HOST says otherwise. Better Auth takes the client IP
+ * from x-forwarded-for, so only the reverse proxy in front may reach the API.
+ */
+export function listenAddress(env: NodeJS.ProcessEnv = process.env): {
+  port: number;
+  host: string;
+} {
+  return { port: Number(env['PORT'] || 3000), host: env['HOST'] || '127.0.0.1' };
+}

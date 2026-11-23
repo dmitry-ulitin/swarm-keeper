@@ -13,6 +13,8 @@ describe('seedOwner', () => {
 
   beforeAll(async () => {
     ({ app, db, auth } = await startAuthApp());
+    // The seed is once per installation: start from an installation without families.
+    await db.deleteFrom('organization').execute();
   });
 
   afterAll(() => app.close());
@@ -61,6 +63,12 @@ describe('seedOwner', () => {
 
     const before = await counts();
     expect(await seedOwner(auth, db, input)).toEqual({ created: false });
+    expect(await counts()).toEqual(before);
+
+    // A rerun with a corrected (different) email must not add a second owner and family.
+    expect(await seedOwner(auth, db, { ...input, email: uniqueEmail('typo-fixed') })).toEqual({
+      created: false,
+    });
     expect(await counts()).toEqual(before);
   });
 });

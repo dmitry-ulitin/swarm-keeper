@@ -147,7 +147,8 @@ The defaults are designed for open SaaS, so here is what we must change.
 - [ ] Sign-up by invitation only: the `user.create.before` hook.
 - [ ] `allowUserToCreateOrganization: false`.
 - [ ] Only the plugins we need: organization, passkey, twoFactor, bearer.
-- [ ] Rate limiting stored in the database (not in memory), client IP taken from the header Caddy sets.
+- [ ] Rate limiting stored in the database (not in memory), client IP taken from `x-forwarded-for`. Better Auth reads the IP only from that header, never from the socket, so: the API listens on `127.0.0.1` (`HOST`) and only the reverse proxy reaches it; the proxy overwrites the header with the client address, or lists itself in `TRUSTED_PROXIES` if it appends. A spoofable header would let a client pick a fresh rate-limit bucket per request.
+- [ ] Auth settings fail closed: dev defaults apply only with `NODE_ENV` set to `development` or `test`; otherwise `BETTER_AUTH_SECRET` (≥ 32 characters, never the dev value), `BETTER_AUTH_URL` and `PASSKEY_RP_ID` are required. Secure cookies follow the `https` scheme of `BETTER_AUTH_URL`.
 - [ ] 30-day sessions, extended once a day on activity; `cookieCache` stays off until load requires it.
 - [ ] Secure cookies and HTTPS in production.
 - [ ] Mandatory 2FA for owners and admins who sign in with a password: the guard on admin actions checks `twoFactorEnabled`; without it, it responds with `TWO_FACTOR_REQUIRED` and the client leads to 2FA setup.

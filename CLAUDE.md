@@ -89,7 +89,7 @@ pnpm db:seed           create the first owner and family (SEED_OWNER_EMAIL, SEED
 ```
 
 - Run `pnpm db:types` after every migration and commit `schema.ts`; never edit it by hand.
-- Better Auth runs inside the API at `/api/auth/*`; every other route needs a session unless marked `@AllowAnonymous()`. Its settings (`BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `PASSKEY_RP_ID`) have dev defaults and are required in production.
+- Better Auth runs inside the API at `/api/auth/*`; every other route needs a session unless marked `@AllowAnonymous()`. Its settings (`BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `PASSKEY_RP_ID`) have dev defaults only when `NODE_ENV` is `development` or `test` (Vitest sets `test`); run the API and `pnpm db:seed` locally with `NODE_ENV=development`. The API listens on `127.0.0.1` unless `HOST` is set.
 - API tests drop and recreate `swarm_keeper_test` and migrate it, so Postgres must be up (`pnpm infra:up`).
 - Every setting has a dev default (`compose.yaml`, `infra/dev/env.sh`). Copy `.env.example` to `.env` only to override one.
 - `pnpm --filter @swarm-keeper/web start` serves the web app on 4200 and proxies `/api` to the API on 3000, so both share one origin.

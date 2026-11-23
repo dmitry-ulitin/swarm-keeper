@@ -21,7 +21,7 @@ describe('toSnakeCase', () => {
 describe('Better Auth schema', () => {
   // Fails when a Better Auth update adds a model or field the mapping does not cover.
   it('names every table and column in snake_case', () => {
-    const tables = getAuthTables(authOptions(authEnv({}), new LoggingMailer()));
+    const tables = getAuthTables(authOptions(authEnv({ NODE_ENV: 'test' }), new LoggingMailer()));
     const names = Object.values(tables).flatMap((table) => [
       table.modelName,
       ...Object.entries(table.fields).map(([key, field]) => field.fieldName ?? key),
