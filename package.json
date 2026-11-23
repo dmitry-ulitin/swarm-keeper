@@ -13,7 +13,7 @@
     "test": "pnpm -r test",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "infra:up": "docker compose up -d --wait --wait-timeout 60",
+    "infra:up": "docker compose up -d --wait --wait-timeout 60 && sh infra/dev/garage-init.sh",
     "infra:down": "docker compose down",
     "infra:reset": "docker compose down -v",
     "infra:logs": "docker compose logs -f",

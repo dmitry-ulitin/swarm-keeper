@@ -1,0 +1,21 @@
+# Garage config for LOCAL DEVELOPMENT ONLY (single node).
+# The secrets below are public dev values: never reuse them anywhere else.
+
+metadata_dir = "/var/lib/garage/meta"
+data_dir = "/var/lib/garage/data"
+db_engine = "lmdb"
+
+replication_factor = 1
+
+rpc_bind_addr = "[::]:3901"
+rpc_public_addr = "127.0.0.1:3901"
+rpc_secret = "ee07447bc9852222c8a0ec257855a9c2880faed98cd8fe8f8aabb9e535dffac9"
+
+[s3_api]
+s3_region = "garage"
+api_bind_addr = "[::]:3900"
+root_domain = ".s3.garage.localhost"
+
+[admin]
+api_bind_addr = "[::]:3903"
+admin_token = "a4487793c9efc46ff2f109f716fb3c52"

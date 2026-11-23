@@ -19,5 +19,22 @@ services:
       timeout: 3s
       retries: 30
 
+  garage:
+    image: dxflrs/garage:v2.5.0
+    ports:
+      - 127.0.0.1:${S3_PORT:-3900}:3900
+    volumes:
+      - ./infra/dev/garage.toml:/etc/garage.toml:ro
+      - garage-meta:/var/lib/garage/meta
+      - garage-data:/var/lib/garage/data
+    healthcheck:
+      # `garage health` fails until the layout is applied by garage-init.sh, so check status.
+      test: [CMD, /garage, status]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
 volumes:
   postgres-data:
+  garage-meta:
+  garage-data:
