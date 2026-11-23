@@ -79,6 +79,15 @@ pnpm infra:logs    follow logs
 pnpm infra:check   smoke test; CHECK_PROXY=1 also checks the web dev proxy
 ```
 
+```
+pnpm db:migrate        apply pending migrations (apps/api/migrations) to DATABASE_URL, the dev database by default
+pnpm db:migrate:down   undo the last migration
+pnpm db:new <name>     create a migration file
+pnpm db:types          regenerate apps/api/src/database/schema.ts from the dev database
+```
+
+- Run `pnpm db:types` after every migration and commit `schema.ts`; never edit it by hand.
+- API tests drop and recreate `swarm_keeper_test` and migrate it, so Postgres must be up (`pnpm infra:up`).
 - Every setting has a dev default (`compose.yaml`, `infra/dev/env.sh`). Copy `.env.example` to `.env` only to override one.
 - `pnpm --filter @swarm-keeper/web start` serves the web app on 4200 and proxies `/api` to the API on 3000, so both share one origin.
 

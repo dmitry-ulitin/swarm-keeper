@@ -15,6 +15,7 @@ export const config: SheriffConfig = {
   modules: {
     'apps/api/src': ['scope:api', 'app:api'],
     'apps/api/src/modules/<module>': ['scope:api', 'api:module:<module>'],
+    'apps/api/src/database': ['scope:api', 'api:infra:database'],
     'apps/worker/src': ['scope:api', 'app:worker'],
     'apps/web/src': ['scope:web', 'app:web'],
     'libs/shared/<lib>/src': ['scope:shared', 'shared:<lib>'],
@@ -37,9 +38,11 @@ export const config: SheriffConfig = {
     'shared:*': 'scope:shared',
 
     // API: modules talk to each other only through their index.ts.
-    'app:api': ['api:module:*', 'scope:shared'],
-    'api:module:*': ['api:module:*', 'scope:shared'],
-    'app:worker': ['app:api', 'api:module:*', 'scope:shared'],
+    // Infrastructure (the database) is reachable from every API module and depends on none.
+    'app:api': ['api:module:*', 'api:infra:database', 'scope:shared'],
+    'api:module:*': ['api:module:*', 'api:infra:database', 'scope:shared'],
+    'api:infra:database': ['scope:shared'],
+    'app:worker': ['app:api', 'api:module:*', 'api:infra:database', 'scope:shared'],
 
     // Web libraries.
     'app:web': ['web:core', 'web:ui', 'layer:public', 'scope:shared'],
