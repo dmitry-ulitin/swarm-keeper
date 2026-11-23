@@ -1,0 +1,27 @@
+<!-- @dsCard group="People" height=130 subtitle="Avatars and chips for filters and tags" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PersonChip — preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="fa-stage">
+  <div class="fa-row">
+    <span class="fa-avatar fa-avatar-lg">AP</span>
+    <span class="fa-avatar fa-avatar-lg fa-avatar-warm">DP</span>
+    <span class="fa-avatar fa-avatar-lg fa-avatar-neutral">GV</span>
+    <span class="fa-avatar">M</span>
+    <span class="fa-avatar fa-avatar-warm">O</span>
+  </div>
+  <div class="fa-row" role="group" aria-label="Filter by people">
+    <button class="fa-chip" aria-pressed="true"><span class="fa-avatar">AP</span>Anna</button>
+    <button class="fa-chip" aria-pressed="false"><span class="fa-avatar fa-avatar-warm">DP</span>Dmitry</button>
+    <button class="fa-chip" aria-pressed="false"><span class="fa-avatar fa-avatar-neutral">GV</span>Grandma Valya</button>
+    <button class="fa-chip" aria-pressed="false"><svg class="fa-ico" viewBox="0 0 24 24" style="margin-left:6px"><path d="M12 5v14M5 12h14"/></svg>Tag</button>
+  </div>
+</div>
+</body>
+</html>

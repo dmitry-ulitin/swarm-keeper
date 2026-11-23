@@ -1,0 +1,40 @@
+<!-- @dsCard group="Family" height=260 subtitle="Header with the menu open" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FamilySwitcher — preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>.fa-menu { margin: var(--space-1) 0 0 var(--space-3); }</style>
+</head>
+<body>
+<div class="fa-bar">
+  <button class="fa-family-btn" aria-haspopup="menu" aria-expanded="true">
+    <span class="fa-family-mark">P</span>The Petrovs
+    <svg class="fa-ico" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+  <span style="flex:1"></span>
+  <span class="fa-caption">Uploading 12 of 40</span>
+  <button class="fa-btn fa-btn-primary"><svg class="fa-ico" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>Upload</button>
+  <span class="fa-avatar fa-avatar-warm">DP</span>
+</div>
+<div class="fa-menu" role="menu" aria-label="Family switcher">
+  <div class="fa-menu-head fa-caption">Your families</div>
+  <div class="fa-menu-item" role="menuitemradio" aria-checked="true">
+    <span class="fa-family-mark">P</span>
+    <span class="fa-grow"><span class="fa-strong">The Petrovs</span><br><span class="fa-caption">Owner · 6 members</span></span>
+    <svg class="fa-ico fa-ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+  </div>
+  <div class="fa-menu-item" role="menuitemradio" aria-checked="false">
+    <span class="fa-family-mark fa-family-mark-warm">S</span>
+    <span class="fa-grow"><span class="fa-strong">The Smirnovs</span><br><span class="fa-caption">Member · 4 members</span></span>
+  </div>
+  <div class="fa-menu-sep"></div>
+  <div class="fa-menu-item" role="menuitem">
+    <svg class="fa-ico" viewBox="0 0 24 24"><path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M9.5 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6M19 8v6M22 11h-6"/></svg>
+    <span class="fa-grow">Members and invitations</span>
+  </div>
+</div>
+</body>
+</html>

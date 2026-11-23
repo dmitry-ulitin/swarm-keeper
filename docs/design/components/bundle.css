@@ -1,0 +1,180 @@
+/* Swarm Keeper — component styles for the previews and as a reference for Angular.
+   Colors, spacing and radii come only from tokens (tokens.css).
+   Size mode: data-size="large" on <html> or a container; without it — compact. */
+
+:root, [data-size="compact"] {
+  --fa-control-h: var(--control-height);
+  --fa-row-h: var(--row-height);
+  --fa-icon: var(--icon-size);
+  --fa-tile: var(--tile-size);
+  --fa-pad-x: var(--space-3);
+  --fa-gap: var(--space-2);
+  --fa-fs-title: 15px; --fa-lh-title: 20px;
+  --fa-fs-body: 13px;  --fa-lh-body: 18px;
+  --fa-fs-label: 12px; --fa-lh-label: 16px;
+  --fa-fs-caption: 11px; --fa-lh-caption: 14px;
+  --fa-avatar: 24px;
+}
+
+[data-size="large"] {
+  --fa-control-h: var(--control-height-large);
+  --fa-row-h: var(--row-height-large);
+  --fa-icon: var(--icon-size-large);
+  --fa-tile: var(--tile-size-large);
+  --fa-pad-x: var(--space-5);
+  --fa-gap: var(--space-3);
+  --fa-fs-title: 19px; --fa-lh-title: 26px;
+  --fa-fs-body: 17px;  --fa-lh-body: 24px;
+  --fa-fs-label: 16px; --fa-lh-label: 22px;
+  --fa-fs-caption: 15px; --fa-lh-caption: 20px;
+  --fa-avatar: 36px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--surface-100);
+  color: var(--ink);
+  font-size: var(--fa-fs-body);
+  line-height: var(--fa-lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.fa-stage { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-4); }
+.fa-row { display: flex; align-items: center; gap: var(--fa-gap); flex-wrap: wrap; }
+.fa-col { display: flex; flex-direction: column; gap: var(--fa-gap); }
+.fa-caption { font-size: var(--fa-fs-caption); line-height: var(--fa-lh-caption); color: var(--ink-muted); }
+.fa-strong { font-weight: 600; }
+.fa-ico { width: var(--fa-icon); height: var(--fa-icon); flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring); outline-offset: 2px; }
+
+/* ---------- Buttons ---------- */
+.fa-btn {
+  font: inherit; font-size: var(--fa-fs-label); line-height: var(--fa-lh-label); font-weight: 500;
+  height: var(--fa-control-h); padding: 0 var(--fa-pad-x);
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-1);
+  border: 1px solid transparent; border-radius: var(--radius-sm);
+  background: none; color: var(--ink); cursor: pointer; white-space: nowrap;
+}
+.fa-btn-primary { background: var(--brand); color: var(--on-brand); }
+.fa-btn-primary:hover { background: var(--brand-hover); }
+.fa-btn-tonal { background: var(--brand-container); color: var(--on-brand-container); }
+.fa-btn-outline { background: var(--surface-000); border-color: var(--border-strong); }
+.fa-btn-outline:hover, .fa-btn-text:hover, .fa-icon-btn:hover { background: var(--surface-200); }
+.fa-btn-text { color: var(--brand); padding: 0 var(--space-2); }
+.fa-btn-danger { background: var(--danger); color: var(--on-danger); }
+.fa-btn[disabled] { background: var(--surface-200); color: var(--ink-subtle); border-color: transparent; cursor: default; }
+.fa-icon-btn { width: var(--fa-control-h); padding: 0; border-radius: var(--radius-full); color: var(--ink-muted); }
+@media (pointer: coarse) {
+  .fa-btn, .fa-icon-btn { min-height: var(--hit-target-touch); }
+  .fa-icon-btn { min-width: var(--hit-target-touch); }
+}
+
+/* ---------- Segmented toggle ---------- */
+.fa-seg { display: inline-flex; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface-000); }
+.fa-seg button {
+  font: inherit; font-size: var(--fa-fs-label); line-height: var(--fa-lh-label); font-weight: 500;
+  height: calc(var(--fa-control-h) - 2px); padding: 0 var(--fa-pad-x); border: 0; background: none; color: var(--ink); cursor: pointer;
+  display: inline-flex; align-items: center; gap: var(--space-1);
+}
+.fa-seg button + button { border-left: 1px solid var(--border-strong); }
+.fa-seg button[aria-pressed="true"] { background: var(--brand-container); color: var(--on-brand-container); font-weight: 600; }
+
+/* ---------- Photo tiles ---------- */
+.fa-date { font-size: var(--fa-fs-title); line-height: var(--fa-lh-title); font-weight: 600; margin: 0 0 var(--space-2); }
+.fa-date .fa-caption { font-weight: 400; margin-left: var(--space-2); }
+.fa-grid { display: flex; gap: var(--space-0); }
+.fa-tile { position: relative; height: var(--fa-tile); border-radius: var(--radius-xs); overflow: hidden; background: var(--media-placeholder); flex: none; cursor: pointer; }
+.fa-tile svg.fa-photo { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.fa-tile[aria-selected="true"] { box-shadow: inset 0 0 0 3px var(--selection); }
+.fa-tile[aria-selected="true"] svg.fa-photo { transform: scale(0.92); border-radius: var(--radius-xs); }
+.fa-check { position: absolute; top: var(--space-1); left: var(--space-1); width: 20px; height: 20px; border-radius: var(--radius-full); display: grid; place-items: center; background: var(--selection); color: var(--on-brand); }
+.fa-check svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.fa-media-badge { position: absolute; right: var(--space-1); bottom: var(--space-1); display: inline-flex; align-items: center; gap: 2px; padding: 0 6px; border-radius: var(--radius-full); background: var(--scrim); color: var(--on-viewer); font-size: var(--fa-fs-caption); line-height: var(--fa-lh-caption); }
+.fa-media-badge svg { width: 10px; height: 10px; fill: currentColor; }
+.fa-fav { position: absolute; right: var(--space-1); top: var(--space-1); width: 18px; height: 18px; fill: var(--accent); stroke: var(--surface-000); stroke-width: 1.5; }
+.fa-tile-processing { display: grid; place-items: center; color: var(--ink-muted); font-size: var(--fa-fs-caption); line-height: var(--fa-lh-caption); text-align: center; }
+.fa-photo .sky { fill: var(--brand-container); }
+.fa-photo .sun { fill: var(--accent); }
+.fa-photo .hill { fill: var(--brand); }
+.fa-photo .hill2 { fill: var(--ink-muted); }
+.fa-photo .warm { fill: var(--accent-container); }
+.fa-photo .deep { fill: var(--ink); }
+
+/* ---------- Upload queue row ---------- */
+.fa-list { background: var(--surface-000); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+.fa-up { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-3); min-height: var(--fa-row-h); padding: var(--space-1) var(--fa-pad-x); }
+.fa-up + .fa-up { border-top: 1px solid var(--border); }
+.fa-up-thumb { width: calc(var(--fa-row-h) - 8px); height: calc(var(--fa-row-h) - 8px); border-radius: var(--radius-xs); background: var(--media-placeholder); display: grid; place-items: center; color: var(--ink-muted); overflow: hidden; }
+.fa-up-main { min-width: 0; }
+.fa-up-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fa-up-name .fa-caption { font-weight: 400; margin-left: var(--space-2); }
+.fa-progress { height: 4px; border-radius: var(--radius-full); background: var(--surface-300); overflow: hidden; margin-top: 3px; }
+.fa-progress > i { display: block; height: 100%; background: var(--brand); border-radius: inherit; }
+.fa-status { display: inline-flex; align-items: center; gap: var(--space-1); padding: 0 var(--space-2); border-radius: var(--radius-full); font-size: var(--fa-fs-caption); line-height: calc(var(--fa-lh-caption) + 6px); font-weight: 500; white-space: nowrap; }
+.fa-status-ok { background: var(--success-container); color: var(--on-success-container); }
+.fa-status-warn { background: var(--warning-container); color: var(--on-warning-container); }
+.fa-status-err { background: var(--danger-container); color: var(--on-danger-container); }
+.fa-status-neutral { background: var(--surface-200); color: var(--ink-muted); }
+
+/* ---------- Document card ---------- */
+.fa-doc { display: grid; grid-template-columns: auto 1fr; gap: var(--space-3); align-items: start; padding: var(--space-3); background: var(--surface-000); border: 1px solid var(--border); border-radius: var(--radius-md); width: 280px; box-sizing: border-box; }
+[data-size="large"] .fa-doc { padding: var(--space-4); width: 360px; }
+.fa-doc-icon { width: calc(var(--fa-control-h) + 4px); height: calc(var(--fa-control-h) + 12px); border-radius: var(--radius-xs); background: var(--brand-container); color: var(--on-brand-container); display: grid; place-items: center; font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
+.fa-doc-title { font-weight: 600; margin: 0; }
+.fa-doc-meta { margin: 2px 0 var(--space-2); }
+
+/* ---------- People ---------- */
+.fa-avatar { width: var(--fa-avatar); height: var(--fa-avatar); border-radius: var(--radius-full); display: grid; place-items: center; flex: none; font-size: calc(var(--fa-avatar) * 0.42); font-weight: 600; background: var(--brand-container); color: var(--on-brand-container); }
+.fa-avatar-warm { background: var(--accent-container); color: var(--on-accent-container); }
+.fa-avatar-neutral { background: var(--surface-300); color: var(--ink); }
+.fa-avatar-lg { --fa-avatar: calc(var(--fa-control-h) + 12px); }
+.fa-chip { display: inline-flex; align-items: center; gap: 6px; height: var(--fa-control-h); padding: 0 var(--space-3) 0 2px; border: 1px solid var(--border-strong); border-radius: var(--radius-full); background: var(--surface-000); color: var(--ink); font-size: var(--fa-fs-label); font-weight: 500; box-sizing: border-box; cursor: pointer; }
+.fa-chip .fa-avatar { --fa-avatar: calc(var(--fa-control-h) - 6px); }
+.fa-chip[aria-pressed="true"] { background: var(--brand-container); color: var(--on-brand-container); border-color: transparent; }
+
+/* ---------- Roles ---------- */
+.fa-role { display: inline-block; padding: 0 var(--space-2); border-radius: var(--radius-xs); font-size: var(--fa-fs-caption); line-height: calc(var(--fa-lh-caption) + 6px); font-weight: 600; border: 1px solid transparent; }
+.fa-role-owner { background: var(--brand); color: var(--on-brand); }
+.fa-role-admin { background: var(--brand-container); color: var(--on-brand-container); }
+.fa-role-member { background: var(--surface-200); color: var(--ink); }
+.fa-role-viewer { border-color: var(--border-strong); color: var(--ink-muted); }
+.fa-member { display: flex; align-items: center; gap: var(--space-3); min-height: var(--fa-row-h); padding: var(--space-1) var(--fa-pad-x); }
+.fa-member + .fa-member { border-top: 1px solid var(--border); }
+.fa-member-main { flex: 1; min-width: 0; }
+
+/* ---------- Header and family switcher ---------- */
+.fa-bar { display: flex; align-items: center; gap: var(--fa-gap); height: calc(var(--fa-control-h) + 16px); padding: 0 var(--space-3); background: var(--surface-000); border-bottom: 1px solid var(--border); }
+.fa-family-btn { font: inherit; font-size: var(--fa-fs-body); font-weight: 600; display: inline-flex; align-items: center; gap: var(--space-2); height: var(--fa-control-h); padding: 0 var(--space-2) 0 2px; border: 0; border-radius: var(--radius-sm); background: none; color: var(--ink); cursor: pointer; }
+.fa-family-btn:hover, .fa-family-btn[aria-expanded="true"] { background: var(--surface-200); }
+.fa-family-mark { width: calc(var(--fa-control-h) - 4px); height: calc(var(--fa-control-h) - 4px); border-radius: var(--radius-xs); background: var(--brand); color: var(--on-brand); display: grid; place-items: center; font-size: var(--fa-fs-label); font-weight: 600; }
+.fa-family-mark-warm { background: var(--accent-container); color: var(--on-accent-container); }
+.fa-menu { width: 264px; background: var(--surface-000); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-md); padding: var(--space-1) 0; }
+.fa-menu-item { display: flex; align-items: center; gap: var(--space-2); min-height: var(--fa-row-h); padding: 0 var(--space-3); cursor: pointer; }
+.fa-menu-item:hover { background: var(--surface-200); }
+.fa-menu-item .fa-grow { flex: 1; min-width: 0; }
+.fa-menu-item .fa-ok { color: var(--brand); }
+.fa-menu-sep { height: 1px; background: var(--border); margin: var(--space-1) 0; }
+.fa-menu-head { padding: var(--space-1) var(--space-3); }
+
+/* ---------- Toasts ---------- */
+.fa-toast { display: inline-flex; align-items: center; gap: var(--space-3); min-height: calc(var(--fa-control-h) + 8px); padding: 0 var(--space-1) 0 var(--space-4); background: var(--ink); color: var(--surface-100); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); }
+.fa-toast .fa-btn-text { color: var(--brand-inverse); font-weight: 600; }
+.fa-toast .fa-btn-text:hover { background: none; text-decoration: underline; }
+.fa-toast-error { background: var(--danger-container); color: var(--on-danger-container); box-shadow: var(--shadow-lg); }
+.fa-toast-error .fa-btn-text { color: var(--on-danger-container); }
+
+/* ---------- Empty state ---------- */
+.fa-empty { display: grid; justify-items: center; text-align: center; gap: var(--space-2); padding: var(--space-8) var(--space-4); max-width: 360px; margin: 0 auto; }
+.fa-empty h3 { margin: var(--space-2) 0 0; font-size: var(--fa-fs-title); line-height: var(--fa-lh-title); font-weight: 600; }
+.fa-empty p { margin: 0 0 var(--space-2); color: var(--ink-muted); }
+.fa-empty .a { fill: var(--media-placeholder); }
+.fa-empty .b { fill: var(--brand-container); }
+.fa-empty .c { fill: var(--brand); }
+.fa-empty .d { fill: var(--accent); }
+
+/* ---------- Size mode showcase ---------- */
+.fa-modes { display: grid; grid-template-columns: auto auto; gap: var(--space-4); align-items: start; justify-content: start; }
+.fa-panel { background: var(--surface-000); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3); display: flex; flex-direction: column; gap: var(--fa-gap); }
+.fa-panel-head { font-size: var(--fa-fs-caption); line-height: var(--fa-lh-caption); color: var(--ink-muted); text-transform: none; }
