@@ -12,7 +12,12 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "infra:up": "docker compose up -d --wait --wait-timeout 60 && sh infra/dev/garage-init.sh",
+    "infra:down": "docker compose down",
+    "infra:reset": "docker compose down -v",
+    "infra:logs": "docker compose logs -f",
+    "infra:check": "sh infra/dev/check.sh"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

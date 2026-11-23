@@ -62,6 +62,26 @@ pnpm --filter @swarm-keeper/<pkg> <script>    run one package's script, e.g. sta
 pnpm exec sheriff list <api|worker|web>       show modules and their tags
 ```
 
+## Local infrastructure
+
+Development only: `compose.yaml` runs the infrastructure, and the apps run on the host via `pnpm`. Whether there will be a self-hosted deployment stack is undecided.
+
+| Service | Image | Port (127.0.0.1) |
+| --- | --- | --- |
+| PostgreSQL, database `swarm_keeper` | `postgres:18.7-alpine` | 5432 |
+| Garage (S3), bucket `swarm-keeper`, region `garage` | `dxflrs/garage:v2.5.0` | 3900 |
+
+```
+pnpm infra:up      start and bootstrap (idempotent: creates the Garage layout, dev key and bucket)
+pnpm infra:down    stop, keep data
+pnpm infra:reset   stop and delete all data
+pnpm infra:logs    follow logs
+pnpm infra:check   smoke test; CHECK_PROXY=1 also checks the web dev proxy
+```
+
+- Every setting has a dev default (`compose.yaml`, `infra/dev/env.sh`). Copy `.env.example` to `.env` only to override one.
+- `pnpm --filter @swarm-keeper/web start` serves the web app on 4200 and proxies `/api` to the API on 3000, so both share one origin.
+
 ## Invariants (do not break without updating the docs)
 
 **Tenancy and access**
