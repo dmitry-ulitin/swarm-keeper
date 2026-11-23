@@ -131,7 +131,7 @@ There are two clients: the Angular web app and a separate native app with auto-u
 **Languages: English and Russian from day one.** Clients translate; the backend returns data and codes (see [i18n.md](i18n.md)).
 
 - `user.locale` (`en` or `ru`) is stored in the profile and returned by `GET /me` together with `uiSize`. On first sign-in it comes from the invitation or `Accept-Language`.
-- API errors are codes with parameters (`{"code": "upload.duplicate", "params": {"takenAt": "…"}}`), with no ready-made text. Dates are ISO 8601; the client formats them.
+- API errors are codes with parameters (`{"code": "upload.duplicate", "params": {"takenAt": "…"}}`), with no ready-made text. Dates are ISO 8601; the client formats them. A global filter enforces this on our routes: unexpected errors become `INTERNAL` (500) with details only in the log, plain 401 / 403 / 404 become `UNAUTHENTICATED` / `FORBIDDEN` / `NOT_FOUND`, and any other status without a code becomes `HTTP_<status>` (for example `HTTP_400` for malformed JSON). Better Auth's `/api/auth/*` responses keep its `{ code, message }` shape; clients read only `code`.
 - Emails (invitation, email verification, password reset) have `en` and `ru` templates; the invitation goes out in `invitation.locale`, everything else in `user.locale`.
 - OCR runs with the `rus+eng` languages.
 - Full-text search: extracted text and captions get `tsvector` columns for both the `russian` and `english` configurations (generated columns + GIN indexes), and queries search both. Names and exact matches use `pg_trgm`.

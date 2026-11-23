@@ -1,6 +1,6 @@
 // Test helpers: build families, people and invitations straight in the database.
 import 'reflect-metadata';
-import type { INestApplication } from '@nestjs/common';
+import type { INestApplication, Type } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AuthService } from '@thallesp/nestjs-better-auth';
 import { DATABASE, type Database, DatabaseModule } from '../../database/index.js';
@@ -24,9 +24,12 @@ export function uniqueEmail(label: string): string {
   return `${label}-${Date.now()}-${counter}@example.test`;
 }
 
-export async function startAuthApp(): Promise<{ app: INestApplication; db: Database; auth: Auth }> {
+export async function startAuthApp(
+  controllers: Type[] = [],
+): Promise<{ app: INestApplication; db: Database; auth: Auth }> {
   const moduleRef = await Test.createTestingModule({
     imports: [DatabaseModule, IdentityModule],
+    controllers,
   }).compile();
   const app = moduleRef.createNestApplication({ bodyParser: false, logger: false });
   await app.init();
@@ -87,4 +90,56 @@ export async function createInvitation(
     })
     .returning('id')
     .executeTakeFirstOrThrow();
+}
+
+export async function addMember(db: Database, familyId: string, userId: string, role: string) {
+  await db
+    .insertInto('member')
+    .values({ organizationId: familyId, userId, role, createdAt: new Date() })
+    .execute();
+}
+
+/** A person with a verified account, a member of the family with the given role. */
+export async function createMember(db: Database, familyId: string, role: string) {
+  const user = await createUser(db, uniqueEmail(role));
+  await addMember(db, familyId, user.id, role);
+  return user;
+}
+
+/** A password (credential) account; the hash is never checked by these tests. */
+export async function givePassword(db: Database, userId: string) {
+  await db
+    .insertInto('account')
+    .values({
+      userId,
+      accountId: userId,
+      providerId: 'credential',
+      password: 'unused',
+      updatedAt: new Date(),
+    })
+    .execute();
+}
+
+export async function enableTwoFactor(db: Database, userId: string) {
+  await db.updateTable('user').set({ twoFactorEnabled: true }).where('id', '=', userId).execute();
+}
+
+/**
+ * A session for the user with the given active family (or none), as a bearer token.
+ * Skips sign-in: these tests are about what a session may do, not how it was opened.
+ */
+export async function sessionFor(
+  auth: Auth,
+  db: Database,
+  userId: string,
+  activeFamilyId: string | null,
+) {
+  const ctx = await auth.$context;
+  const session = await ctx.internalAdapter.createSession(userId);
+  await db
+    .updateTable('session')
+    .set({ activeOrganizationId: activeFamilyId })
+    .where('id', '=', session.id)
+    .execute();
+  return `Bearer ${session.token}`;
 }
