@@ -43,6 +43,16 @@ describe('module boundaries', () => {
       'libs/shared/permissions/src/index.ts',
       "export * from '@swarm-keeper/web-core';",
     ],
+    [
+      'database → an api module',
+      'apps/api/src/database/create-database.ts',
+      "export * from '../modules/assets/index.js';",
+    ],
+    [
+      'api module → database internals',
+      'apps/api/src/modules/identity/identity.module.ts',
+      "export * from '../../database/create-database.js';",
+    ],
   ];
 
   it.each(forbidden)('rejects %s', async (_name, file, code) => {
@@ -70,6 +80,11 @@ describe('module boundaries', () => {
       'api module → another module barrel',
       'apps/api/src/modules/identity/identity.module.ts',
       "export * from '../assets/index.js';",
+    ],
+    [
+      'api module → database barrel',
+      'apps/api/src/modules/identity/identity.module.ts',
+      "export * from '../../database/index.js';",
     ],
   ];
 

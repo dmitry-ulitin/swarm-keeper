@@ -47,6 +47,7 @@ libs/web/features/<name>  @swarm-keeper/feature-<name>  layers in src/{data-acce
 - `libs/shared/*` are compiled into the API and worker under `nodenext`, so their relative imports use `.js` suffixes (their tsconfig enforces it).
 - Every app keeps an `index.ts` in `src/`: without it Sheriff does not treat the app as a module and skips its rules. Boundary regression tests live in `tools/boundaries`.
 - API modules live in `apps/api/src/modules/<name>` and are reachable from other modules only through their `index.ts`.
+- `apps/api/src/database` is the Kysely connection (`DatabaseModule`, token `DATABASE`); any API module may import it through its `index.ts`. A runtime dependency of API code must also be listed in `apps/worker/package.json`, because the worker compiles API sources.
 - Dependency versions are pinned exactly; shared ones go in the `catalog:` of `pnpm-workspace.yaml`.
 
 ## Commands
@@ -79,6 +80,15 @@ pnpm infra:logs    follow logs
 pnpm infra:check   smoke test; CHECK_PROXY=1 also checks the web dev proxy
 ```
 
+```
+pnpm db:migrate        apply pending migrations (apps/api/migrations) to DATABASE_URL, the dev database by default
+pnpm db:migrate:down   undo the last migration
+pnpm db:new <name>     create a migration file
+pnpm db:types          regenerate apps/api/src/database/schema.ts from the dev database
+```
+
+- Run `pnpm db:types` after every migration and commit `schema.ts`; never edit it by hand.
+- API tests drop and recreate `swarm_keeper_test` and migrate it, so Postgres must be up (`pnpm infra:up`).
 - Every setting has a dev default (`compose.yaml`, `infra/dev/env.sh`). Copy `.env.example` to `.env` only to override one.
 - `pnpm --filter @swarm-keeper/web start` serves the web app on 4200 and proxies `/api` to the API on 3000, so both share one origin.
 

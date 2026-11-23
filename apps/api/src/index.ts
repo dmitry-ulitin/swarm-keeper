@@ -1,6 +1,15 @@
 /** Every API route lives under this prefix; changes within a version are additive only. */
 export const API_PREFIX = 'api/v1';
 
+export {
+  DATABASE,
+  type DB,
+  type Database,
+  DatabaseModule,
+  createDatabase,
+  createMigrator,
+  databaseUrl,
+} from './database/index.js';
 export { AlbumsModule } from './modules/albums/index.js';
 export { AssetsModule } from './modules/assets/index.js';
 export { AuditModule } from './modules/audit/index.js';

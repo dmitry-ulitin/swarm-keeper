@@ -11,7 +11,7 @@ The spec targets Better Auth 1.6; the current release is 1.7.27. Every step chec
 | # | Step | Depends on | Done when |
 | --- | --- | --- | --- |
 | 1 | Permissions library | — | Role matrix is code and unit-tested |
-| 2 | Database layer and migrations | — | Migrations run against the dev Postgres from `pnpm` |
+| 2 | Database layer and migrations | — | Migrations run against the dev Postgres from `pnpm`; API tests use a migrated test database |
 | 3 | Auth core in the API | 1, 2 | Seeded owner invites a person; they sign up via API; the four security tests pass |
 | 4 | Email | 3 | Invitation, verification and reset emails in en/ru land in a dev mailbox |
 | 5 | Web foundations | — | Transloco, Material theme and generated design tokens in the web app |
@@ -31,12 +31,13 @@ Steps 1, 2 and 5 are independent and can be done in any order. The proposed orde
 
 - Query builder and migration tool: **Kysely** (decided). Why: Better Auth already uses it internally, it stays close to SQL (RLS, `SET LOCAL`, `tsvector`, generated columns), and its migrator keeps every migration in plain TypeScript.
 - Migration scripts (`db:migrate`, `db:migrate:down`, `db:new`) against the dev Postgres from `compose.yaml`.
-- Better Auth tables are generated with its CLI and committed as our migration, so the whole schema history lives in one place.
+- Better Auth tables move to step 3: its CLI generates them from the full `auth.ts` config, which only exists there. Step 2 lays the migration infrastructure and a first `pg_trgm` migration.
 - IDs are UUIDv7: Better Auth's ID generation must be configured to produce them, and our tables use them too.
 - **Decided:** Kysely.
 
 ### 3. Auth core in the API
 
+- Better Auth tables: generated with its CLI from `auth.ts` and committed as our migration, so the whole schema history lives in one place.
 - `auth.ts` per the spec skeleton: email + password with required verification, sessions 30 days / extended daily, `cookieCache` off, rate limiting in the database, only the organization, passkey, twoFactor and bearer plugins, `allowUserToCreateOrganization: false`, `user.locale` / `user.uiSize` and `invitation.locale` / `invitation.uiSize`.
 - `identity` module with `@thallesp/nestjs-better-auth` (2.8, supports Nest 12): `/api/auth/*`, global guard, `@AllowAnonymous()`, `@Session()`, our `@RequirePermission(resource, action)`.
 - The `user.create.before` hook: rejects sign-up without a valid invitation (`INVITE_REQUIRED`), and marks the email verified only when it matches the invitation.

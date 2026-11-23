@@ -60,7 +60,9 @@ Design for mobile auto-upload from day one: an endpoint "here is a batch of hash
 
 ## 5. Data model (core)
 
-Every archive table carries `family_id` — the Better Auth `organization.id`. IDs are UUIDv7.
+Every archive table carries `family_id` — the Better Auth `organization.id`. IDs are UUIDv7, defaulted in the database with PostgreSQL 18's `uuidv7()`.
+
+Columns are snake_case in the database; code sees them as camelCase through Kysely's `CamelCasePlugin`.
 
 | Table | Key fields | Purpose |
 | --- | --- | --- |
@@ -103,7 +105,7 @@ Not needed at the start: microservices, Kubernetes, Elasticsearch (PostgreSQL fu
 | Layer | Choice |
 | --- | --- |
 | API and workers | NestJS + TypeScript |
-| Database access | Kysely or Drizzle |
+| Database access | Kysely (migrations with `kysely-ctl`, types generated with `kysely-codegen`) |
 | Database | PostgreSQL |
 | Queue | pg-boss |
 | Files | S3-compatible storage |

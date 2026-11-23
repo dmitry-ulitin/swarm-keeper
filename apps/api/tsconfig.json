@@ -11,5 +11,11 @@
       "@swarm-keeper/permissions": ["../../libs/shared/permissions/src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "vitest.config.ts"]
+  "include": [
+    "src/**/*.ts",
+    "migrations/**/*.ts",
+    "test/**/*.ts",
+    "kysely.config.ts",
+    "vitest.config.ts"
+  ]
 }
