@@ -1,6 +1,8 @@
 import swc from 'unplugin-swc';
 import { defineConfig } from 'vitest/config';
-import { databaseUrl, testDatabaseUrl } from './src/database/index.js';
+// Not the barrel: it pulls in Nest decorators, which the config bundler cannot parse.
+// eslint-disable-next-line @sheriff-arch/sheriff/encapsulation
+import { databaseUrl, testDatabaseUrl } from './src/database/database-url.js';
 
 // SWC emits the decorator metadata Nest's DI needs; esbuild does not.
 export default defineConfig({

@@ -10,9 +10,11 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@swarm-keeper/api": "workspace:*",
     "@nestjs/common": "catalog:",
     "@nestjs/core": "catalog:",
+    "@swarm-keeper/api": "workspace:*",
+    "kysely": "catalog:",
+    "pg": "catalog:",
     "reflect-metadata": "catalog:",
     "rxjs": "catalog:"
   },

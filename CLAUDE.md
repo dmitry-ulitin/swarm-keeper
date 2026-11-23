@@ -47,6 +47,7 @@ libs/web/features/<name>  @swarm-keeper/feature-<name>  layers in src/{data-acce
 - `libs/shared/*` are compiled into the API and worker under `nodenext`, so their relative imports use `.js` suffixes (their tsconfig enforces it).
 - Every app keeps an `index.ts` in `src/`: without it Sheriff does not treat the app as a module and skips its rules. Boundary regression tests live in `tools/boundaries`.
 - API modules live in `apps/api/src/modules/<name>` and are reachable from other modules only through their `index.ts`.
+- `apps/api/src/database` is the Kysely connection (`DatabaseModule`, token `DATABASE`); any API module may import it through its `index.ts`. A runtime dependency of API code must also be listed in `apps/worker/package.json`, because the worker compiles API sources.
 - Dependency versions are pinned exactly; shared ones go in the `catalog:` of `pnpm-workspace.yaml`.
 
 ## Commands
