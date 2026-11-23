@@ -6,6 +6,7 @@ import { bearer, organization, twoFactor } from 'better-auth/plugins';
 import type { Database } from '../../database/index.js';
 import type { AuthEnv } from './auth-env.js';
 import { inviteOnlyHooks } from './invite-only.js';
+import { type SessionLookup, activeFamilyHooks, organizationHooks } from './organization-hooks.js';
 import type { Mailer } from './mailer.js';
 import { type ModelMapping, snakeCaseSchema } from './snake-case-schema.js';
 
@@ -103,11 +104,16 @@ export function authOptions(env: AuthEnv, mailer: Mailer) {
 
 /** Better Auth over our pool. Without plugins: Better Auth maps column names itself. */
 export function createAuth(db: Database, env: AuthEnv, mailer: Mailer) {
-  return betterAuth({
+  // Hooks need the finished instance to resolve sessions; bound right after creation.
+  let lookupSession: SessionLookup = async () => null;
+  const auth = betterAuth({
     ...authOptions(env, mailer),
     database: { db: db.withoutPlugins(), type: 'postgres' },
-    databaseHooks: inviteOnlyHooks(db),
+    databaseHooks: { ...inviteOnlyHooks(db), ...activeFamilyHooks(db) },
+    hooks: { before: organizationHooks(db, (headers) => lookupSession(headers)) },
   });
+  lookupSession = (headers) => auth.api.getSession({ headers });
+  return auth;
 }
 
 export type Auth = ReturnType<typeof createAuth>;
