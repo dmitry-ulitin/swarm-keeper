@@ -37,6 +37,8 @@ Steps 1, 2 and 5 are independent and can be done in any order. The proposed orde
 
 ### 3. Auth core in the API
 
+Delivered in two PRs. **3a** (`docs/superpowers/specs/2026-11-23-auth-core-design.md`): tables, configuration, Nest integration, invite-only sign-up, mailer interface, seed, and the tests for sign-up without an invitation and an unverified email. **3b**: `@RequirePermission`, the 2FA rule, `GET /me`, `{ code, params }` errors, and the tests for viewer upload, another family, `creatorRole` and one role per member.
+
 - Better Auth tables: generated with its CLI from `auth.ts` and committed as our migration, so the whole schema history lives in one place.
 - `auth.ts` per the spec skeleton: email + password with required verification, sessions 30 days / extended daily, `cookieCache` off, rate limiting in the database, only the organization, passkey, twoFactor and bearer plugins, `allowUserToCreateOrganization: false`, `user.locale` / `user.uiSize` and `invitation.locale` / `invitation.uiSize`.
 - `identity` module with `@thallesp/nestjs-better-auth` (2.8, supports Nest 12): `/api/auth/*`, global guard, `@AllowAnonymous()`, `@Session()`, our `@RequirePermission(resource, action)`.
