@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "types": [],
+    "paths": {
+      "@swarm-keeper/api": ["./apps/api/src/index.ts"],
+      "@swarm-keeper/permissions": ["./libs/shared/permissions/src/index.ts"],
+      "@swarm-keeper/design-tokens": ["./libs/shared/design-tokens/src/index.ts"],
+      "@swarm-keeper/api-client": ["./libs/web/api-client/src/index.ts"],
+      "@swarm-keeper/web-core": ["./libs/web/core/src/index.ts"],
+      "@swarm-keeper/web-ui": ["./libs/web/ui/src/index.ts"],
+      "@swarm-keeper/feature-gallery": ["./libs/web/features/gallery/src/index.ts"],
+      "@swarm-keeper/feature-documents": ["./libs/web/features/documents/src/index.ts"],
+      "@swarm-keeper/feature-upload": ["./libs/web/features/upload/src/index.ts"],
+      "@swarm-keeper/feature-family": ["./libs/web/features/family/src/index.ts"],
+      "@swarm-keeper/feature-people": ["./libs/web/features/people/src/index.ts"],
+      "@swarm-keeper/feature-search": ["./libs/web/features/search/src/index.ts"],
+      "@swarm-keeper/feature-trash": ["./libs/web/features/trash/src/index.ts"],
+      "@swarm-keeper/feature-settings": ["./libs/web/features/settings/src/index.ts"]
+    }
+  }
+}

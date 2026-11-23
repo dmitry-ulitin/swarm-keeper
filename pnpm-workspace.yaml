@@ -1,0 +1,12 @@
+packages:
+  - apps/*
+  - libs/shared/*
+  - libs/web/*
+  - libs/web/features/*
+
+# Exact versions shared across packages. Never use ^ or ~.
+catalog:
+  '@types/node': 26.6.6
+  typescript: 6.0.3
+  vitest: 5.1.1
+  '@angular/core': 22.3.0
