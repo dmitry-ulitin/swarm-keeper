@@ -180,6 +180,19 @@ describe('InvitePage', () => {
     expect(el(f, 'invalid')).not.toBeNull();
   });
 
+  it('explains INVITE_REQUIRED when the invitation still works', async () => {
+    auth.signUpPasskey.mockImplementation(rejectWith('INVITE_REQUIRED'));
+    const f = await render();
+    await type(f, 'name', 'Валя');
+    el(f, 'passkey-sign-up')!.click();
+    await new Promise((resolve) => setTimeout(resolve));
+    TestBed.tick();
+    flush(INVITATION);
+    await f.whenStable();
+    expect(el(f, 'invalid')).toBeNull();
+    expect(el(f, 'error')).not.toBeNull();
+  });
+
   it('has no literal text in its template', () => {
     expect(literalText('../../libs/web/features/auth/src/feature/invite.page.html')).toBe('');
   });

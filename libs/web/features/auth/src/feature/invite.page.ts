@@ -58,7 +58,9 @@ export class InvitePage {
 
   protected readonly invitation = invitationResource(this.token);
   /** The invitation, or undefined while loading or after an error (value() throws then). */
-  protected readonly view = computed(() => (this.invitation.hasValue() ? this.invitation.value() : undefined));
+  protected readonly view = computed(() =>
+    this.invitation.hasValue() ? this.invitation.value() : undefined,
+  );
   protected readonly busy = signal(false);
   protected readonly errorKey = signal<string | null>(null);
   private readonly withPassword = signal(false);
@@ -173,12 +175,9 @@ export class InvitePage {
       await action();
     } catch (error) {
       const code = codeOf(error);
-      if (GONE.has(code)) {
-        // Check again: if the invitation is gone, the page shows the expired state.
-        this.invitation.reload();
-      } else {
-        this.errorKey.set(authErrorKey(code));
-      }
+      this.errorKey.set(authErrorKey(code));
+      // Check again: if the invitation is gone, the page shows the expired state instead.
+      if (GONE.has(code)) this.invitation.reload();
     } finally {
       this.busy.set(false);
     }
