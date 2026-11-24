@@ -4,7 +4,7 @@ Guidance for Claude Code in this repository.
 
 ## Project
 
-**Swarm Keeper** is a self-hosted family archive for photos and documents with access for the whole family. Components:
+**Swarm Keeper** is a family archive for photos and documents with access for the whole family. Whoever runs it is the operator: one installation serves several families, on their own server or in the cloud. Components:
 
 - NestJS API and workers;
 - Angular 22 web app;
@@ -68,7 +68,7 @@ pnpm icons:build                              regenerate libs/web/ui/src/icons/i
 
 ## Local infrastructure
 
-Development only: `compose.yaml` runs the infrastructure, and the apps run on the host via `pnpm`. Whether there will be a self-hosted deployment stack is undecided.
+Development only: `compose.yaml` runs the infrastructure, and the apps run on the host via `pnpm`. The production deployment stack is undecided.
 
 | Service | Image | Port (127.0.0.1) |
 | --- | --- | --- |
@@ -98,6 +98,16 @@ pnpm db:seed           create the first owner and family (SEED_OWNER_EMAIL, SEED
 - Auth emails go over SMTP (`SMTP_URL`, `MAIL_FROM`); in development they land in Mailpit at http://127.0.0.1:8025.
 - Every setting has a dev default (`compose.yaml`, `infra/dev/env.sh`). Copy `.env.example` to `.env` only to override one.
 - `pnpm --filter @swarm-keeper/web start` serves the web app on 4200 and proxies `/api` to the API on 3000, so both share one origin.
+
+Operator commands:
+
+```
+pnpm family:create --name <name> --owner-email <email> [--locale en|ru]   new family, owner invitation mailed
+pnpm family:invite-owner --family <slug> [--owner-email <email>]          new owner invitation for a family without an owner
+pnpm family:list                                                          families, owners, members, pending owner invitations
+```
+
+- The `family:*` commands are the operator's tools. The inviter is the operator's own verified account (`OPERATOR_EMAIL` or `--inviter`), and the invitation goes out over SMTP for real. Locally run them with `NODE_ENV=development`, like `pnpm db:seed`.
 
 ## Invariants (do not break without updating the docs)
 

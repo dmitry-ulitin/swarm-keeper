@@ -12,7 +12,7 @@ let counter = 0;
 
 /**
  * A fresh client IP per request. Rate limiting stays on in tests; distinct IPs keep
- * unrelated test requests out of one bucket, as Caddy's x-forwarded-for does in deployment.
+ * unrelated test requests out of one bucket, as the reverse proxy's x-forwarded-for does in deployment.
  */
 export function clientIp(): string {
   counter += 1;

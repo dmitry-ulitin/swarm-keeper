@@ -15,6 +15,9 @@ import { type ModelMapping, snakeCaseSchema } from './snake-case-schema.js';
 
 const DAY = 60 * 60 * 24;
 
+/** How long an invitation stays valid, in seconds (Better Auth's `invitationExpiresIn`). */
+export const INVITATION_EXPIRES_IN = 7 * DAY;
+
 type Mapping = Record<string, ModelMapping | undefined>;
 
 const mailLogger = new Logger('Mailer');
@@ -77,7 +80,7 @@ function buildOptions(env: AuthEnv, mailer: Mailer, map: Mapping, db?: Database)
         ac,
         roles,
         allowUserToCreateOrganization: false,
-        invitationExpiresIn: 7 * DAY,
+        invitationExpiresIn: INVITATION_EXPIRES_IN,
         requireEmailVerificationOnInvitation: true,
         sendInvitationEmail: async (data) => {
           await mailer.invitation({
