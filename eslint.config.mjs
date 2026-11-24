@@ -46,6 +46,22 @@ export default defineConfig(
     extends: [sheriff.configs.all],
   },
   {
+    // A skipped or focused test must not reach main: the security tests are never switched off.
+    files: ['**/*.spec.ts'],
+    rules: {
+      'no-restricted-properties': [
+        'error',
+        ...['it', 'test', 'describe'].flatMap((object) =>
+          ['skip', 'only', 'todo', 'skipIf', 'runIf', 'fixme'].map((property) => ({
+            object,
+            property,
+            message: 'Tests are never skipped or focused in the repository.',
+          })),
+        ),
+      ],
+    },
+  },
+  {
     // Migrations take Kysely<any>: they are frozen in time and must not follow schema.ts.
     files: ['apps/api/migrations/**/*.ts'],
     rules: { '@typescript-eslint/no-explicit-any': 'off' },
