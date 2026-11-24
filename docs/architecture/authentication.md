@@ -298,7 +298,7 @@ In 2026 vulnerabilities were found in Better Auth regularly and fixed quickly. N
 - `better-auth` and `@better-auth/*` versions are pinned exactly; Renovate opens a PR for every release, and security patches go in within a few days.
 - Subscribe to GitHub Security Advisories for `better-auth/better-auth`; the project announces security release dates in advance.
 - Integration tests for critical scenarios: sign-up without an invitation is rejected, an unverified email can't accept an invitation, a viewer can't upload, another family is inaccessible. They must pass before merging any update.
-- Members see a list of their sessions (device, IP, date) and can end any of them.
+- Members see a list of their sessions (device, IP, date) and can end any of them. Our own routes serve this, not Better Auth's `list-sessions` and `revoke-session`, which need a fresh session and hand every token to the browser: `GET /api/v1/me/sessions` (id, user agent, IP, dates, `current`, never the token), `DELETE /api/v1/me/sessions/:id` (`SESSION_NOT_FOUND` 404 for an unknown or foreign id, `CURRENT_SESSION` 400 for the current one) and `DELETE /api/v1/me/sessions` (all others). Deleting the row ends the session at once for cookie and bearer clients.
 - Better Auth tables are included in the shared encrypted PostgreSQL backup.
 
 ## Open questions
