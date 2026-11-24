@@ -92,7 +92,9 @@ Sign-up without an invitation is rejected by the `user.create.before` hook: if t
 | Magic link / email code | Relatives without a passkey-capable device | Later, on request |
 | Sign in with Google / Apple | — | Not enabled: unnecessary attack surface (see "Operations and security") |
 
-**Email language.** Every email template exists in English and Russian. The invitation goes out in the language the admin picked (`invitation.locale`, defaulting to the admin's own); the `/invite/:token` page opens in that language, and on sign-up it is saved to `user.locale`. Email verification, password reset and all other emails use `user.locale`: `mailer` picks the template by the recipient's language.
+**Email language.** Every email template exists in English and Russian. The invitation goes out in the language the admin picked (`invitation.locale`, defaulting to the admin's own); the `/invite/:token` page opens in that language, and on sign-up it is saved to `user.locale`. Email verification, password reset and all other emails use `user.locale`: `mailer` picks the template by the recipient's language. The texts live in `apps/api/src/modules/identity/mail/i18n/{en,ru}.json` and use the design-system glossary; each email is HTML plus `text/plain`.
+
+**Email delivery.** The API sends over SMTP (`SMTP_URL`, `MAIL_FROM`; module `apps/api/src/modules/mail`), so any provider with SMTP fits; which one runs in production is still open. In development every email lands in Mailpit (`compose.yaml`, web UI at http://127.0.0.1:8025).
 
 **Account recovery.** Forgot the password — reset by email. Owners and admins with 2FA who lost their phone sign in with backup codes. With access to neither the passkey nor the mailbox, an admin or owner sends a recovery link to a new address: the account's email changes, old passkeys and sessions are revoked, files and role are kept, and the event goes to the activity log. If the only owner loses access, recovery is done with a server-side script, like the initial setup.
 
@@ -184,12 +186,12 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     minPasswordLength: 12,
-    sendResetPassword: ({ user, url }) => mailer.resetPassword(user.email, url),
+    sendResetPassword: ({ user, url }) => mailer.resetPassword({ email: user.email, url, locale: user.locale }),
   },
   emailVerification: {
     sendOnSignUp: false, // on sign-up, the invitation link verifies the email
     autoSignInAfterVerification: true,
-    sendVerificationEmail: ({ user, url }) => mailer.verifyEmail(user.email, url),
+    sendVerificationEmail: ({ user, url }) => mailer.verifyEmail({ email: user.email, url, locale: user.locale }),
   },
 
   session: {
@@ -235,7 +237,7 @@ export const auth = betterAuth({
           },
         },
       },
-      sendInvitationEmail: (data) => mailer.invitation(data),
+      sendInvitationEmail: (data) => mailer.invitation(data), // + inviter name, family name, expiry, invitation.locale
     }),
     passkey({
       rpID: process.env.PASSKEY_RP_ID,   // the app's domain

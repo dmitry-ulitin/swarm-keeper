@@ -13,7 +13,7 @@ The spec targets Better Auth 1.6; the current release is 1.7.27. Every step chec
 | 1 | Permissions library | — | Role matrix is code and unit-tested |
 | 2 | Database layer and migrations | — | Migrations run against the dev Postgres from `pnpm`; API tests use a migrated test database |
 | 3 | Auth core in the API (done: 3a, 3b) | 1, 2 | Seeded owner invites a person; they sign up via API; the four security tests pass |
-| 4 | Email | 3 | Invitation, verification and reset emails in en/ru land in a dev mailbox |
+| 4 | Email (done) | 3 | Invitation, verification and reset emails in en/ru land in a dev mailbox |
 | 5 | Web foundations | — | Transloco, Material theme and generated design tokens in the web app |
 | 6 | Web sign-in and invitation screens | 3, 4, 5 | `/login`, `/invite/:token`, `/settings/security` work end to end |
 | 7 | Hardening (later) | 3, archive tables, deployment | RLS per request, Caddy rate-limit layer, CI gate on the security tests |
@@ -55,6 +55,9 @@ Delivered in two PRs. **3a** (`docs/superpowers/specs/2026-11-23-auth-core-desig
 - **Decided:** tests use a separate `swarm_keeper_test` database in the dev Postgres, recreated by the test setup.
 
 ### 4. Email
+
+Done: `docs/superpowers/specs/2026-11-24-email-design.md` (SMTP via nodemailer, Mailpit in dev, en/ru texts as JSON).
+
 
 - Mailpit in `compose.yaml` for development.
 - Mailer implementation with en/ru templates for invitation, email verification and password reset; language from `invitation.locale` or `user.locale`; terms from the design-system glossary.
