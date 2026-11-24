@@ -4,7 +4,9 @@
   // relative imports need .js suffixes.
   "compilerOptions": {
     "module": "nodenext",
-    "moduleResolution": "nodenext"
+    "moduleResolution": "nodenext",
+    // build/generate.ts runs directly under Node, which needs the .ts suffix; never emitted.
+    "allowImportingTsExtensions": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "build/**/*.ts", "vitest.config.ts"]
 }

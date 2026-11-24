@@ -7,9 +7,13 @@
     ".": "./src/index.ts"
   },
   "scripts": {
+    "build": "node build/generate.ts",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "devDependencies": {
-    "typescript": "catalog:"
+    "style-dictionary": "5.8.0",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

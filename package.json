@@ -13,6 +13,7 @@
     "test": "pnpm -r test",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "tokens:build": "pnpm --filter @swarm-keeper/design-tokens build",
     "db:migrate": "pnpm --filter @swarm-keeper/api db:migrate",
     "db:migrate:down": "pnpm --filter @swarm-keeper/api db:migrate:down",
     "db:new": "pnpm --filter @swarm-keeper/api db:new",
