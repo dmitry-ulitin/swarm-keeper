@@ -45,6 +45,16 @@ describe('authInterceptor', () => {
     expect(navigate).not.toHaveBeenCalled();
   });
 
+  it('sends a 401 from a route that only starts like /me to /login', async () => {
+    await call('/api/v1/members', 401);
+    expect(navigate).toHaveBeenCalledWith('/login?returnUrl=%2Fcurrent');
+  });
+
+  it('leaves a 401 from /me with a query alone', async () => {
+    await call('/api/v1/me?x=1', 401);
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
   it('sends TWO_FACTOR_REQUIRED to /settings/security', async () => {
     await call('/api/v1/families/x', 403, { code: 'TWO_FACTOR_REQUIRED', params: {} });
     expect(navigate).toHaveBeenCalledWith('/settings/security');

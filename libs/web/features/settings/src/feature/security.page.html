@@ -1,0 +1,135 @@
+<h1 class="title">{{ 'settings.security.title' | transloco }}</h1>
+
+<section class="section" data-test="passkeys">
+  <header class="section-head">
+    <h2>{{ 'settings.passkeys.title' | transloco }}</h2>
+    <button matButton="tonal" type="button" data-test="add-passkey" (click)="addPasskey()">
+      <mat-icon svgIcon="add" />{{ 'settings.passkeys.add' | transloco }}
+    </button>
+  </header>
+  <p class="hint">{{ 'settings.passkeys.hint' | transloco }}</p>
+  @if (passkeys.error()) {
+    <p class="note danger load-error" role="alert" data-test="passkeys-error">
+      {{ 'settings.loadError' | transloco }}
+      <button matButton="text" type="button" (click)="passkeys.reload()">
+        {{ 'settings.retry' | transloco }}
+      </button>
+    </p>
+  }
+  <ul class="rows">
+    @for (passkey of passkeys.hasValue() ? passkeys.value() : []; track passkey.id) {
+      <li class="row" data-test="passkey">
+        <span class="main">
+          <span>{{ passkey.name || ('settings.passkeys.unnamed' | transloco) }}</span>
+          <small>{{
+            'settings.passkeys.added' | transloco: { date: date(passkey.createdAt) }
+          }}</small>
+        </span>
+        <button matButton="text" type="button" data-test="rename-passkey" (click)="rename(passkey)">
+          {{ 'settings.passkeys.rename' | transloco }}
+        </button>
+        <button
+          matButton="text"
+          class="danger"
+          type="button"
+          data-test="delete-passkey"
+          (click)="deletePasskey(passkey)"
+        >
+          {{ 'settings.passkeys.delete' | transloco }}
+        </button>
+      </li>
+    } @empty {
+      @if (!passkeys.error() && !passkeys.isLoading()) {
+        <li class="row empty">{{ 'settings.passkeys.empty' | transloco }}</li>
+      }
+    }
+  </ul>
+</section>
+
+@if (user()?.hasPassword) {
+  <section class="section" data-test="two-factor">
+    <header class="section-head">
+      <h2>{{ 'settings.twoFactor.title' | transloco }}</h2>
+      @if (user()?.twoFactorEnabled) {
+        <span class="badge" data-test="two-factor-on">{{
+          'settings.twoFactor.on' | transloco
+        }}</span>
+      } @else {
+        <button matButton="filled" type="button" data-test="enable-2fa" (click)="enableTwoFactor()">
+          {{ 'settings.twoFactor.enable' | transloco }}
+        </button>
+      }
+    </header>
+    <p class="hint">{{ 'settings.twoFactor.hint' | transloco }}</p>
+    @if (user()?.twoFactorEnabled) {
+      <div class="actions">
+        <button matButton="outlined" type="button" data-test="new-codes" (click)="newBackupCodes()">
+          {{ 'settings.twoFactor.newCodes' | transloco }}
+        </button>
+        <button
+          matButton="text"
+          class="danger"
+          type="button"
+          data-test="disable-2fa"
+          (click)="disableTwoFactor()"
+        >
+          {{ 'settings.twoFactor.disable' | transloco }}
+        </button>
+      </div>
+    } @else {
+      @if (isAdmin()) {
+        <p class="note warning" data-test="two-factor-required">
+          {{ 'settings.twoFactor.required' | transloco }}
+        </p>
+      }
+    }
+  </section>
+}
+
+<section class="section" data-test="sessions">
+  <header class="section-head">
+    <h2>{{ 'settings.sessions.title' | transloco }}</h2>
+    <button matButton="outlined" type="button" data-test="end-others" (click)="endOtherSessions()">
+      {{ 'settings.sessions.endOthers' | transloco }}
+    </button>
+  </header>
+  @if (sessions.error()) {
+    <p class="note danger load-error" role="alert" data-test="sessions-error">
+      {{ 'settings.loadError' | transloco }}
+      <button matButton="text" type="button" (click)="sessions.reload()">
+        {{ 'settings.retry' | transloco }}
+      </button>
+    </p>
+  }
+  <ul class="rows">
+    @for (session of sessions.hasValue() ? sessions.value() : []; track session.id) {
+      @let active = lastActive(session);
+      <li class="row" data-test="session">
+        <span class="main">
+          <span>{{ device(session) ?? ('settings.sessions.unknownDevice' | transloco) }}</span>
+          <small>
+            <span>{{ session.ipAddress ?? ('settings.sessions.unknownIp' | transloco) }}</span>
+            <span>{{
+              active.today
+                ? ('settings.sessions.today' | transloco: { time: active.text })
+                : active.text
+            }}</span>
+          </small>
+        </span>
+        @if (session.current) {
+          <span class="badge">{{ 'settings.sessions.current' | transloco }}</span>
+        } @else {
+          <button
+            matButton="text"
+            class="danger"
+            type="button"
+            data-test="end-session"
+            (click)="endSession(session)"
+          >
+            {{ 'settings.sessions.end' | transloco }}
+          </button>
+        }
+      </li>
+    }
+  </ul>
+</section>

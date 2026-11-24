@@ -9,6 +9,7 @@ import type { AuthEnv } from './auth-env.js';
 import { inviteOnlyHooks } from './invite-only.js';
 import { passkeySignUp } from './passkey-sign-up.js';
 import { type SessionLookup, activeFamilyHooks, organizationHooks } from './organization-hooks.js';
+import { combineBefore, securityHooks } from './security-hooks.js';
 import type { Mailer } from './mailer.js';
 import { type ModelMapping, snakeCaseSchema } from './snake-case-schema.js';
 
@@ -135,7 +136,12 @@ export function createAuth(db: Database, env: AuthEnv, mailer: Mailer) {
     // Transactions on: a passkey sign-up writes the user, membership and passkey atomically.
     database: { db: db.withoutPlugins(), type: 'postgres', transaction: true },
     databaseHooks: { ...inviteOnlyHooks(db), ...activeFamilyHooks(db) },
-    hooks: { before: organizationHooks(db, (headers) => lookupSession(headers)) },
+    hooks: {
+      before: combineBefore(
+        organizationHooks(db, (headers) => lookupSession(headers)),
+        securityHooks(db, (headers) => lookupSession(headers)),
+      ),
+    },
   });
   lookupSession = (headers) => auth.api.getSession({ headers });
   return auth;

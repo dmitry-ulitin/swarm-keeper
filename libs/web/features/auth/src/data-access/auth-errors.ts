@@ -1,6 +1,6 @@
 /**
  * Keys built at runtime, listed for transloco-keys-manager:
- * t(errors.auth.INVALID_EMAIL_OR_PASSWORD, errors.auth.INVALID_CODE, errors.auth.INVALID_BACKUP_CODE, errors.auth.TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE, errors.auth.TOO_MANY_REQUESTS, errors.auth.PASSWORD_TOO_SHORT, errors.auth.PASSWORD_TOO_LONG, errors.auth.INVALID_TOKEN, errors.auth.INVITE_REQUIRED, errors.auth.INVITATION_NOT_FOUND, errors.auth.NAME_REQUIRED, errors.auth.USER_ALREADY_EXISTS, errors.auth.YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION, errors.auth.PASSKEY_CANCELLED, errors.auth.UNKNOWN)
+ * t(errors.auth.INVALID_EMAIL_OR_PASSWORD, errors.auth.INVALID_CODE, errors.auth.INVALID_BACKUP_CODE, errors.auth.TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE, errors.auth.TOO_MANY_REQUESTS, errors.auth.PASSWORD_TOO_SHORT, errors.auth.PASSWORD_TOO_LONG, errors.auth.INVALID_TOKEN, errors.auth.INVITE_REQUIRED, errors.auth.INVITATION_NOT_FOUND, errors.auth.NAME_REQUIRED, errors.auth.NAME_TOO_LONG, errors.auth.USER_ALREADY_EXISTS, errors.auth.YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION, errors.auth.PASSKEY_CANCELLED, errors.auth.UNKNOWN)
  */
 /** Codes with their own text under `errors.auth.*`; anything else reads as UNKNOWN. */
 const KNOWN = new Set([
@@ -15,6 +15,7 @@ const KNOWN = new Set([
   'INVITE_REQUIRED',
   'INVITATION_NOT_FOUND',
   'NAME_REQUIRED',
+  'NAME_TOO_LONG',
   'USER_ALREADY_EXISTS',
   'YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION',
 ]);

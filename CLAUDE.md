@@ -63,6 +63,7 @@ pnpm format                                   Prettier
 pnpm --filter @swarm-keeper/<pkg> <script>    run one package's script, e.g. start or test
 pnpm exec sheriff list <api|worker|web>       show modules and their tags
 pnpm tokens:build                             regenerate libs/shared/design-tokens/src/tokens.css after editing docs/design/tokens.json
+pnpm icons:build                              regenerate libs/web/ui/src/icons/icons.ts after editing libs/web/ui/icons.json
 ```
 
 ## Local infrastructure

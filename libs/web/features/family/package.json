@@ -9,7 +9,32 @@
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
+  "dependencies": {
+    "tslib": "2.9.1"
+  },
+  "peerDependencies": {
+    "@angular/common": "catalog:",
+    "@angular/core": "catalog:",
+    "@angular/forms": "catalog:",
+    "@angular/material": "catalog:",
+    "@angular/router": "catalog:",
+    "@jsverse/transloco": "8.4.0",
+    "@swarm-keeper/permissions": "workspace:*",
+    "@swarm-keeper/web-core": "workspace:*"
+  },
   "devDependencies": {
-    "typescript": "catalog:"
+    "@angular/cdk": "catalog:",
+    "@angular/common": "catalog:",
+    "@angular/core": "catalog:",
+    "@angular/forms": "catalog:",
+    "@angular/material": "catalog:",
+    "@angular/router": "catalog:",
+    "@jsverse/transloco": "8.4.0",
+    "@swarm-keeper/permissions": "workspace:*",
+    "@swarm-keeper/web-core": "workspace:*",
+    "@types/node": "catalog:",
+    "rxjs": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

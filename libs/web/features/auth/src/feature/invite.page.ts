@@ -7,7 +7,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { FormField, form, minLength, required } from '@angular/forms/signals';
+import { FormField, form, maxLength, minLength, required } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -23,12 +23,19 @@ type State =
   | 'sign-up'
   | 'sign-up-password'
   | 'add-passkey'
+  | 'account-ready'
   | 'sign-in-to-accept'
   | 'accept'
   | 'other-account';
 
 /** Errors that mean the invitation itself stopped working while the page was open. */
 const GONE = new Set(['INVITE_REQUIRED', 'INVITATION_NOT_FOUND']);
+
+/** The longest name a person may give (the server answers NAME_TOO_LONG past it). */
+const NAME_MAX_LENGTH = 64;
+
+/** AuthService: the account was created, the sign-in after it failed. */
+const SIGNED_UP_SIGN_IN_FAILED = 'SIGNED_UP_SIGN_IN_FAILED';
 
 /** t(auth.invite.role.owner, auth.invite.role.admin, auth.invite.role.member, auth.invite.role.viewer) */
 const ROLES = new Set(['owner', 'admin', 'member', 'viewer']);
@@ -65,10 +72,13 @@ export class InvitePage {
   protected readonly errorKey = signal<string | null>(null);
   private readonly withPassword = signal(false);
   private readonly created = signal(false);
+  /** The account exists but the sign-in after sign-up failed: the form would only fail again. */
+  private readonly accountReady = signal(false);
 
   private readonly model = signal({ name: '', password: '' });
   protected readonly fields = form(this.model, (path) => {
     required(path.name);
+    maxLength(path.name, NAME_MAX_LENGTH);
     required(path.password);
     minLength(path.password, 12);
   });
@@ -81,8 +91,10 @@ export class InvitePage {
   protected readonly state = computed<State>(() => {
     if (this.invitation.error()) return 'invalid';
     const invitation = this.view();
-    if (!invitation) return 'loading';
+    // Until /me answers, a signed-in member would briefly see the sign-up form.
+    if (!invitation || !this.auth.ready()) return 'loading';
     if (this.created()) return 'add-passkey';
+    if (this.accountReady()) return 'account-ready';
     const user = this.auth.user();
     if (user) {
       return user.email.toLowerCase() === invitation.email.toLowerCase()
@@ -112,7 +124,7 @@ export class InvitePage {
   }
 
   protected signUpPasskey(): Promise<void> {
-    if (this.fields.name().invalid()) {
+    if (this.fields.name().invalid() || !this.model().name.trim()) {
       this.fields.name().markAsTouched();
       return Promise.resolve();
     }
@@ -131,15 +143,28 @@ export class InvitePage {
     const invitation = this.view();
     if (!invitation || !this.fields().valid()) return Promise.resolve();
     return this.run(async () => {
-      await this.auth.signUpPassword({
+      const signedIn = await this.signUpPasswordOrRecover({
         invitationId: this.token(),
         email: invitation.email,
         name: this.model().name.trim(),
         password: this.model().password,
         locale: this.appearance.lang(),
       });
-      this.created.set(true);
+      if (signedIn) this.created.set(true);
     });
+  }
+
+  private async signUpPasswordOrRecover(
+    input: Parameters<AuthService['signUpPassword']>[0],
+  ): Promise<boolean> {
+    try {
+      await this.auth.signUpPassword(input);
+      return true;
+    } catch (error) {
+      if (codeOf(error) !== SIGNED_UP_SIGN_IN_FAILED) throw error;
+      this.accountReady.set(true);
+      return false;
+    }
   }
 
   protected addPasskey(): Promise<void> {

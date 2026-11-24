@@ -14,6 +14,7 @@ test('an invitee joins with a password, adds a passkey, then signs in with it', 
   await page.locator(hook('add-passkey')).click();
   await expect(page).toHaveURL(/\/$/);
 
+  await page.locator(hook('user-menu')).click();
   await page.locator(hook('sign-out')).click();
   await expect(page).toHaveURL(/\/login$/);
   await page.locator(hook('passkey')).click();

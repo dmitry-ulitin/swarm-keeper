@@ -25,7 +25,8 @@
     "infra:down": "docker compose down",
     "infra:reset": "docker compose down -v",
     "infra:logs": "docker compose logs -f",
-    "infra:check": "sh infra/dev/check.sh"
+    "infra:check": "sh infra/dev/check.sh",
+    "icons:build": "node libs/web/ui/scripts/build-icons.mjs && prettier --write libs/web/ui/src/icons/icons.ts"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

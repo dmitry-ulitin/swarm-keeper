@@ -169,6 +169,50 @@ describe('passkey-first sign-up from an invitation', () => {
     expect(generated.body.code).toBe('NAME_REQUIRED');
   });
 
+  it('rejects a name longer than 64 characters with NAME_TOO_LONG', async () => {
+    const email = uniqueEmail('long');
+    const invitation = await invite({ email });
+    const { generated } = await registerWithPasskey(app, {
+      invitation: invitation.id,
+      name: 'я'.repeat(65),
+    });
+    expect(generated.status).toBe(400);
+    expect(generated.body.code).toBe('NAME_TOO_LONG');
+    expect(await userByEmail(email)).toEqual([]);
+  });
+
+  it('accepts a name of exactly 64 characters', async () => {
+    const invitation = await invite();
+    const { verified } = await registerWithPasskey(app, {
+      invitation: invitation.id,
+      name: 'я'.repeat(64),
+    });
+    expect(verified?.status).toBe(200);
+  });
+
+  it('accepts the invitation once, without the invite-only after-hook', async () => {
+    const email = uniqueEmail('once');
+    const invitation = await invite({ email });
+    const { verified } = await registerWithPasskey(app, {
+      invitation: invitation.id,
+      name: 'Однажды',
+    });
+    expect(verified?.status).toBe(200);
+    const [user] = await userByEmail(email);
+    const members = await db
+      .selectFrom('member')
+      .select('id')
+      .where('userId', '=', user!.id)
+      .execute();
+    expect(members).toHaveLength(1);
+    const invitations = await db
+      .selectFrom('invitation')
+      .select('status')
+      .where('email', '=', email.toLowerCase())
+      .execute();
+    expect(invitations).toEqual([{ status: 'accepted' }]);
+  });
+
   it('creates one user when the same invitation is verified twice', async () => {
     const email = uniqueEmail('twice');
     const invitation = await invite({ email });

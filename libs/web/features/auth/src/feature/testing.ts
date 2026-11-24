@@ -29,8 +29,10 @@ export const fileLoader = { provide: TRANSLOCO_LOADER, useClass: FileLoader };
 /** A stand-in AuthService: every method is a vi.fn, signals are writable. */
 export function fakeAuth(me: MeResponse | null = null) {
   const state = signal<MeResponse | null>(me);
+  const ready = signal(true);
   return {
     state,
+    ready,
     signedIn: () => state() !== null,
     user: () => state()?.user ?? null,
     activeFamily: () => state()?.families.find((f) => f.id === state()?.activeFamilyId) ?? null,
@@ -76,6 +78,7 @@ export const ME: MeResponse = {
     locale: 'ru',
     uiSize: 'compact',
     twoFactorEnabled: false,
+    hasPassword: true,
   },
   families: [{ id: 'f1', name: 'Ивановы', role: 'admin' }],
   activeFamilyId: 'f1',

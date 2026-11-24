@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { type CanMatchFn, Router, type UrlSegment } from '@angular/router';
 import { AuthService } from './auth.service';
+import { safeReturnUrl } from './return-url';
 
 const urlOf = (segments: UrlSegment[]) => '/' + segments.map((s) => s.path).join('/');
 
@@ -17,8 +18,9 @@ export const authGuard: CanMatchFn = async (_route, segments) => {
 export const guestGuard: CanMatchFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
+  const returnUrl = router.currentNavigation()?.extractedUrl.queryParamMap.get('returnUrl');
   await auth.ensureLoaded();
-  return auth.signedIn() ? router.createUrlTree(['/']) : true;
+  return auth.signedIn() ? router.parseUrl(safeReturnUrl(returnUrl)) : true;
 };
 
 /** An active family is selected. */

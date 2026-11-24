@@ -11,13 +11,19 @@
   },
   "devDependencies": {
     "@angular/core": "catalog:",
+    "@angular/material": "catalog:",
+    "@angular/platform-browser": "catalog:",
+    "@types/node": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "dependencies": {
+    "@material-symbols/svg-400": "0.49.0",
     "tslib": "2.9.1"
   },
   "peerDependencies": {
-    "@angular/core": "catalog:"
+    "@angular/core": "catalog:",
+    "@angular/material": "catalog:",
+    "@angular/platform-browser": "catalog:"
   }
 }

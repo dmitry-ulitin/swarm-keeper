@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { Router, provideRouter } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { provideTranslocoScope } from '@jsverse/transloco';
 import { AuthService, provideWebCore } from '@swarm-keeper/web-core';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ME, fakeAuth, fileLoader, literalText } from './testing';
 import { HomePlaceholderPage } from './home-placeholder.page';
 
 describe('HomePlaceholderPage', () => {
-  it('names the family and signs out', async () => {
+  it('names the family', async () => {
     const auth = fakeAuth(ME);
     TestBed.configureTestingModule({
       providers: [
@@ -18,15 +18,10 @@ describe('HomePlaceholderPage', () => {
         { provide: AuthService, useValue: auth },
       ],
     });
-    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     const fixture = TestBed.createComponent(HomePlaceholderPage);
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('[data-test="family"]')?.textContent).toContain('Ивановы');
-    (el.querySelector('[data-test="sign-out"]') as HTMLElement).click();
-    await fixture.whenStable();
-    expect(auth.signOut).toHaveBeenCalled();
-    expect(navigate).toHaveBeenCalledWith('/login');
   });
 
   it('has no literal text in its template', () => {

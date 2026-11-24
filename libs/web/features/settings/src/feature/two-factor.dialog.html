@@ -1,0 +1,80 @@
+@switch (step()) {
+  @case ('password') {
+    <h2 mat-dialog-title>{{ 'settings.setup.passwordTitle' | transloco }}</h2>
+    <form novalidate (submit)="start($event)">
+      <mat-dialog-content>
+        <p class="hint">{{ 'settings.setup.passwordHint' | transloco }}</p>
+        @if (errorKey(); as key) {
+          <p class="note danger" role="alert" data-test="error">{{ key | transloco }}</p>
+        }
+        <mat-form-field>
+          <mat-label>{{ 'settings.setup.password' | transloco }}</mat-label>
+          <input
+            matInput
+            type="password"
+            autocomplete="current-password"
+            data-test="password"
+            [formField]="passwordForm.password"
+          />
+        </mat-form-field>
+      </mat-dialog-content>
+      <mat-dialog-actions align="end">
+        <button matButton="text" type="button" data-test="cancel" (click)="cancel()">
+          {{ 'settings.setup.cancel' | transloco }}
+        </button>
+        <button matButton="filled" type="submit" data-test="next" [disabled]="busy()">
+          {{ 'settings.setup.next' | transloco }}
+        </button>
+      </mat-dialog-actions>
+    </form>
+  }
+  @case ('scan') {
+    <h2 mat-dialog-title>{{ 'settings.setup.scanTitle' | transloco }}</h2>
+    <form novalidate (submit)="confirm($event)">
+      <mat-dialog-content>
+        <p class="hint">{{ 'settings.setup.scanHint' | transloco }}</p>
+        <sk-qr-code [value]="totpURI()" [label]="'settings.setup.scanTitle' | transloco" />
+        <p
+          class="secret"
+          [attr.aria-label]="'settings.setup.secret' | transloco"
+          data-test="secret"
+        >
+          {{ secret() }}
+        </p>
+        @if (errorKey(); as key) {
+          <p class="note danger" role="alert" data-test="error">{{ key | transloco }}</p>
+        }
+        <mat-form-field>
+          <mat-label>{{ 'settings.setup.code' | transloco }}</mat-label>
+          <input
+            matInput
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            data-test="code"
+            [formField]="codeForm.code"
+          />
+        </mat-form-field>
+      </mat-dialog-content>
+      <mat-dialog-actions align="end">
+        <button matButton="text" type="button" data-test="cancel" (click)="cancel()">
+          {{ 'settings.setup.cancel' | transloco }}
+        </button>
+        <button matButton="filled" type="submit" data-test="confirm" [disabled]="busy()">
+          {{ 'settings.setup.confirm' | transloco }}
+        </button>
+      </mat-dialog-actions>
+    </form>
+  }
+  @case ('codes') {
+    <h2 mat-dialog-title>{{ 'settings.setup.codesTitle' | transloco }}</h2>
+    <mat-dialog-content>
+      <p class="hint">{{ 'settings.setup.codesHint' | transloco }}</p>
+      <sk-backup-codes [codes]="codes()" />
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button matButton="filled" type="button" data-test="done" (click)="done()">
+        {{ 'settings.setup.done' | transloco }}
+      </button>
+    </mat-dialog-actions>
+  }
+}

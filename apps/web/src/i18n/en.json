@@ -16,7 +16,25 @@
       "USER_ALREADY_EXISTS": "An account with this email already exists. Sign in instead",
       "YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION": "This invitation is for another email",
       "PASSKEY_CANCELLED": "The passkey was not used. Try again or sign in with a password",
+      "LAST_SIGN_IN_METHOD": "This is your last way to sign in, so it cannot be deleted. Add another passkey first",
+      "SESSION_NOT_FRESH": "Sign in again to do this",
+      "CURRENT_SESSION": "To end this session, sign out",
+      "SESSION_NOT_FOUND": "This session has already ended",
+      "INVALID_PASSWORD": "Wrong password",
+      "NAME_TOO_LONG": "The name is too long",
+      "USER_IS_ALREADY_A_MEMBER_OF_THIS_ORGANIZATION": "This person is already in the family",
+      "USER_IS_ALREADY_INVITED_TO_THIS_ORGANIZATION": "This person is already invited. Resend the invitation from the list",
+      "YOU_ARE_NOT_ALLOWED_TO_INVITE_USER_WITH_THIS_ROLE": "You cannot invite with this role",
+      "SINGLE_ROLE_REQUIRED": "Choose one role",
+      "TWO_FACTOR_REQUIRED": "Turn on two-factor authentication first",
       "UNKNOWN": "Something went wrong. Try again"
     }
+  },
+  "shell": {
+    "appName": "Swarm Keeper",
+    "userMenu": "Account menu",
+    "security": "Security",
+    "members": "Members",
+    "signOut": "Sign out"
   }
 }

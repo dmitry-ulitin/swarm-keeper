@@ -16,7 +16,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: unknown) => {
       if (error instanceof HttpErrorResponse && req.url.startsWith('/api/v1/')) {
         const code = (error.error as { code?: string } | null)?.code;
-        if (error.status === 401 && !req.url.startsWith('/api/v1/me')) {
+        if (error.status === 401 && req.url.split('?')[0] !== '/api/v1/me') {
           void router.navigateByUrl(`/login?returnUrl=${encodeURIComponent(router.url)}`);
         } else if (error.status === 403 && code === 'TWO_FACTOR_REQUIRED') {
           void router.navigateByUrl('/settings/security');

@@ -1,0 +1,61 @@
+{
+  "title": "Members of the family “{family}”",
+  "invite": "Invite",
+  "notImplemented": "Not implemented yet",
+  "twoFactorNote": "To invite and manage members, turn on two-factor authentication.",
+  "twoFactorLink": "Go to security settings →",
+  "members": {
+    "title": "Members",
+    "you": "(you)",
+    "since": "since {date}",
+    "menu": "Actions for {name}",
+    "changeRole": "Change role",
+    "remove": "Remove from family"
+  },
+  "invitations": {
+    "title": "Invitations",
+    "empty": "No pending invitations",
+    "lang": {
+      "en": "email in English",
+      "ru": "email in Russian"
+    },
+    "validUntil": "until {date}",
+    "expired": "Expired",
+    "resend": "Resend",
+    "cancel": "Cancel",
+    "resent": "Invitation sent again",
+    "cancelled": "Invitation cancelled",
+    "cancelTitle": "Cancel the invitation?",
+    "cancelText": "The link in the email will stop working.",
+    "cancelConfirm": "Cancel invitation",
+    "keep": "Keep"
+  },
+  "dialog": {
+    "title": "Invite to the family",
+    "hint": "The person gets an email with a link. The link works for 7 days.",
+    "email": "Email",
+    "role": "Role",
+    "language": "Email language",
+    "send": "Send",
+    "cancel": "Cancel",
+    "sent": "Invitation sent"
+  },
+  "roles": {
+    "owner": "Owner",
+    "admin": "Admin",
+    "member": "Member",
+    "viewer": "Viewer"
+  },
+  "roleHints": {
+    "owner": "Everything, including other owners and the family itself",
+    "admin": "Uploads, edits and manages members",
+    "member": "Uploads and edits their own files",
+    "viewer": "Only looks at the shared archive"
+  },
+  "languages": {
+    "en": "English",
+    "ru": "Русский"
+  },
+  "loadError": "Could not load the list.",
+  "retry": "Try again"
+}

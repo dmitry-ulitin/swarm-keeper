@@ -7,6 +7,9 @@ import { INVITE_REQUIRED, findPendingInvitationById } from './invite-only.js';
 
 export const NAME_REQUIRED = 'NAME_REQUIRED';
 export const SESSION_NOT_FRESH = 'SESSION_NOT_FRESH';
+export const NAME_TOO_LONG = 'NAME_TOO_LONG';
+/** The longest display name a person may give at sign-up. */
+export const NAME_MAX_LENGTH = 64;
 
 type Registration = NonNullable<PasskeyOptions['registration']>;
 
@@ -37,6 +40,7 @@ function parseContext(raw: string | null | undefined): SignUpContext {
   const ctx = value as Partial<SignUpContext> | undefined;
   if (!ctx || typeof ctx.invitation !== 'string') throw rejected(INVITE_REQUIRED);
   if (typeof ctx.name !== 'string' || !ctx.name.trim()) throw rejected(NAME_REQUIRED);
+  if (ctx.name.trim().length > NAME_MAX_LENGTH) throw rejected(NAME_TOO_LONG);
   return { invitation: ctx.invitation, name: ctx.name.trim(), locale: ctx.locale };
 }
 

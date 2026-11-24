@@ -45,6 +45,7 @@ describe('GET /me', () => {
         locale: 'en',
         uiSize: 'compact',
         twoFactorEnabled: null,
+        hasPassword: false,
       },
       families: [{ id: familyId, name: 'Family', role: 'viewer' }],
       activeFamilyId: familyId,
@@ -62,6 +63,7 @@ describe('GET /me', () => {
     expect(res.body.role).toBe('owner');
     expect(res.body.permissions).toContain('organization:delete');
     expect(res.body.twoFactorRequired).toBe(true);
+    expect(res.body.user.hasPassword).toBe(true);
   });
 
   it('does not prompt a member with a password', async () => {
