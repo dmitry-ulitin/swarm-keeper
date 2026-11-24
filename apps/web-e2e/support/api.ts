@@ -1,5 +1,6 @@
+import { randomBytes } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-import { type APIRequestContext, expect, request } from '@playwright/test';
+import { type APIRequestContext, type Page, expect, request } from '@playwright/test';
 import pg from 'pg';
 import { BASE_URL, DATABASE_URL, OWNER } from '../env.js';
 import { totp } from './totp.js';
@@ -69,8 +70,13 @@ export async function invite(input: {
 }
 
 /** A member with a password, created from an invitation through the API. */
-export async function createMember(email: string, password: string, locale: string) {
-  const id = await invite({ email, locale });
+export async function createMember(
+  email: string,
+  password: string,
+  locale: string,
+  role = 'member',
+) {
+  const id = await invite({ email, locale, role });
   const ctx = await request.newContext({
     baseURL: BASE_URL,
     extraHTTPHeaders: { origin: BASE_URL, 'x-forwarded-for': clientIp() },
@@ -92,14 +98,14 @@ export async function sql(text: string, values: unknown[] = []) {
   }
 }
 
-let ipCounter = 0;
 /**
  * A fresh client IP per context or page. Better Auth's rate limit stays on (3 sign-ins per
  * 10 s per IP); distinct IPs keep unrelated scenarios apart, as Caddy's x-forwarded-for does.
+ * Random, not a counter: each spec file loads this module afresh, so a counter would repeat.
  */
 export function clientIp(): string {
-  ipCounter += 1;
-  return `10.1.${Math.floor(ipCounter / 250) % 250}.${(ipCounter % 250) + 1}`;
+  const [a, b, c] = randomBytes(3);
+  return `10.${a}.${b}.${(c! % 250) + 1}`;
 }
 
 let counter = 0;
@@ -107,4 +113,38 @@ let counter = 0;
 export function uniqueEmail(label: string): string {
   counter += 1;
   return `${label}-${Date.now()}-${counter}@e2e.test`;
+}
+
+/**
+ * Signs the page's browser context in through the API (cookies land in the context), with
+ * the TOTP code when 2FA is on. Faster than the form, which sign-in.spec.ts covers.
+ */
+export async function signInPage(page: Page, email: string, password: string, secret?: string) {
+  const headers = { origin: BASE_URL, 'x-forwarded-for': clientIp() };
+  const api = page.context().request;
+  const res = await api.post('/api/auth/sign-in/email', { data: { email, password }, headers });
+  expect(res.ok(), await res.text()).toBe(true);
+  if ((await res.json()).twoFactorRedirect) {
+    if (!secret) throw new Error(`${email} needs a second factor`);
+    const verified = await api.post('/api/auth/two-factor/verify-totp', {
+      data: { code: totp(secret) },
+      headers,
+    });
+    expect(verified.ok(), await verified.text()).toBe(true);
+  }
+}
+
+const MAILPIT = process.env['MAILPIT_URL']?.trim() || 'http://127.0.0.1:8025';
+
+/** Subjects of the emails Mailpit holds for one address, newest first. */
+export async function mailSubjects(to: string): Promise<string[]> {
+  const ctx = await request.newContext();
+  try {
+    const res = await ctx.get(`${MAILPIT}/api/v1/search`, { params: { query: `to:"${to}"` } });
+    expect(res.ok(), await res.text()).toBe(true);
+    const body = (await res.json()) as { messages: { Subject: string }[] };
+    return body.messages.map((message) => message.Subject);
+  } finally {
+    await ctx.dispose();
+  }
 }
