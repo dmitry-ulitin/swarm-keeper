@@ -34,6 +34,11 @@ describe('module boundaries', () => {
       "export * from '@swarm-keeper/feature-settings';",
     ],
     [
+      'settings feature → another feature',
+      'libs/web/features/settings/src/feature/index.ts',
+      "export * from '@swarm-keeper/feature-auth';",
+    ],
+    [
       'auth feature ui → web-core',
       'libs/web/features/auth/src/ui/index.ts',
       "export * from '@swarm-keeper/web-core';",

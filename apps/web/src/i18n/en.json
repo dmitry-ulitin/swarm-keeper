@@ -16,6 +16,12 @@
       "USER_ALREADY_EXISTS": "An account with this email already exists. Sign in instead",
       "YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION": "This invitation is for another email",
       "PASSKEY_CANCELLED": "The passkey was not used. Try again or sign in with a password",
+      "LAST_SIGN_IN_METHOD": "This is your last way to sign in, so it cannot be deleted. Add another passkey first",
+      "SESSION_NOT_FRESH": "Sign in again to do this",
+      "CURRENT_SESSION": "To end this session, sign out",
+      "SESSION_NOT_FOUND": "This session has already ended",
+      "INVALID_PASSWORD": "Wrong password",
+      "NAME_TOO_LONG": "The name is too long",
       "UNKNOWN": "Something went wrong. Try again"
     }
   },

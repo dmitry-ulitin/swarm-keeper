@@ -1,0 +1,81 @@
+{
+  "security": {
+    "title": "Security"
+  },
+  "passkeys": {
+    "title": "Passkeys",
+    "hint": "Sign in with a fingerprint, Face ID or PIN, without a password.",
+    "add": "Add passkey",
+    "rename": "Rename",
+    "delete": "Delete",
+    "unnamed": "Passkey",
+    "added": "added {date}",
+    "empty": "No passkeys yet"
+  },
+  "twoFactor": {
+    "title": "Two-factor authentication",
+    "hint": "When you sign in with a password, we also ask for a code from an authenticator app.",
+    "required": "Owners and admins with a password must turn on 2FA: without it you cannot invite or manage members.",
+    "enable": "Turn on",
+    "on": "On",
+    "newCodes": "New backup codes",
+    "disable": "Turn off"
+  },
+  "setup": {
+    "passwordTitle": "Confirm your password",
+    "passwordHint": "To turn on 2FA, enter your account password.",
+    "password": "Password",
+    "next": "Next",
+    "scanTitle": "Scan the code",
+    "scanHint": "In an authenticator app, such as Google Authenticator or 1Password. If you cannot scan, enter the key below.",
+    "secret": "Key",
+    "code": "Code from the app",
+    "confirm": "Confirm",
+    "codesTitle": "Save your backup codes",
+    "codesHint": "If you lose your phone, sign in with one of them. Each code works once, and we will not show them again.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "download": "Download",
+    "done": "Done",
+    "cancel": "Cancel"
+  },
+  "codes": {
+    "title": "New backup codes",
+    "passwordHint": "The old codes stop working. Enter your password to make new ones."
+  },
+  "disable": {
+    "title": "Turn off 2FA?",
+    "hint": "Enter your password to turn off two-factor authentication.",
+    "warning": "Without 2FA you cannot invite or manage members until you turn it on again.",
+    "confirm": "Turn off"
+  },
+  "rename": {
+    "title": "Rename the passkey",
+    "name": "Name",
+    "save": "Save"
+  },
+  "deletePasskey": {
+    "title": "Delete the passkey?",
+    "text": "You will no longer be able to sign in with it.",
+    "confirm": "Delete"
+  },
+  "fresh": {
+    "title": "Sign in again",
+    "text": "You can add a key only right after signing in. This protects your account if someone got hold of an old session.",
+    "confirm": "Sign in again"
+  },
+  "sessions": {
+    "title": "Sessions",
+    "endOthers": "End all others",
+    "end": "End",
+    "current": "This device",
+    "unknownDevice": "Unknown device",
+    "unknownIp": "Unknown",
+    "today": "today at {time}",
+    "endOthersTitle": "End all other sessions?",
+    "endOthersText": "Every other device is signed out.",
+    "endOthersConfirm": "End sessions",
+    "ended": "Session ended"
+  },
+  "cancel": "Cancel"
+}
