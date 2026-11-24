@@ -22,6 +22,11 @@
       "SESSION_NOT_FOUND": "Эта сессия уже завершена",
       "INVALID_PASSWORD": "Неверный пароль",
       "NAME_TOO_LONG": "Слишком длинное имя",
+      "USER_IS_ALREADY_A_MEMBER_OF_THIS_ORGANIZATION": "Этот человек уже в семье",
+      "USER_IS_ALREADY_INVITED_TO_THIS_ORGANIZATION": "Этот человек уже приглашён. Отправьте приглашение ещё раз из списка",
+      "YOU_ARE_NOT_ALLOWED_TO_INVITE_USER_WITH_THIS_ROLE": "Вы не можете пригласить с этой ролью",
+      "SINGLE_ROLE_REQUIRED": "Выберите одну роль",
+      "TWO_FACTOR_REQUIRED": "Сначала включите двухфакторную аутентификацию",
       "UNKNOWN": "Что-то пошло не так. Попробуйте ещё раз"
     }
   },

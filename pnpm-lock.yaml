@@ -413,6 +413,9 @@ importers:
       '@swarm-keeper/feature-auth':
         specifier: workspace:*
         version: link:../../libs/web/features/auth
+      '@swarm-keeper/feature-family':
+        specifier: workspace:*
+        version: link:../../libs/web/features/family
       '@swarm-keeper/feature-settings':
         specifier: workspace:*
         version: link:../../libs/web/features/settings
@@ -657,10 +660,50 @@ importers:
         version: 6.0.3
 
   libs/web/features/family:
+    dependencies:
+      tslib:
+        specifier: 2.9.1
+        version: 2.9.1
     devDependencies:
+      '@angular/cdk':
+        specifier: 'catalog:'
+        version: 22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(@angular/forms@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(@angular/platform-browser@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)))(rxjs@7.8.2))(@angular/platform-browser@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)))(rxjs@7.8.2)
+      '@angular/common':
+        specifier: 'catalog:'
+        version: 22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@angular/core':
+        specifier: 'catalog:'
+        version: 22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)
+      '@angular/forms':
+        specifier: 'catalog:'
+        version: 22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(@angular/platform-browser@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)))(rxjs@7.8.2)
+      '@angular/material':
+        specifier: 'catalog:'
+        version: 22.3.0(6698d387d07f655357e9b1dd618f8319)
+      '@angular/router':
+        specifier: 'catalog:'
+        version: 22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(@angular/platform-browser@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)))(rxjs@7.8.2)
+      '@jsverse/transloco':
+        specifier: 8.4.0
+        version: 8.4.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2)(typescript@6.0.3)
+      '@swarm-keeper/permissions':
+        specifier: workspace:*
+        version: link:../../../shared/permissions
+      '@swarm-keeper/web-core':
+        specifier: workspace:*
+        version: link:../../core
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 5.1.1(@types/node@26.6.6)(jsdom@31.0.1(@noble/hashes@2.4.0))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.108.2)(sass@1.108.2))
 
   libs/web/features/gallery:
     devDependencies:

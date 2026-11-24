@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>{{ 'family.dialog.title' | transloco }}</h2>
+<form novalidate (submit)="submit($event)">
+  <mat-dialog-content>
+    <p class="hint">{{ 'family.dialog.hint' | transloco }}</p>
+    @if (errorKey(); as key) {
+      <p class="note danger" role="alert" data-test="error">{{ key | transloco }}</p>
+    }
+    <mat-form-field>
+      <mat-label>{{ 'family.dialog.email' | transloco }}</mat-label>
+      <input
+        matInput
+        type="email"
+        autocomplete="off"
+        data-test="email"
+        [formField]="inviteForm.email"
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{ 'family.dialog.role' | transloco }}</mat-label>
+      <select matNativeControl data-test="role" [formField]="inviteForm.role">
+        @for (role of roles(); track role) {
+          <option [value]="role">{{ 'family.roles.' + role | transloco }}</option>
+        }
+      </select>
+      <mat-hint>{{ 'family.roleHints.' + model().role | transloco }}</mat-hint>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{ 'family.dialog.language' | transloco }}</mat-label>
+      <select matNativeControl data-test="locale" [formField]="inviteForm.locale">
+        @for (lang of langs; track lang) {
+          <option [value]="lang">{{ 'family.languages.' + lang | transloco }}</option>
+        }
+      </select>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button matButton="text" type="button" mat-dialog-close>
+      {{ 'family.dialog.cancel' | transloco }}
+    </button>
+    <button matButton="filled" type="submit" data-test="send" [disabled]="busy()">
+      {{ 'family.dialog.send' | transloco }}
+    </button>
+  </mat-dialog-actions>
+</form>

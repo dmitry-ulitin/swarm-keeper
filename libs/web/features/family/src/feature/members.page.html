@@ -1,0 +1,111 @@
+<header class="head">
+  <h1 class="title" data-test="title">
+    {{ 'family.title' | transloco: { family: auth.activeFamily()?.name ?? '' } }}
+  </h1>
+  @if (!blocked()) {
+    <button matButton="filled" type="button" data-test="invite" (click)="invite()">
+      <mat-icon svgIcon="person_add" />{{ 'family.invite' | transloco }}
+    </button>
+  }
+</header>
+
+@if (blocked()) {
+  <p class="note warning" data-test="two-factor-note">
+    {{ 'family.twoFactorNote' | transloco }}
+    <a routerLink="/settings/security">{{ 'family.twoFactorLink' | transloco }}</a>
+  </p>
+}
+
+<section class="section">
+  <h2 class="section-title">{{ 'family.members.title' | transloco }}</h2>
+  <ul class="rows">
+    @for (member of members.value() ?? []; track member.id) {
+      <li class="row" data-test="member">
+        <span class="main">
+          <span class="name">
+            {{ member.user.name }}
+            @if (isSelf(member)) {
+              <span class="muted">{{ 'family.members.you' | transloco }}</span>
+            }
+          </span>
+          <small>{{ member.user.email }}</small>
+        </span>
+        <sk-role-badge [role]="member.role" />
+        <span class="meta">{{
+          'family.members.since' | transloco: { date: date(member.createdAt) }
+        }}</span>
+        @if (manageable(member)) {
+          <button
+            matIconButton
+            type="button"
+            data-test="member-menu"
+            [matMenuTriggerFor]="menu"
+            [attr.aria-label]="'family.members.menu' | transloco: { name: member.user.name }"
+          >
+            <mat-icon svgIcon="more_vert" />
+          </button>
+          <mat-menu #menu="matMenu" xPosition="before">
+            <button mat-menu-item type="button" data-test="change-role" (click)="notImplemented()">
+              {{ 'family.members.changeRole' | transloco }}
+            </button>
+            <button
+              mat-menu-item
+              class="danger"
+              type="button"
+              data-test="remove-member"
+              (click)="notImplemented()"
+            >
+              {{ 'family.members.remove' | transloco }}
+            </button>
+          </mat-menu>
+        } @else {
+          <span class="menu-space" aria-hidden="true"></span>
+        }
+      </li>
+    }
+  </ul>
+</section>
+
+<section class="section">
+  <h2 class="section-title">{{ 'family.invitations.title' | transloco }}</h2>
+  <ul class="rows">
+    @for (row of invitations(); track row.id) {
+      <li class="row" data-test="invitation">
+        <span class="main">
+          <span class="name">{{ row.email }}</span>
+          <small>{{
+            'family.invitations.lang.' + (row.locale === 'ru' ? 'ru' : 'en') | transloco
+          }}</small>
+        </span>
+        <sk-role-badge [role]="row.role" />
+        @if (expired(row)) {
+          <span class="expired" data-test="expired">{{
+            'family.invitations.expired' | transloco
+          }}</span>
+        } @else {
+          <span class="meta">{{
+            'family.invitations.validUntil' | transloco: { date: date(row.expiresAt) }
+          }}</span>
+        }
+        @if (!blocked()) {
+          <span class="actions">
+            <button matButton="text" type="button" data-test="resend" (click)="resend(row)">
+              {{ 'family.invitations.resend' | transloco }}
+            </button>
+            <button
+              matButton="text"
+              class="danger"
+              type="button"
+              data-test="cancel"
+              (click)="cancel(row)"
+            >
+              {{ 'family.invitations.cancel' | transloco }}
+            </button>
+          </span>
+        }
+      </li>
+    } @empty {
+      <li class="row empty">{{ 'family.invitations.empty' | transloco }}</li>
+    }
+  </ul>
+</section>

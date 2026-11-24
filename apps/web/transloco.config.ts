@@ -11,6 +11,7 @@ const config = {
       '../../libs/web/core/src/auth',
       '../../libs/web/features/auth/src',
       '../../libs/web/features/settings/src',
+      '../../libs/web/features/family/src',
     ],
     output: 'src/i18n',
     unflat: true,
@@ -19,6 +20,7 @@ const config = {
     dev: 'src/i18n/dev',
     auth: 'src/i18n/auth',
     settings: 'src/i18n/settings',
+    family: 'src/i18n/family',
   },
 };
 

@@ -1,1 +1,1 @@
-export {};
+export { RoleBadge } from './role-badge';

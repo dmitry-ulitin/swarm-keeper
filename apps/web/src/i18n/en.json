@@ -22,6 +22,11 @@
       "SESSION_NOT_FOUND": "This session has already ended",
       "INVALID_PASSWORD": "Wrong password",
       "NAME_TOO_LONG": "The name is too long",
+      "USER_IS_ALREADY_A_MEMBER_OF_THIS_ORGANIZATION": "This person is already in the family",
+      "USER_IS_ALREADY_INVITED_TO_THIS_ORGANIZATION": "This person is already invited. Resend the invitation from the list",
+      "YOU_ARE_NOT_ALLOWED_TO_INVITE_USER_WITH_THIS_ROLE": "You cannot invite with this role",
+      "SINGLE_ROLE_REQUIRED": "Choose one role",
+      "TWO_FACTOR_REQUIRED": "Turn on two-factor authentication first",
       "UNKNOWN": "Something went wrong. Try again"
     }
   },

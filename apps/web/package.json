@@ -28,6 +28,7 @@
     "@jsverse/transloco": "8.4.0",
     "@jsverse/transloco-messageformat": "8.4.0",
     "@swarm-keeper/feature-auth": "workspace:*",
+    "@swarm-keeper/feature-family": "workspace:*",
     "@swarm-keeper/feature-settings": "workspace:*",
     "@swarm-keeper/web-core": "workspace:*",
     "better-auth": "catalog:",
