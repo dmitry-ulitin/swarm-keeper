@@ -78,7 +78,11 @@ Sign-up is by invitation only. The primary sign-in method is a passkey; a passwo
 
 1. The first owner and family are created once by a seed script at deployment.
 2. An owner or admin invites a person by email with a role; the email contains a link.
-3. The invitee opens the link and creates an account for the same email address: with a passkey right away (in Better Auth 1.6 a passkey can be registered before a session exists) or with a password. Following the link with the invitation token counts as email verification: the `user.create.before` hook checks the token and sets `emailVerified: true` only if the sign-up email matches the invitation email. There is no second email.
+3. The invitee opens the link (`/invite/:token`, which reads `GET /api/v1/invitations/:id` without a session) and creates an account for the invited email address, with a passkey (primary) or a password (fallback). Following the link counts as email verification: the account is created with `emailVerified: true` only for a pending invitation whose email matches. There is no second email.
+   - **Passkey, no password.** The passkey plugin runs with `registration.requireSession: false`. The client sends `context` = `{ invitation, name, locale }`. `resolveUser` checks that the invitation is pending and that its email has no account. `afterVerification` runs inside Better Auth's registration transaction (`createSession: true`): it creates the user through the internal adapter, so the user hooks run, inserts the membership and marks the invitation accepted. Then the plugin signs in. No `credential` account exists, so the 2FA rule for owners and admins does not apply. Code: `apps/api/src/modules/identity/passkey-sign-up.ts`.
+   - **Password.** `/sign-up/email` with `inviteToken`; the `user.create` hooks check the token and add the membership.
+   - **Language.** Both paths take the visitor's last choice (`locale`, `en` or `ru`) over `invitation.locale`.
+   - **Existing account.** Someone who already has an account signs in and accepts with `/organization/accept-invitation`.
 4. The invitation is accepted right after the account is created, and the person becomes a family member. The token travels as `inviteToken` in the sign-up request body. Sign-up does not start a session (email verification is required by configuration), so the client signs in right after it.
 5. We immediately offer to add a passkey.
 
