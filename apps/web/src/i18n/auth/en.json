@@ -1,7 +1,10 @@
 {
   "appName": "Swarm Keeper",
   "tagline": "Family archive of photos and documents",
-  "lang": { "en": "English", "ru": "Русский" },
+  "lang": {
+    "en": "English",
+    "ru": "Русский"
+  },
   "login": {
     "title": "Sign in",
     "passkey": "Sign in with passkey",
@@ -43,5 +46,38 @@
     "signedIn": "You are in the family “{family}”",
     "noFamily": "You are signed in",
     "signOut": "Sign out"
+  },
+  "invite": {
+    "title": "Invitation to the family “{family}”",
+    "from": "{inviter} invites you to a shared archive of family photos and documents",
+    "email": "Email",
+    "name": "What should we call you",
+    "password": "Password (at least 12 characters)",
+    "role": {
+      "owner": "Role: Owner",
+      "admin": "Role: Admin",
+      "member": "Role: Member",
+      "viewer": "Role: Viewer"
+    },
+    "passkey": "Create account with passkey",
+    "passkeyHint": "fingerprint, Face ID or PIN — no password needed",
+    "showPassword": "Create with password →",
+    "submit": "Create account",
+    "back": "← Create with passkey",
+    "created": "Account created. You are in the family “{family}”",
+    "addPasskeyTitle": "Sign in without a password?",
+    "addPasskeyHint": "Add a passkey: next time a fingerprint or Face ID is enough",
+    "addPasskey": "Add passkey",
+    "later": "Later",
+    "hasAccount": "You already have an account. Sign in to accept the invitation",
+    "signIn": "Sign in",
+    "accept": "Accept invitation",
+    "acceptHint": "You are signed in as {email}",
+    "otherAccount": "You are signed in as {email}, but the invitation is for {invited}",
+    "signOut": "Sign out to accept",
+    "invalidTitle": "This link no longer works",
+    "invalid": "The invitation has expired or was already used. Ask whoever invited you to send a new one.",
+    "signInExisting": "Sign in if you have an account",
+    "toArchive": "Go to the archive"
   }
 }

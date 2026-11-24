@@ -19,6 +19,12 @@ export const AUTH_ROUTES: Routes = [
     loadComponent: () => import('./reset-password.page').then((m) => m.ResetPasswordPage),
   },
   {
+    // No guard: the page has signed-in states (accept, or another account).
+    path: 'invite/:token',
+    providers: scope,
+    loadComponent: () => import('./invite.page').then((m) => m.InvitePage),
+  },
+  {
     path: '',
     pathMatch: 'full',
     canMatch: [authGuard],

@@ -58,6 +58,7 @@ export function literalText(path: string): string {
   return (
     readFileSync(path, 'utf8')
       .replace(/<!--[\s\S]*?-->/g, '')
+      .replace(/@let\s[^;]*;/g, '')
       .replace(/\{\{[\s\S]*?\}\}/g, '')
       .replace(/<[^>]*>/g, '')
       // Control flow such as @if (a(); as b) {, with one level of nested parentheses.
