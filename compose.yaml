@@ -34,6 +34,18 @@ services:
       timeout: 3s
       retries: 30
 
+  mailpit:
+    image: axllent/mailpit:v1.34.0
+    # Dev mail only: catches everything the API sends; nothing leaves the machine.
+    ports:
+      - 127.0.0.1:${SMTP_PORT:-1025}:1025
+      - 127.0.0.1:${MAILPIT_PORT:-8025}:8025
+    healthcheck:
+      test: [CMD, /mailpit, readyz]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
 volumes:
   postgres-data:
   garage-meta:

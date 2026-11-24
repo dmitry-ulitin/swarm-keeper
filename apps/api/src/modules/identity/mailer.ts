@@ -3,27 +3,44 @@ import { Injectable, Logger } from '@nestjs/common';
 /** Injection token for the Mailer. */
 export const MAILER = Symbol('MAILER');
 
-/** Outgoing auth emails. Step 4 adds the SMTP implementation with en/ru templates. */
-export interface Mailer {
-  invitation(input: { email: string; url: string; locale: string }): Promise<void>;
-  verifyEmail(input: { email: string; url: string }): Promise<void>;
-  resetPassword(input: { email: string; url: string }): Promise<void>;
+export interface InvitationMail {
+  email: string;
+  url: string;
+  /** The invitation's language, picked by the inviter. */
+  locale: string;
+  inviterName: string;
+  familyName: string;
+  expiresAt: Date;
 }
 
-/** Development: writes the link to the log instead of sending an email. */
+export interface LinkMail {
+  email: string;
+  url: string;
+  /** The user's language (`user.locale`). */
+  locale: string;
+}
+
+/** Outgoing auth emails. `SmtpMailer` sends them; `LoggingMailer` only logs the links. */
+export interface Mailer {
+  invitation(input: InvitationMail): Promise<void>;
+  verifyEmail(input: LinkMail): Promise<void>;
+  resetPassword(input: LinkMail): Promise<void>;
+}
+
+/** For the seed script: writes the link to the log instead of sending an email. */
 @Injectable()
 export class LoggingMailer implements Mailer {
   private readonly logger = new Logger('Mailer');
 
-  async invitation({ email, url, locale }: { email: string; url: string; locale: string }) {
+  async invitation({ email, url, locale }: InvitationMail) {
     this.logger.log(`Invitation for ${email} (${locale}): ${url}`);
   }
 
-  async verifyEmail({ email, url }: { email: string; url: string }) {
+  async verifyEmail({ email, url }: LinkMail) {
     this.logger.log(`Email verification for ${email}: ${url}`);
   }
 
-  async resetPassword({ email, url }: { email: string; url: string }) {
+  async resetPassword({ email, url }: LinkMail) {
     this.logger.log(`Password reset for ${email}: ${url}`);
   }
 }

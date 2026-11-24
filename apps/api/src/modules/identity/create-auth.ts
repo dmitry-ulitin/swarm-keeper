@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { passkey } from '@better-auth/passkey';
 import { ac, roles } from '@swarm-keeper/permissions';
 import { type BetterAuthOptions, betterAuth } from 'better-auth';
@@ -13,6 +14,18 @@ import { type ModelMapping, snakeCaseSchema } from './snake-case-schema.js';
 const DAY = 60 * 60 * 24;
 
 type Mapping = Record<string, ModelMapping | undefined>;
+
+const mailLogger = new Logger('Mailer');
+
+/** Sends without holding up the response; a failure is logged, as Better Auth does for awaited sends. */
+function inBackground(sending: Promise<void>): void {
+  sending.catch((error: unknown) => mailLogger.error('Sending an auth email failed', error));
+}
+
+/** `locale` is our additional field on users and invitations; Better Auth's types omit it. */
+function localeOf(record: object): string {
+  return String((record as { locale?: unknown }).locale ?? 'en');
+}
 
 /** The options as `authentication.md` specifies them, with an optional snake_case mapping. */
 function buildOptions(env: AuthEnv, mailer: Mailer, map: Mapping) {
@@ -38,12 +51,15 @@ function buildOptions(env: AuthEnv, mailer: Mailer, map: Mapping) {
       enabled: true,
       requireEmailVerification: true,
       minPasswordLength: 12,
-      sendResetPassword: ({ user, url }) => mailer.resetPassword({ email: user.email, url }),
+      // Not awaited: waiting for SMTP only for real accounts would reveal which emails exist.
+      sendResetPassword: async ({ user, url }) =>
+        inBackground(mailer.resetPassword({ email: user.email, url, locale: localeOf(user) })),
     },
     emailVerification: {
       sendOnSignUp: false, // the invitation link verifies the email on sign-up
       autoSignInAfterVerification: true,
-      sendVerificationEmail: ({ user, url }) => mailer.verifyEmail({ email: user.email, url }),
+      sendVerificationEmail: async ({ user, url }) =>
+        inBackground(mailer.verifyEmail({ email: user.email, url, locale: localeOf(user) })),
     },
 
     rateLimit: { ...map['rateLimit'], enabled: true, storage: 'database' },
@@ -65,7 +81,10 @@ function buildOptions(env: AuthEnv, mailer: Mailer, map: Mapping) {
           await mailer.invitation({
             email: data.email,
             url: `${env.baseURL}/invite/${data.id}`,
-            locale: String((data.invitation as { locale?: string }).locale ?? 'en'),
+            locale: localeOf(data.invitation),
+            inviterName: data.inviter.user.name,
+            familyName: data.organization.name,
+            expiresAt: new Date(data.invitation.expiresAt),
           });
         },
         schema: {
