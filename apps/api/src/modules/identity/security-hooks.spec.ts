@@ -3,7 +3,14 @@ import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { Database } from '../../database/index.js';
 import type { Auth } from './create-auth.js';
-import { clientIp, createUser, givePassword, sessionFor, startAuthApp, uniqueEmail } from './testing.js';
+import {
+  clientIp,
+  createUser,
+  givePassword,
+  sessionFor,
+  startAuthApp,
+  uniqueEmail,
+} from './testing.js';
 
 const DAY = 24 * 60 * 60 * 1000;
 

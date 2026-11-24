@@ -28,7 +28,8 @@ export function combineBefore(...hooks: ReturnType<typeof createAuthMiddleware>[
 export function securityHooks(db: Database, lookupSession: SessionLookup) {
   return createAuthMiddleware(async (ctx) => {
     if (ctx.path === '/passkey/delete-passkey') await keepLastSignInMethod(db, lookupSession, ctx);
-    else if (ctx.path === '/passkey/generate-register-options') await requireFresh(lookupSession, ctx);
+    else if (ctx.path === '/passkey/generate-register-options')
+      await requireFresh(lookupSession, ctx);
   });
 }
 
@@ -37,11 +38,7 @@ async function keepLastSignInMethod(db: Database, lookupSession: SessionLookup, 
   const id = (ctx.body as { id?: unknown } | undefined)?.id;
   if (!session || typeof id !== 'string') return; // the plugin answers itself
   const userId = session.user.id;
-  const owned = await db
-    .selectFrom('passkey')
-    .select('id')
-    .where('userId', '=', userId)
-    .execute();
+  const owned = await db.selectFrom('passkey').select('id').where('userId', '=', userId).execute();
   // A passkey that is not the caller's is left to the plugin's ownership check.
   if (!owned.some((key) => key.id === id)) return;
   if (owned.length <= 1 && !(await hasPassword(db, userId))) {

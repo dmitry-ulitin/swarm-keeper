@@ -135,7 +135,9 @@ describe('AuthService', () => {
     it('resends a valid invitation with resend: true and never cancels', async () => {
       const inviteMember = vi.fn(() => ok({}));
       const cancelInvitation = vi.fn(() => ok({}));
-      const auth = await withFamily(fakeClient({ organization: organization({ inviteMember, cancelInvitation }) }));
+      const auth = await withFamily(
+        fakeClient({ organization: organization({ inviteMember, cancelInvitation }) }),
+      );
       await auth.resendInvitation({ ...ROW, expiresAt: future });
       expect(inviteMember).toHaveBeenCalledTimes(1);
       expect(inviteMember).toHaveBeenCalledWith({
@@ -159,7 +161,9 @@ describe('AuthService', () => {
         calls.push('cancel');
         return ok({});
       });
-      const auth = await withFamily(fakeClient({ organization: organization({ inviteMember, cancelInvitation }) }));
+      const auth = await withFamily(
+        fakeClient({ organization: organization({ inviteMember, cancelInvitation }) }),
+      );
       await auth.resendInvitation({ ...ROW, expiresAt: past });
       expect(calls).toEqual(['invite', 'cancel']);
       expect(cancelInvitation).toHaveBeenCalledWith({ invitationId: 'i1' });
@@ -186,7 +190,9 @@ describe('AuthService', () => {
 
   describe('two-factor', () => {
     it('starts 2FA with the password and returns the URI and codes', async () => {
-      const enable = vi.fn(() => ok({ totpURI: 'otpauth://totp/x?secret=ABC', backupCodes: ['a', 'b'] }));
+      const enable = vi.fn(() =>
+        ok({ totpURI: 'otpauth://totp/x?secret=ABC', backupCodes: ['a', 'b'] }),
+      );
       const auth = setup(fakeClient({ twoFactor: twoFactor({ enable }) }));
       await expect(auth.startTwoFactor('secret password')).resolves.toEqual({
         totpURI: 'otpauth://totp/x?secret=ABC',

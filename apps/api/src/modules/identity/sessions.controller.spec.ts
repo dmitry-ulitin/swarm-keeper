@@ -120,7 +120,11 @@ describe('/me/sessions', () => {
     const { user, bearers } = await userWithSessions(3);
     const [a, b, c] = bearers as [string, string, string];
     expect((await endOthers(a)).status).toBe(204);
-    const left = await db.selectFrom('session').select('id').where('userId', '=', user.id).execute();
+    const left = await db
+      .selectFrom('session')
+      .select('id')
+      .where('userId', '=', user.id)
+      .execute();
     expect(left).toEqual([{ id: await sessionId(a) }]);
     expect((await me(a)).status).toBe(200);
     expect((await me(b)).status).toBe(401);
