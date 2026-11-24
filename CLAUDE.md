@@ -85,15 +85,17 @@ pnpm infra:check   smoke test; CHECK_PROXY=1 also checks the web dev proxy
 ```
 
 ```
-pnpm db:migrate        apply pending migrations (apps/api/migrations) to DATABASE_URL, the dev database by default
+pnpm db:roles          create the application role swarm_keeper_app once per cluster, as an admin (DATABASE_ADMIN_URL, else DATABASE_OWNER_URL); --dev-login also creates swarm_app (local clusters, not in production)
+pnpm db:migrate        apply pending migrations (apps/api/migrations) as the schema owner (DATABASE_OWNER_URL), the dev database by default
 pnpm db:migrate:down   undo the last migration
 pnpm db:new <name>     create a migration file
-pnpm db:types          regenerate apps/api/src/database/schema.ts from the dev database
+pnpm db:types          regenerate apps/api/src/database/schema.ts from the dev database (as the owner)
 pnpm db:seed           create the first owner and family (SEED_OWNER_EMAIL, SEED_OWNER_PASSWORD, SEED_FAMILY_NAME)
 ```
 
 - Run `pnpm db:types` after every migration and commit `schema.ts`; never edit it by hand.
-- Better Auth runs inside the API at `/api/auth/*`; every other route needs a session unless marked `@AllowAnonymous()`. Its settings (`BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `PASSKEY_RP_ID`) have dev defaults only when `NODE_ENV` is `development` or `test` (Vitest sets `test`); run the API and `pnpm db:seed` locally with `NODE_ENV=development`. The API listens on `127.0.0.1` unless `HOST` is set.
+- Two database roles: migrations, codegen and test resets run as the schema owner (`DATABASE_OWNER_URL`, the compose superuser `swarm` in dev); the API, worker, `db:seed` and `family:*` connect as `swarm_app`, a login in `swarm_keeper_app`, which is not a superuser and does not bypass RLS (`DATABASE_URL`). `pnpm infra:up` creates the roles. Migrations never create roles, and import nothing from `src` (Node loads them as plain `.ts`). Tests that run DDL use `ownerDatabase()` from the identity testing helpers.
+- Better Auth runs inside the API at `/api/auth/*`; every other route needs a session unless marked `@AllowAnonymous()`. Its settings (`BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `PASSKEY_RP_ID`) have dev defaults only when `NODE_ENV` is `development` or `test` (Vitest sets `test` when `NODE_ENV` is unset); run the API and `pnpm db:seed` locally with `NODE_ENV=development`. The API listens on `127.0.0.1` unless `HOST` is set.
 - API tests drop and recreate `swarm_keeper_test` and migrate it, and the email tests read Mailpit, so the infrastructure must be up (`pnpm infra:up`).
 - Auth emails go over SMTP (`SMTP_URL`, `MAIL_FROM`); in development they land in Mailpit at http://127.0.0.1:8025.
 - Every setting has a dev default (`compose.yaml`, `infra/dev/env.sh`). Copy `.env.example` to `.env` only to override one.
@@ -112,8 +114,8 @@ pnpm family:list                                                          famili
 ## Invariants (do not break without updating the docs)
 
 **Tenancy and access**
-- Every archive table has `family_id` (= Better Auth `organization.id`) and a PostgreSQL RLS policy.
-- The API sets `SET LOCAL app.family_id` and `app.user_id` per request transaction.
+- Every archive table has `family_id` (= Better Auth `organization.id`) and a PostgreSQL RLS policy: its migration calls `select enable_family_rls('<table>')` right after `create table` (policy `family_isolation`, forced RLS, grants to `swarm_keeper_app`).
+- Family work runs in `FamilyDb.run(ctx, trx => …)` (`apps/api/src/database`), which sets `app.family_id` and `app.user_id` with `set_config(…, true)` for that transaction. `ctx` comes from `@Family()` on a `@RequirePermission` route (the verified `member` row) or, in the worker, from the job. Outside `run` an archive table shows no rows.
 - Authorization lives in the service layer and uses `libs/shared/permissions`. The UI hides actions using the permission list from `GET /me`, but the server always checks again.
 - Private assets (`visibility = private`) are visible only to their owner, whatever the role.
 - IDs are UUIDv7.
@@ -158,6 +160,7 @@ pnpm family:list                                                          famili
 
 - Vitest for unit tests: stores, the permission directive, the gallery layout, the upload queue.
 - Playwright for end-to-end tests (`apps/web-e2e`, `pnpm e2e`): it starts the real API on 3100 against a fresh `swarm_keeper_e2e` database and the web dev server on 4300, with Postgres and Mailpit from `pnpm infra:up`. Every scenario runs in `chromium-en` and `chromium-ru`; passkeys use Chromium's virtual authenticator. `pnpm test` does not run it.
+- CI (`.github/workflows/ci.yml`) runs on every pull request and on `main`: job `check` (lint, typecheck, build, `pnpm test` against Postgres and Mailpit service containers) and job `e2e` (Playwright). Lint fails on `.skip`, `.only`, `.todo`, `.skipIf`, `.runIf` and `.fixme` in spec files.
 - Never skip these auth integration tests:
   - sign-up without an invitation is rejected;
   - an unverified email can't accept an invitation;

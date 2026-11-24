@@ -2,7 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { type APIRequestContext, type Page, expect, request } from '@playwright/test';
 import pg from 'pg';
-import { BASE_URL, DATABASE_URL, OWNER } from '../env.js';
+import { BASE_URL, DATABASE_OWNER_URL, OWNER } from '../env.js';
 import { totp } from './totp.js';
 
 export const STATE_FILE = new URL('../.state/owner.json', import.meta.url);
@@ -89,7 +89,7 @@ export async function createMember(
 }
 
 export async function sql(text: string, values: unknown[] = []) {
-  const client = new pg.Client({ connectionString: DATABASE_URL });
+  const client = new pg.Client({ connectionString: DATABASE_OWNER_URL });
   await client.connect();
   try {
     return await client.query(text, values);

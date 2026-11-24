@@ -14,7 +14,8 @@
     "db:migrate": "kysely --no-outdated-check migrate latest",
     "db:migrate:down": "kysely --no-outdated-check migrate down",
     "db:new": "kysely --no-outdated-check migrate make",
-    "db:types": "kysely-codegen --dialect postgres --camel-case --url \"${DATABASE_URL:-postgres://swarm:swarm@127.0.0.1:5432/swarm_keeper}\" --out-file src/database/schema.ts",
+    "db:types": "kysely-codegen --dialect postgres --camel-case --url \"${DATABASE_OWNER_URL:-postgres://swarm:swarm@127.0.0.1:5432/swarm_keeper}\" --out-file src/database/schema.ts",
+    "db:roles": "pnpm build && node dist/apps/api/src/db-roles.js",
     "db:seed": "pnpm build && node dist/apps/api/src/seed.js",
     "family": "pnpm build && node dist/apps/api/src/family.js"
   },

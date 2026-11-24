@@ -11,6 +11,7 @@ import {
   createInvitation,
   createUser,
   sessionFor,
+  ownerDatabase,
   startAuthApp,
   uniqueEmail,
 } from './testing.js';
@@ -238,12 +239,14 @@ describe('passkey-first sign-up from an invitation', () => {
 
   it('leaves nothing behind when the passkey cannot be stored', async () => {
     // A trigger makes the passkey insert fail after the user and membership are written.
+    // Triggers are DDL, so the owner creates and drops them.
+    const owner = ownerDatabase();
     await sql`create or replace function fail_test_passkey() returns trigger language plpgsql as $$
       begin if new.name = 'fail-on-insert' then raise exception 'test failure'; end if; return new; end $$`.execute(
-      db,
+      owner,
     );
     await sql`create trigger fail_test_passkey before insert on passkey for each row execute function fail_test_passkey()`.execute(
-      db,
+      owner,
     );
     try {
       const email = uniqueEmail('atomic');
@@ -262,8 +265,9 @@ describe('passkey-first sign-up from an invitation', () => {
         .executeTakeFirst();
       expect(row?.status).toBe('pending');
     } finally {
-      await sql`drop trigger if exists fail_test_passkey on passkey`.execute(db);
-      await sql`drop function if exists fail_test_passkey()`.execute(db);
+      await sql`drop trigger if exists fail_test_passkey on passkey`.execute(owner);
+      await sql`drop function if exists fail_test_passkey()`.execute(owner);
+      await owner.destroy();
     }
   });
 

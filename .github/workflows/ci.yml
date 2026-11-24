@@ -1,0 +1,86 @@
+# The merge gate: lint (incl. i18n keys and the ban on skipped tests), types, build, unit and
+# integration tests (incl. the four auth security tests) and the Playwright e2e suite.
+# A Better Auth update arrives as a pull request like any other and runs the same gate.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Same images as compose.yaml; tests connect to 127.0.0.1 like in development.
+    services:
+      postgres:
+        image: postgres:18.7-alpine
+        env:
+          POSTGRES_USER: swarm
+          POSTGRES_PASSWORD: swarm
+          POSTGRES_DB: swarm_keeper
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U swarm -d swarm_keeper"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+      mailpit:
+        image: axllent/mailpit:v1.34.0
+        ports: ['1025:1025', '8025:8025']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm build
+      # The test setup creates the roles too; this checks the operator command on a fresh cluster.
+      - run: pnpm db:roles --dev-login
+      # NODE_ENV stays unset: Vitest then sets it to test.
+      - run: pnpm test
+
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18.7-alpine
+        env:
+          POSTGRES_USER: swarm
+          POSTGRES_PASSWORD: swarm
+          POSTGRES_DB: swarm_keeper
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U swarm -d swarm_keeper"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+      mailpit:
+        image: axllent/mailpit:v1.34.0
+        ports: ['1025:1025', '8025:8025']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @swarm-keeper/web-e2e exec playwright install --with-deps chromium
+      # prepare-api.sh (started by Playwright) creates the roles, migrates and seeds the e2e database.
+      - run: pnpm e2e
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-test-results
+          path: apps/web-e2e/test-results
+          retention-days: 7

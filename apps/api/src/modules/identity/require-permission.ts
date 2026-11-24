@@ -11,6 +11,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { MemberHasPermission } from '@thallesp/nestjs-better-auth';
 import { DATABASE, type Database } from '../../database/index.js';
+import { FamilyContextGuard } from './family-context.js';
 import { type Action, type Resource, isAdminAction, twoFactorRequired } from './rules.js';
 
 const ADMIN_ACTION = Symbol('ADMIN_ACTION');
@@ -67,11 +68,12 @@ export class TwoFactorGuard implements CanActivate {
 /**
  * The route needs a session, an active family, and a role in it that allows the action.
  * Admin actions (owner/admin only) also need 2FA from anyone who has a password.
+ * The handler gets the verified family through @Family().
  */
 export function RequirePermission<R extends Resource>(resource: R, action: Action<R>) {
   return applyDecorators(
     MemberHasPermission({ permissions: { [resource]: [action] } }),
     SetMetadata(ADMIN_ACTION, isAdminAction(resource, action)),
-    UseGuards(TwoFactorGuard),
+    UseGuards(FamilyContextGuard, TwoFactorGuard),
   );
 }
