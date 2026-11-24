@@ -10,10 +10,22 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "devDependencies": {
+    "@angular/common": "catalog:",
+    "@angular/core": "catalog:",
+    "@jsverse/transloco": "8.4.0",
+    "@jsverse/transloco-messageformat": "8.4.0",
+    "rxjs": "catalog:",
     "typescript": "catalog:",
-    "@angular/core": "catalog:"
+    "vitest": "catalog:"
   },
   "peerDependencies": {
-    "@angular/core": "catalog:"
+    "@angular/core": "catalog:",
+    "@angular/common": "catalog:",
+    "@jsverse/transloco": "8.4.0",
+    "@jsverse/transloco-messageformat": "8.4.0",
+    "rxjs": "catalog:"
+  },
+  "dependencies": {
+    "tslib": "2.9.1"
   }
 }

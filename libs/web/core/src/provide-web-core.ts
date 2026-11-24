@@ -1,6 +1,8 @@
+import { provideHttpClient } from '@angular/common/http';
 import { type EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
+import { provideI18n } from './i18n';
 
-/** Registers app-wide core providers (auth, HTTP, config). Empty until those land. */
+/** App-wide core providers: HTTP and translations. Auth joins in step 6. */
 export function provideWebCore(): EnvironmentProviders {
-  return makeEnvironmentProviders([]);
+  return makeEnvironmentProviders([provideHttpClient(), provideI18n()]);
 }
