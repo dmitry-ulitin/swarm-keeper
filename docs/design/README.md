@@ -141,7 +141,7 @@ The "Swarm family" mark: six dots of different sizes around an amber center. The
 
 ## Icons
 
-Material Symbols Rounded (outline, weight 400, no fill) via `mat-icon` with `fontSet`, bundled from the `material-symbols` package (no CDN). Size — `icon-size` or `icon-size-large` depending on the mode; color inherits from text. Icon buttons always have an `aria-label`. Fill is allowed only for "favorite" (the `accent` star) and the selection check mark. The previews draw icons as simplified strokes in the same style.
+Material Symbols Rounded (outline, weight 400, no fill) as SVG via `<mat-icon svgIcon="…">`, taken from the `@material-symbols/svg-400` package (no font, no CDN). Only registered icons ship: list a new one in `libs/web/ui/icons.json` and run `pnpm icons:build`, which regenerates `libs/web/ui/src/icons/icons.ts`; a unit test fails on an unregistered `svgIcon` or a stale registry. Size — `icon-size` or `icon-size-large` depending on the mode; color inherits from text. Icon buttons always have an `aria-label`. Fill is allowed only for "favorite" (the `accent` star) and the selection check mark. The previews draw icons as simplified strokes in the same style.
 
 ## Accessibility
 

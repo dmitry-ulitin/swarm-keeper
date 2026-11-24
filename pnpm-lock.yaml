@@ -419,9 +419,6 @@ importers:
       better-auth:
         specifier: 'catalog:'
         version: 1.7.27(pg@8.23.1)(vitest@5.1.1(@types/node@26.6.6)(jsdom@31.0.1(@noble/hashes@1.8.0))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.108.2)(sass@1.108.2)))
-      material-symbols:
-        specifier: 0.49.0
-        version: 0.49.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -697,6 +694,9 @@ importers:
 
   libs/web/ui:
     dependencies:
+      '@material-symbols/svg-400':
+        specifier: 0.49.0
+        version: 0.49.0
       tslib:
         specifier: 2.9.1
         version: 2.9.1
@@ -704,6 +704,15 @@ importers:
       '@angular/core':
         specifier: 'catalog:'
         version: 22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)
+      '@angular/material':
+        specifier: 'catalog:'
+        version: 22.3.0(6698d387d07f655357e9b1dd618f8319)
+      '@angular/platform-browser':
+        specifier: 'catalog:'
+        version: 22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2))
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -1919,6 +1928,9 @@ packages:
   '@lukeed/csprng@1.1.0':
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
+
+  '@material-symbols/svg-400@0.49.0':
+    resolution: {integrity: sha512-zXwn52xxfAqmmHdhiNmuP3qqHqr/xRp7XchR38Rfujk8kdx2jg4xmv9uLobU2nYHPMnaXew8eU3KadrdZqF2sA==}
 
   '@messageformat/core@3.4.1':
     resolution: {integrity: sha512-98uXHLDjPe2WZ8Xr05MhFQGfpMRbUcJDEYgjLV5ZBTgnntIkKS0VKGE+g8ug/hbgggyPEAeZBRJryIsBUp1vvw==}
@@ -4428,9 +4440,6 @@ packages:
 
   make-plural@7.5.0:
     resolution: {integrity: sha512-0booA+aVYyVFoR67JBHdfVk0U08HmrBH2FrtmBqBa+NldlqXv/G2Z9VQuQq6Wgp2jDWdybEWGfBkk1cq5264WA==}
-
-  material-symbols@0.49.0:
-    resolution: {integrity: sha512-3yFCfEA1+gZPsTJYXWbEmNgxvm0pFpXuVIyUMJzjajMGpZ5vOTPan4p8VO1x0pIAE2fPmf/N9ZZuGiFfTyLF3Q==}
 
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
@@ -6977,6 +6986,8 @@ snapshots:
 
   '@lukeed/csprng@1.1.0': {}
 
+  '@material-symbols/svg-400@0.49.0': {}
+
   '@messageformat/core@3.4.1':
     dependencies:
       '@messageformat/date-skeleton': 2.0.0-0
@@ -9356,8 +9367,6 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.6.0
 
   make-plural@7.5.0: {}
-
-  material-symbols@0.49.0: {}
 
   math-intrinsics@1.1.0: {}
 

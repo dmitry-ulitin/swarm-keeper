@@ -1,12 +1,7 @@
-import {
-  type ApplicationConfig,
-  inject,
-  provideBrowserGlobalErrorListeners,
-  provideEnvironmentInitializer,
-} from '@angular/core';
-import { MatIconRegistry } from '@angular/material/icon';
+import { type ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideWebCore } from '@swarm-keeper/web-core';
+import { provideIcons } from '@swarm-keeper/web-ui';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -14,12 +9,6 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideWebCore(),
-    // Material Symbols Rounded, bundled from the material-symbols package: <mat-icon fontIcon="…">.
-    provideEnvironmentInitializer(() =>
-      inject(MatIconRegistry).setDefaultFontSetClass(
-        'material-symbols-rounded',
-        'mat-ligature-font',
-      ),
-    ),
+    provideIcons(),
   ],
 };

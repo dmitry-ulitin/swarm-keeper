@@ -178,6 +178,7 @@ The native app uses its own translation system and the shared glossary from the 
 
 - **Foundations page.** In development builds `/dev/foundations` shows the Material components, type scale, colors, plurals and formats, with switches for language, size and theme. The production build replaces `dev-routes.ts` with an empty list, so the page and its translations are not shipped.
 - **UI kit — Angular Material (M3).** The fast path to a ready, accessible interface. For a family archive, predictability and accessibility matter more than a unique style. Angular Aria (stable in 22) is the alternative if we ever need a fully custom design.
+- **Icons are SVG, not a font:** `provideIcons()` from `libs/web/ui` registers the icons listed in `libs/web/ui/icons.json` (`pnpm icons:build`), so only those ship (see `docs/design/README.md`).
 - **Accessibility from day one:** compact mode by default and large mode by each member's choice, contrast, keyboard navigation, labels on icons. People of all ages will use the interface.
 - **Languages:** English and Russian from day one; see "Interface languages".
 - **Unit tests — Vitest:** stores, the permission directive, the gallery layout, the upload queue.

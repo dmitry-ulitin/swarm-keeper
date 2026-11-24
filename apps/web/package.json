@@ -30,7 +30,6 @@
     "@swarm-keeper/feature-auth": "workspace:*",
     "@swarm-keeper/web-core": "workspace:*",
     "better-auth": "catalog:",
-    "material-symbols": "0.49.0",
     "rxjs": "catalog:",
     "tslib": "2.9.1"
   },
