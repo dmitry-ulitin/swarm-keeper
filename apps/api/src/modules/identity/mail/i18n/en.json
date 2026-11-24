@@ -1,0 +1,26 @@
+{
+  "footer": "Swarm Keeper · family archive",
+  "invitation": {
+    "subject": "Invitation to the family “{family}”",
+    "heading": "Invitation to the family “{family}”",
+    "body": "{inviter} invites you to the family “{family}” in Swarm Keeper, a shared archive of family photos and documents.",
+    "action": "Accept invitation",
+    "expires": "The link works until {date}.",
+    "ignore": "If you weren't expecting this invitation, ignore this email."
+  },
+  "verifyEmail": {
+    "subject": "Confirm your email",
+    "heading": "Confirm your email",
+    "body": "Confirm that this address is yours to keep using Swarm Keeper.",
+    "action": "Confirm email",
+    "ignore": "If you didn't ask for this, ignore this email."
+  },
+  "resetPassword": {
+    "subject": "Reset your password",
+    "heading": "Reset your password",
+    "body": "Someone asked to reset the password for your Swarm Keeper account. Set a new one with the link below.",
+    "action": "Set a new password",
+    "expires": "The link works for one hour.",
+    "ignore": "If you didn't ask for this, ignore this email."
+  }
+}
