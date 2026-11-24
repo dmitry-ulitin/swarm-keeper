@@ -62,6 +62,18 @@ check_garage() {
   ok "S3 round trip through bucket $S3_BUCKET at $endpoint"
 }
 
+check_mailpit() {
+  [ "$(health mailpit)" = healthy ] || fail "mailpit is not healthy"
+  ok "mailpit is healthy"
+  check_loopback mailpit 1025
+  check_loopback mailpit 8025
+  info=$(curl -s --max-time 5 "http://127.0.0.1:$MAILPIT_PORT/api/v1/info") || fail "mailpit API is not reachable"
+  case "$info" in
+    *'"Version"'*) ok "mailpit API answers on port $MAILPIT_PORT" ;;
+    *) fail "mailpit API returned unexpected data" ;;
+  esac
+}
+
 check_proxy() {
   body=$(curl -s --max-time 5 http://localhost:4200/api/v1/health) || fail "dev server on :4200 is not reachable"
   [ "$body" = '{"status":"ok"}' ] || fail "ng serve does not proxy /api to the API (got: $(echo "$body" | head -c 60))"
@@ -70,4 +82,5 @@ check_proxy() {
 
 check_postgres
 check_garage
+check_mailpit
 if [ "${CHECK_PROXY:-0}" = 1 ]; then check_proxy; fi

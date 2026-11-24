@@ -10,6 +10,8 @@ fi
 : "${POSTGRES_USER:=swarm}"
 : "${POSTGRES_PASSWORD:=swarm}"
 : "${POSTGRES_DB:=swarm_keeper}"
+: "${SMTP_PORT:=1025}"
+: "${MAILPIT_PORT:=8025}"
 : "${S3_REGION:=garage}"
 : "${S3_BUCKET:=swarm-keeper}"
 : "${S3_ACCESS_KEY_ID:=GKec20a5351a7e7b4b01dffdad}"
