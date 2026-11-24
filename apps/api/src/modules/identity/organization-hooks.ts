@@ -25,7 +25,7 @@ type Body = Record<string, unknown>;
 
 /** Resolves the caller's session the way any request would, bearer tokens included. */
 export type SessionLookup = (headers: Headers) => Promise<{
-  session: { activeOrganizationId?: string | null };
+  session: { activeOrganizationId?: string | null; createdAt?: Date | string };
   user: { id: string; twoFactorEnabled?: boolean | null };
 } | null>;
 

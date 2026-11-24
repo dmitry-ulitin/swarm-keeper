@@ -13,6 +13,8 @@ export interface MeResponse {
     locale: string;
     uiSize: string;
     twoFactorEnabled: boolean | null;
+    /** Has a password (`credential` account): only then can 2FA be turned on. */
+    hasPassword: boolean;
   };
   families: { id: string; name: string; role: string }[];
   activeFamilyId: string | null;
@@ -53,14 +55,15 @@ export class MeController {
     const activeRole = active?.role;
     const role = isFamilyRole(activeRole) ? activeRole : null;
     const isAdmin = role === 'owner' || role === 'admin';
+    const password = await hasPassword(this.db, userId);
 
     return {
-      user,
+      user: { ...user, hasPassword: password },
       families,
       activeFamilyId,
       role,
       permissions: role ? permissionsOf(role) : [],
-      twoFactorRequired: isAdmin && twoFactorRequired(user, await hasPassword(this.db, userId)),
+      twoFactorRequired: isAdmin && twoFactorRequired(user, password),
     };
   }
 }
