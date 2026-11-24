@@ -2,6 +2,7 @@
 @switch (state()) {
   @case ('loading') {
     <sk-auth-card
+      data-test="loading"
       [heading]="'auth.appName' | transloco"
       [lang]="appearance.lang()"
       (langChange)="appearance.setLang($event)"
@@ -138,6 +139,20 @@
           </button>
           <button matButton="text" type="button" data-test="later" (click)="go('/')">
             {{ 'auth.invite.later' | transloco }}
+          </button>
+        }
+        @case ('account-ready') {
+          <p class="note success" role="status" data-test="account-ready">
+            {{ 'auth.invite.accountReady' | transloco }}
+          </p>
+          <button
+            matButton="filled"
+            class="wide"
+            type="button"
+            data-test="sign-in"
+            (click)="go(signInUrl())"
+          >
+            {{ 'auth.invite.signIn' | transloco }}
           </button>
         }
         @case ('sign-in-to-accept') {

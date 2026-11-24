@@ -193,6 +193,41 @@ describe('InvitePage', () => {
     expect(el(f, 'error')).not.toBeNull();
   });
 
+  it('waits for the session before choosing a state', async () => {
+    auth.ready.set(false);
+    const f = await render();
+    expect(el(f, 'name')).toBeNull();
+    expect(el(f, 'accept')).toBeNull();
+    expect(el(f, 'loading')).not.toBeNull();
+    auth.ready.set(true);
+    await f.whenStable();
+    expect(el(f, 'name')).not.toBeNull();
+  });
+
+  it('sends a half-done password sign-up to sign in', async () => {
+    auth.signUpPassword.mockImplementation(rejectWith('SIGNED_UP_SIGN_IN_FAILED'));
+    const f = await render();
+    await click(f, 'show-password');
+    await type(f, 'name', 'Валя');
+    await type(f, 'password', 'correct horse battery');
+    await click(f, 'submit');
+    await new Promise((resolve) => setTimeout(resolve));
+    await f.whenStable();
+    expect(el(f, 'account-ready')).not.toBeNull();
+    expect(el(f, 'submit')).toBeNull();
+    await click(f, 'sign-in');
+    expect(navigate).toHaveBeenCalledWith(
+      `/login?returnUrl=${encodeURIComponent(`/invite/${ID}`)}`,
+    );
+  });
+
+  it('refuses a name longer than 64 characters', async () => {
+    const f = await render();
+    await type(f, 'name', 'я'.repeat(65));
+    await click(f, 'passkey-sign-up');
+    expect(auth.signUpPasskey).not.toHaveBeenCalled();
+  });
+
   it('has no literal text in its template', () => {
     expect(literalText('../../libs/web/features/auth/src/feature/invite.page.html')).toBe('');
   });

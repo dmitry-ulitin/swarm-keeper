@@ -133,7 +133,10 @@ export class AuthService {
     await this.refresh();
   }
 
-  /** Password sign-up from an invitation, then sign-in (sign-up starts no session). */
+  /**
+   * Password sign-up from an invitation, then sign-in (sign-up starts no session). When the
+   * sign-in fails after the account was created, rejects with SIGNED_UP_SIGN_IN_FAILED.
+   */
   async signUpPassword(input: {
     invitationId: string;
     email: string;
@@ -150,7 +153,12 @@ export class AuthService {
         locale: input.locale,
       }),
     );
-    await this.signInPassword(input.email, input.password);
+    // The account exists now; a failed sign-in must not look like a failed sign-up.
+    try {
+      await this.signInPassword(input.email, input.password);
+    } catch {
+      throw new AuthError('SIGNED_UP_SIGN_IN_FAILED');
+    }
   }
 
   /** An existing member accepts another family's invitation and switches to it. */

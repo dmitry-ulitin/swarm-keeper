@@ -210,4 +210,34 @@ describe('AuthService', () => {
       expect(auth.signedIn()).toBe(true);
     });
   });
+
+  it('reports a sign-up whose sign-in failed as SIGNED_UP_SIGN_IN_FAILED', async () => {
+    const auth = setup(
+      fakeClient({
+        signIn: { passkey: () => ok({}), email: () => fail('TOO_MANY_REQUESTS') },
+      }),
+    );
+    await expect(
+      auth.signUpPassword({
+        invitationId: 'i1',
+        email: 'valya@example.test',
+        name: 'Валя',
+        password: 'correct horse battery',
+        locale: 'ru',
+      }),
+    ).rejects.toEqual(new AuthError('SIGNED_UP_SIGN_IN_FAILED'));
+  });
+
+  it('keeps the sign-up error when the account was not created', async () => {
+    const auth = setup(fakeClient({ signUp: { email: () => fail('INVITE_REQUIRED') } }));
+    await expect(
+      auth.signUpPassword({
+        invitationId: 'i1',
+        email: 'valya@example.test',
+        name: 'Валя',
+        password: 'correct horse battery',
+        locale: 'ru',
+      }),
+    ).rejects.toEqual(new AuthError('INVITE_REQUIRED'));
+  });
 });
