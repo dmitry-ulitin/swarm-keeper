@@ -11,7 +11,10 @@ describe('mailEnv', () => {
 
   it('takes trimmed values from the environment', () => {
     expect(
-      mailEnv({ SMTP_URL: ' smtps://u:p@mail.example:465 ', MAIL_FROM: ' Archive <a@example.org> ' }),
+      mailEnv({
+        SMTP_URL: ' smtps://u:p@mail.example:465 ',
+        MAIL_FROM: ' Archive <a@example.org> ',
+      }),
     ).toEqual({ smtpUrl: 'smtps://u:p@mail.example:465', from: 'Archive <a@example.org>' });
   });
 
