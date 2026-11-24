@@ -16,7 +16,7 @@ The spec targets Better Auth 1.6; the current release is 1.7.27. Every step chec
 | 4 | Email (done) | 3 | Invitation, verification and reset emails in en/ru land in a dev mailbox |
 | 5 | Web foundations (done) | — | Transloco, Material theme and generated design tokens in the web app |
 | 6 | Web sign-in and invitation screens (done) | 3, 4, 5 | `/login`, `/invite/:token`, `/settings/security` work end to end |
-| 7 | Hardening (later) | 3, archive tables, deployment | RLS per request, Caddy rate-limit layer, CI gate on the security tests |
+| 7 | Hardening (7a done; 7b waits for deployment) | 3, archive tables, deployment | RLS per request, Caddy rate-limit layer, CI gate on the security tests |
 
 Steps 1, 2 and 5 are independent and can be done in any order. The proposed order is 1 → 2 → 3 → 4 → 5 → 6.
 
@@ -84,11 +84,21 @@ Done: `docs/superpowers/specs/2026-11-24-web-foundations-design.md` (Style Dicti
 - Playwright for these screens in both languages.
 - **Open:** screen layouts (design system components exist; details settled in the step's design).
 
-### 7. Hardening (later)
+### 7. Hardening
 
-- Per-request transaction with `SET LOCAL app.family_id` / `app.user_id` and RLS policies: lands with the first archive tables.
-- Second rate-limit layer for `/api/auth/*` in Caddy, and `/.well-known/*` for native passkeys: lands with a deployment stack, which is undecided.
-- CI that runs the security tests before every merge and on every Better Auth update.
+7a done: `docs/superpowers/specs/2026-11-24-hardening-design.md`. It covers:
+- the application role `swarm_keeper_app`, which is not a superuser and does not bypass RLS, so the API, worker and CLI connect through a login in it, while migrations use `DATABASE_OWNER_URL`;
+- the verified family context: `@Family()` from the `member` row, and `FamilyDb.run` with `set_config` per transaction;
+- `enable_family_rls(table)` for archive table migrations;
+- refusing to start as an RLS-bypassing role;
+- CI on GitHub Actions: lint, typecheck, build, tests and e2e;
+- the dev proxy overwriting `x-forwarded-for`.
+
+The first archive tables only need to call `enable_family_rls` and use `FamilyDb.run`.
+
+7b, waiting for a deployment stack, which is undecided:
+- a second rate-limit layer for `/api/auth/*` in Caddy (or whatever proxy is chosen); it must overwrite `x-forwarded-for`, as the dev proxy now does;
+- `/.well-known/*` for native passkeys.
 
 ## Decisions
 

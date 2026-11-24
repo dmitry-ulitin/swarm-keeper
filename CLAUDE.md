@@ -160,6 +160,7 @@ pnpm family:list                                                          famili
 
 - Vitest for unit tests: stores, the permission directive, the gallery layout, the upload queue.
 - Playwright for end-to-end tests (`apps/web-e2e`, `pnpm e2e`): it starts the real API on 3100 against a fresh `swarm_keeper_e2e` database and the web dev server on 4300, with Postgres and Mailpit from `pnpm infra:up`. Every scenario runs in `chromium-en` and `chromium-ru`; passkeys use Chromium's virtual authenticator. `pnpm test` does not run it.
+- CI (`.github/workflows/ci.yml`) runs on every pull request and on `main`: job `check` (lint, typecheck, build, `pnpm test` against Postgres and Mailpit service containers) and job `e2e` (Playwright). Lint fails on `.skip`, `.only`, `.todo`, `.skipIf`, `.runIf` and `.fixme` in spec files.
 - Never skip these auth integration tests:
   - sign-up without an invitation is rejected;
   - an unverified email can't accept an invitation;
