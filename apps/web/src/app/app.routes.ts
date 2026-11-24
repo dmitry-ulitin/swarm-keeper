@@ -21,6 +21,10 @@ export function appRoutes(dev: boolean): Routes {
           loadChildren: () =>
             import('@swarm-keeper/feature-settings').then((m) => m.SETTINGS_ROUTES),
         },
+        {
+          path: 'family',
+          loadChildren: () => import('@swarm-keeper/feature-family').then((m) => m.FAMILY_ROUTES),
+        },
       ],
     },
   ];
