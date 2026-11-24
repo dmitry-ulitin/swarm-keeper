@@ -29,6 +29,16 @@ describe('module boundaries', () => {
       "export * from '@swarm-keeper/feature-gallery';",
     ],
     [
+      'auth feature → another feature',
+      'libs/web/features/auth/src/feature/index.ts',
+      "export * from '@swarm-keeper/feature-settings';",
+    ],
+    [
+      'auth feature ui → web-core',
+      'libs/web/features/auth/src/ui/index.ts',
+      "export * from '@swarm-keeper/web-core';",
+    ],
+    [
       'api module → internals of another module',
       'apps/api/src/modules/identity/identity.module.ts',
       "export * from '../assets/assets.module.js';",

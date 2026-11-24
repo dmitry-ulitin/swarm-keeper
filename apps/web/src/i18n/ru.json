@@ -1,1 +1,22 @@
-{}
+{
+  "errors": {
+    "forbidden": "У вас нет прав на это действие",
+    "auth": {
+      "INVALID_EMAIL_OR_PASSWORD": "Неверный email или пароль",
+      "INVALID_CODE": "Неверный код. Проверьте приложение и попробуйте ещё раз",
+      "INVALID_BACKUP_CODE": "Этот резервный код не подходит",
+      "TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE": "Слишком много попыток. Войдите заново",
+      "TOO_MANY_REQUESTS": "Слишком много попыток. Подождите минуту и попробуйте снова",
+      "PASSWORD_TOO_SHORT": "В пароле должно быть не меньше 12 символов",
+      "PASSWORD_TOO_LONG": "Пароль слишком длинный",
+      "INVALID_TOKEN": "Ссылка устарела. Запросите новую",
+      "INVITE_REQUIRED": "Это приглашение больше не действует",
+      "INVITATION_NOT_FOUND": "Это приглашение больше не действует",
+      "NAME_REQUIRED": "Введите имя",
+      "USER_ALREADY_EXISTS": "Аккаунт с этим email уже есть. Войдите в него",
+      "YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION": "Это приглашение на другой email",
+      "PASSKEY_CANCELLED": "Passkey не использован. Попробуйте ещё раз или войдите по паролю",
+      "UNKNOWN": "Что-то пошло не так. Попробуйте ещё раз"
+    }
+  }
+}

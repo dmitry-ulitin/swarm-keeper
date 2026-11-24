@@ -1,6 +1,5 @@
 import { HttpErrorResponse, type HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Injector, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslocoService } from '@jsverse/transloco';
 import { catchError, throwError } from 'rxjs';
@@ -11,7 +10,7 @@ import { catchError, throwError } from 'rxjs';
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
-  const snackBar = inject(MatSnackBar);
+  const injector = inject(Injector);
   const transloco = inject(TranslocoService, { optional: true });
   return next(req).pipe(
     catchError((error: unknown) => {
@@ -22,9 +21,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         } else if (error.status === 403 && code === 'TWO_FACTOR_REQUIRED') {
           void router.navigateByUrl('/settings/security');
         } else if (error.status === 403) {
-          snackBar.open(transloco?.translate('errors.forbidden') ?? 'errors.forbidden', undefined, {
-            duration: 6000,
-          });
+          // The snack bar loads only when needed, keeping it out of the initial bundle.
+          void import('@angular/material/snack-bar').then(({ MatSnackBar }) =>
+            injector
+              .get(MatSnackBar)
+              .open(transloco?.translate('errors.forbidden') ?? 'errors.forbidden', undefined, {
+                duration: 6000,
+              }),
+          );
         }
       }
       return throwError(() => error);

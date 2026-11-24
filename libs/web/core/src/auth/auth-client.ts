@@ -1,7 +1,4 @@
 import { InjectionToken } from '@angular/core';
-import { passkeyClient } from '@better-auth/passkey/client';
-import { createAuthClient } from 'better-auth/client';
-import { organizationClient, twoFactorClient } from 'better-auth/client/plugins';
 
 /** What a Better Auth client call answers: data, or an error with a code. */
 export interface AuthResult<T = unknown> {
@@ -40,13 +37,37 @@ export interface AuthClientPort {
   signOut: Call<void>;
 }
 
-/** Better Auth's client on the app's own origin (`/api/auth`, cookie session). */
+/**
+ * Better Auth's client on the app's own origin (`/api/auth`, cookie session). Loaded on the
+ * first call, so the sign-in code stays out of the initial bundle.
+ */
 export const AUTH_CLIENT = new InjectionToken<AuthClientPort>('AUTH_CLIENT', {
   providedIn: 'root',
   factory: () =>
-    createAuthClient({
-      baseURL: globalThis.location?.origin,
-      basePath: '/api/auth',
-      plugins: [passkeyClient(), twoFactorClient(), organizationClient()],
-    }) as unknown as AuthClientPort,
+    lazyPort(() => import('./better-auth-client').then((m) => m.createBetterAuthClient())),
 });
+
+/** A port whose calls load the real client once, then delegate to it. */
+export function lazyPort(load: () => Promise<AuthClientPort>): AuthClientPort {
+  let client: Promise<AuthClientPort> | undefined;
+  const get = () => (client ??= load());
+  return {
+    signIn: {
+      passkey: (input) => get().then((c) => c.signIn.passkey(input)),
+      email: (input) => get().then((c) => c.signIn.email(input)),
+    },
+    signUp: { email: (input) => get().then((c) => c.signUp.email(input)) },
+    twoFactor: {
+      verifyTotp: (input) => get().then((c) => c.twoFactor.verifyTotp(input)),
+      verifyBackupCode: (input) => get().then((c) => c.twoFactor.verifyBackupCode(input)),
+    },
+    passkey: { addPasskey: (input) => get().then((c) => c.passkey.addPasskey(input)) },
+    organization: {
+      acceptInvitation: (input) => get().then((c) => c.organization.acceptInvitation(input)),
+      setActive: (input) => get().then((c) => c.organization.setActive(input)),
+    },
+    requestPasswordReset: (input) => get().then((c) => c.requestPasswordReset(input)),
+    resetPassword: (input) => get().then((c) => c.resetPassword(input)),
+    signOut: (input) => get().then((c) => c.signOut(input)),
+  };
+}

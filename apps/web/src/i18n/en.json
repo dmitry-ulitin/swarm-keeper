@@ -1,1 +1,22 @@
-{}
+{
+  "errors": {
+    "forbidden": "You are not allowed to do this",
+    "auth": {
+      "INVALID_EMAIL_OR_PASSWORD": "Wrong email or password",
+      "INVALID_CODE": "The code is wrong. Check the app and try again",
+      "INVALID_BACKUP_CODE": "This backup code does not work",
+      "TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE": "Too many attempts. Sign in again",
+      "TOO_MANY_REQUESTS": "Too many attempts. Wait a minute and try again",
+      "PASSWORD_TOO_SHORT": "The password needs at least 12 characters",
+      "PASSWORD_TOO_LONG": "The password is too long",
+      "INVALID_TOKEN": "The link has expired. Ask for a new one",
+      "INVITE_REQUIRED": "This invitation no longer works",
+      "INVITATION_NOT_FOUND": "This invitation no longer works",
+      "NAME_REQUIRED": "Enter your name",
+      "USER_ALREADY_EXISTS": "An account with this email already exists. Sign in instead",
+      "YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION": "This invitation is for another email",
+      "PASSKEY_CANCELLED": "The passkey was not used. Try again or sign in with a password",
+      "UNKNOWN": "Something went wrong. Try again"
+    }
+  }
+}

@@ -106,7 +106,12 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "include": ["**/*.spec.ts", "../../../libs/web/**/src/**/*.spec.ts"]
+            "include": [
+              "**/*.spec.ts",
+              "../../../libs/web/core/src/**/*.spec.ts",
+              "../../../libs/web/ui/src/**/*.spec.ts",
+              "../../../libs/web/features/*/src/**/*.spec.ts"
+            ]
           }
         }
       }

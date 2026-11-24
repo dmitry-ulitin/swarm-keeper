@@ -52,7 +52,7 @@ describe('authInterceptor', () => {
 
   it('explains any other 403', async () => {
     await call('/api/v1/assets', 403, { code: 'FORBIDDEN', params: {} });
-    expect(snack).toHaveBeenCalled();
+    await vi.waitFor(() => expect(snack).toHaveBeenCalled());
     expect(navigate).not.toHaveBeenCalled();
   });
 
