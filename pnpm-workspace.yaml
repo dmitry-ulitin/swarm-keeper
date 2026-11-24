@@ -26,6 +26,8 @@ catalog:
   '@angular/build': 22.3.0
   '@angular/cli': 22.3.0
   '@angular/compiler-cli': 22.3.0
+  '@angular/material': 22.3.0
+  '@angular/cdk': 22.3.0
   '@nestjs/common': 12.6.0
   '@nestjs/core': 12.6.0
   '@nestjs/platform-express': 12.6.0

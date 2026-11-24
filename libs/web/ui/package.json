@@ -10,6 +10,14 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "devDependencies": {
-    "typescript": "catalog:"
+    "@angular/core": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "dependencies": {
+    "tslib": "2.9.1"
+  },
+  "peerDependencies": {
+    "@angular/core": "catalog:"
   }
 }

@@ -1,1 +1,135 @@
-/* You can add global styles to this file, and also import other style files */
+// Global styles. Values come only from tokens (libs/shared/design-tokens/src/tokens.css,
+// loaded before this file); see docs/design/README.md, "Mapping to Angular Material".
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+// Every key must be a known system token: theme-overrides silently drops unknown names.
+$overrides: (
+  primary: var(--brand),
+  on-primary: var(--on-brand),
+  primary-container: var(--brand-container),
+  on-primary-container: var(--on-brand-container),
+  secondary: var(--brand),
+  on-secondary: var(--on-brand),
+  // M3 tonal buttons use secondary-container; the design system uses brand-container.
+  secondary-container: var(--brand-container),
+  on-secondary-container: var(--on-brand-container),
+  primary-fixed: var(--brand-container),
+  primary-fixed-dim: var(--brand-container),
+  on-primary-fixed: var(--on-brand-container),
+  on-primary-fixed-variant: var(--on-brand-container),
+  secondary-fixed: var(--brand-container),
+  secondary-fixed-dim: var(--brand-container),
+  on-secondary-fixed: var(--on-brand-container),
+  on-secondary-fixed-variant: var(--on-brand-container),
+  surface-tint: var(--brand),
+  tertiary: var(--accent),
+  on-tertiary: var(--on-brand),
+  tertiary-fixed: var(--accent-container),
+  tertiary-fixed-dim: var(--accent-container),
+  on-tertiary-fixed: var(--on-accent-container),
+  on-tertiary-fixed-variant: var(--on-accent-container),
+  tertiary-container: var(--accent-container),
+  on-tertiary-container: var(--on-accent-container),
+  surface: var(--surface-100),
+  background: var(--surface-100),
+  on-background: var(--ink),
+  surface-bright: var(--surface-000),
+  surface-dim: var(--surface-200),
+  surface-variant: var(--surface-200),
+  surface-container-lowest: var(--surface-000),
+  surface-container-low: var(--surface-000),
+  surface-container-high: var(--surface-200),
+  surface-container: var(--surface-200),
+  surface-container-highest: var(--surface-300),
+  on-surface: var(--ink),
+  on-surface-variant: var(--ink-muted),
+  outline: var(--border-strong),
+  outline-variant: var(--border),
+  error: var(--danger),
+  on-error: var(--on-danger),
+  error-container: var(--danger-container),
+  on-error-container: var(--on-danger-container),
+  inverse-surface: var(--ink),
+  inverse-on-surface: var(--surface-100),
+  inverse-primary: var(--brand-inverse),
+  scrim: var(--scrim),
+  shadow: var(--ink),
+  corner-extra-small: var(--radius-xs),
+  corner-small: var(--radius-sm),
+  corner-medium: var(--radius-md),
+  corner-large: var(--radius-lg),
+  corner-full: var(--radius-full),
+  corner-extra-large: var(--radius-lg),
+  corner-extra-large-top: var(--radius-lg) var(--radius-lg) 0 0,
+  corner-large-top: var(--radius-lg) var(--radius-lg) 0 0,
+  corner-large-start: var(--radius-lg) 0 0 var(--radius-lg),
+  corner-large-end: 0 var(--radius-lg) var(--radius-lg) 0,
+  corner-extra-small-top: var(--radius-xs) var(--radius-xs) 0 0,
+);
+
+// Material's body, label and title roles follow our type scale and switch with the size mode
+// through the --fa-* variables (libs/web/ui/src/styles/size-modes.css).
+$type-roles: (
+  body: body,
+  label: label,
+  title: title,
+);
+@each $role, $style in $type-roles {
+  @each $scale in large, medium, small {
+    $overrides: map.merge(
+      $overrides,
+      (
+        '#{$role}-#{$scale}-size': var(--fa-fs-#{$style}),
+        '#{$role}-#{$scale}-line-height': var(--fa-lh-#{$style}),
+        '#{$role}-#{$scale}-weight': var(--type-#{$style}-weight),
+        '#{$role}-#{$scale}-font': var(--font-sans),
+        '#{$role}-#{$scale}': var(--type-#{$style}-weight)
+          var(--fa-fs-#{$style}) /
+          var(--fa-lh-#{$style})
+          var(--font-sans),
+      )
+    );
+  }
+}
+
+html {
+  @include mat.theme(
+    (
+      color: (
+        theme-type: color-scheme,
+        // Only the raw tone variables (--mat-sys-neutral10 …) keep these palettes; every color
+        // role below is overridden from tokens. Azure and orange sit closest to brand and accent.
+        primary: mat.$azure-palette,
+        tertiary: mat.$orange-palette,
+      ),
+      typography: (
+        plain-family: Inter,
+        brand-family: Inter,
+      ),
+      density: 0,
+    )
+  );
+
+  @include mat.theme-overrides($overrides);
+}
+
+// Compact (the default) is density -3. Large mode keeps the base density 0: a density-0 theme
+// emits no height tokens, so it could not undo -3 if compact were the base.
+html:not([data-size='large']) {
+  @include mat.theme(
+    (
+      density: -3,
+    )
+  );
+  // mat.theme re-emits the shape tokens with Material's values; restore ours.
+  @include mat.theme-overrides($overrides);
+}
+
+body {
+  margin: 0;
+  background: var(--surface-100);
+  color: var(--ink);
+  font: var(--fa-fs-body) / var(--fa-lh-body) var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

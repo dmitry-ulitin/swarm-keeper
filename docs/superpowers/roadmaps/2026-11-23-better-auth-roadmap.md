@@ -14,7 +14,7 @@ The spec targets Better Auth 1.6; the current release is 1.7.27. Every step chec
 | 2 | Database layer and migrations | — | Migrations run against the dev Postgres from `pnpm`; API tests use a migrated test database |
 | 3 | Auth core in the API (done: 3a, 3b) | 1, 2 | Seeded owner invites a person; they sign up via API; the four security tests pass |
 | 4 | Email (done) | 3 | Invitation, verification and reset emails in en/ru land in a dev mailbox |
-| 5 | Web foundations | — | Transloco, Material theme and generated design tokens in the web app |
+| 5 | Web foundations (done) | — | Transloco, Material theme and generated design tokens in the web app |
 | 6 | Web sign-in and invitation screens | 3, 4, 5 | `/login`, `/invite/:token`, `/settings/security` work end to end |
 | 7 | Hardening (later) | 3, archive tables, deployment | RLS per request, Caddy rate-limit layer, CI gate on the security tests |
 
@@ -64,6 +64,9 @@ Done: `docs/superpowers/specs/2026-11-24-email-design.md` (SMTP via nodemailer, 
 - **Open:** the production email service (already an open question in `CLAUDE.md`); this step only needs SMTP to Mailpit.
 
 ### 5. Web foundations
+
+Done: `docs/superpowers/specs/2026-11-24-web-foundations-design.md` (Style Dictionary tokens with `light-dark()`, every M3 color role from tokens, self-hosted fonts, Transloco with ICU, `/dev/foundations`).
+
 
 - Transloco with per-feature `i18n/<feature>/{en,ru}.json`, ICU plurals, the CI check for missing keys.
 - Style Dictionary build of `docs/design/tokens.json` into `libs/shared/design-tokens`; Angular Material themed through `--mat-sys-*`; compact / large size modes.

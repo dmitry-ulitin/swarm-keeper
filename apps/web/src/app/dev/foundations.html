@@ -1,0 +1,95 @@
+<!-- Keys built at runtime, listed for transloco-keys-manager: -->
+<!-- t(dev.lang.en, dev.lang.ru, dev.size.compact, dev.size.large, dev.theme.system, dev.theme.light, dev.theme.dark)
+  t(dev.type.display, dev.type.title-lg, dev.type.title, dev.type.body, dev.type.label, dev.type.caption) -->
+<main class="page" *transloco="let t">
+  <header class="bar">
+    <h1>{{ t('dev.title') }}</h1>
+    <div class="toggles">
+      @for (lang of langs; track lang) {
+        <button
+          matButton="outlined"
+          [class.active]="appearance.lang() === lang"
+          [attr.data-test]="'lang-' + lang"
+          (click)="appearance.setLang(lang)"
+        >
+          {{ t('dev.lang.' + lang) }}
+        </button>
+      }
+      @for (size of sizes; track size) {
+        <button
+          matButton="outlined"
+          [class.active]="appearance.uiSize() === size"
+          [attr.data-test]="'size-' + size"
+          (click)="appearance.setUiSize(size)"
+        >
+          {{ t('dev.size.' + size) }}
+        </button>
+      }
+      @for (item of themes; track item) {
+        <button
+          matButton="outlined"
+          [class.active]="theme() === item"
+          [attr.data-test]="'theme-' + item"
+          (click)="setTheme(item)"
+        >
+          {{ t('dev.theme.' + item) }}
+        </button>
+      }
+    </div>
+  </header>
+
+  <section class="card">
+    <h2>{{ t('dev.sections.buttons') }}</h2>
+    <div class="row">
+      <button matButton="filled">
+        <mat-icon fontIcon="upload" />
+        {{ t('dev.buttons.upload') }}
+      </button>
+      <button matButton="tonal">{{ t('dev.buttons.album') }}</button>
+      <button matButton="outlined">{{ t('dev.buttons.cancel') }}</button>
+      <button matButton="text">{{ t('dev.buttons.more') }}</button>
+      <button matButton="filled" class="danger">{{ t('dev.buttons.delete') }}</button>
+      <button matButton="outlined" [matMenuTriggerFor]="menu">{{ t('dev.buttons.menu') }}</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>{{ t('dev.menu.rename') }}</button>
+        <button mat-menu-item>{{ t('dev.menu.move') }}</button>
+      </mat-menu>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>{{ t('dev.sections.form') }}</h2>
+    <div class="row">
+      <mat-form-field>
+        <mat-label>{{ t('dev.form.album') }}</mat-label>
+        <input matInput [placeholder]="t('dev.form.placeholder')" />
+      </mat-form-field>
+      <mat-checkbox>{{ t('dev.form.private') }}</mat-checkbox>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>{{ t('dev.sections.type') }}</h2>
+    @for (style of typeStyles; track style) {
+      <p [class]="'type type-' + style">{{ t('dev.type.' + style) }}</p>
+    }
+  </section>
+
+  <section class="card">
+    <h2>{{ t('dev.sections.colors') }}</h2>
+    <div class="row">
+      @for (swatch of swatches; track swatch) {
+        <span class="swatch" [class]="'swatch swatch-' + swatch">{{ swatch }}</span>
+      }
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>{{ t('dev.sections.formats') }}</h2>
+    @for (count of counts; track count) {
+      <p>{{ t('dev.files', { count }) }}</p>
+    }
+    <p>{{ date() }}</p>
+    <p>{{ fileBytes | fileSize: appearance.lang() }}</p>
+  </section>
+</main>

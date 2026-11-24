@@ -153,8 +153,8 @@ The native app's stack (Swift + Kotlin, Kotlin Multiplatform or Flutter) doesn't
 
 The interface ships in two languages from day one: English and Russian. Language is a personal member setting, like the size mode: stored in the profile and switched without a reload.
 
-- **Transloco, not Angular's built-in i18n.** The built-in one produces a separate build per language and switches only with a reload. Transloco uses one build, with translations as per-feature JSON files (`i18n/<feature>/en.json`, `ru.json`) loaded lazily with the feature.
-- **Per-feature keys**, with English as the key and fallback language: `gallery.empty.title`, `upload.status.duplicate`. Templates contain no literal text. transloco-keys-manager in CI catches missing and unused keys; the build fails if a key is missing from `en` or `ru`.
+- **Transloco, not Angular's built-in i18n.** The built-in one produces a separate build per language and switches only with a reload. Transloco uses one build, with translations as per-feature JSON files (`i18n/<feature>/en.json`, `ru.json`) loaded lazily with the feature. They are served at `/i18n/<scope>/<lang>.json` (root files at `/i18n/<lang>.json`, today in `apps/web/src/i18n`); a lazy route registers its scope with `provideTranslocoScope`. `provideWebCore()` sets up Transloco, and `AppearanceService` (`libs/web/core`) holds the language and size signals and reflects them on `<html lang>` and `data-size`.
+- **Per-feature keys**, with English as the key and fallback language: `gallery.empty.title`, `upload.status.duplicate`. Templates contain no literal text. `pnpm lint` runs `pnpm i18n:check`: our parity script (`tools/i18n-check`) fails when `en.json` and `ru.json` of a folder differ in keys, and `transloco-keys-manager find -e` fails when code uses a key missing from the files. Keys built at runtime are listed in a `<!-- t(a.b, a.c) -->` comment so the keys manager sees them.
 - **Plurals use ICU MessageFormat** (the messageformat plugin for Transloco). Russian has `one`, `few`, `many`; English has `one`, `other`.
 - **Dates, numbers, file sizes, durations** go only through `Intl` with the user's locale: "12 июля 2025" / "July 12, 2025", "3,4 МБ" / "3.4 MB". `en` and `ru` locale data are registered; shared `fileSize` and `duration` pipes live in `libs/web/ui`. Material's `DateAdapter` switches locale together with the language.
 - **Where the language comes from:** after sign-in — `locale` from `GET /me`; before sign-in (`/login`, `/invite/:token`) — `navigator.languages`, otherwise English; on the invitation page — the invitation's language. It's switched in "Settings → Appearance", next to the interface size. The `lang` attribute on `<html>` changes with the language.
@@ -176,6 +176,7 @@ The native app uses its own translation system and the shared glossary from the 
 
 ## UI kit, accessibility, tests
 
+- **Foundations page.** In development builds `/dev/foundations` shows the Material components, type scale, colors, plurals and formats, with switches for language, size and theme. The production build replaces `dev-routes.ts` with an empty list, so the page and its translations are not shipped.
 - **UI kit — Angular Material (M3).** The fast path to a ready, accessible interface. For a family archive, predictability and accessibility matter more than a unique style. Angular Aria (stable in 22) is the alternative if we ever need a fully custom design.
 - **Accessibility from day one:** compact mode by default and large mode by each member's choice, contrast, keyboard navigation, labels on icons. People of all ages will use the interface.
 - **Languages:** English and Russian from day one; see "Interface languages".

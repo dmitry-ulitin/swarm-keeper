@@ -57,10 +57,11 @@ pnpm install                                  install everything
 pnpm build                                    build all apps
 pnpm typecheck                                type-check every package
 pnpm test                                     unit tests (Vitest) in every package
-pnpm lint                                     ESLint + Sheriff boundary rules
+pnpm lint                                     ESLint + Sheriff boundary rules + pnpm i18n:check (en/ru keys)
 pnpm format                                   Prettier
 pnpm --filter @swarm-keeper/<pkg> <script>    run one package's script, e.g. start or test
 pnpm exec sheriff list <api|worker|web>       show modules and their tags
+pnpm tokens:build                             regenerate libs/shared/design-tokens/src/tokens.css after editing docs/design/tokens.json
 ```
 
 ## Local infrastructure
