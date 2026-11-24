@@ -1,0 +1,196 @@
+<style>
+  .sk { --paper:#f7f4ef; --card:#ffffff; --ink:#1f1b16; --muted:#5c544a; --brand:#2f5d8c; --on-brand:#fff;
+        --brand-c:#d9e6f4; --on-brand-c:#0f2c4a; --border:#d6cec2; --strong:#8f8577; --danger:#b3261e; --danger-c:#f9dedc; --on-danger-c:#5f1410;
+        --warn-c:#fbe7c6; --on-warn-c:#4a2f05;
+        font-family: Inter, system-ui, sans-serif; color: var(--ink); }
+  .sk .page { background: var(--paper); border-radius: 8px; overflow:hidden; }
+  .sk .bar { display:flex; align-items:center; gap:8px; padding:10px 16px; background:var(--card); border-bottom:1px solid var(--border); font-size:13px; }
+  .sk .bar .logo { display:flex; align-items:center; gap:8px; font-weight:600; color:var(--muted); }
+  .sk .bar .sp { flex:1; }
+  .sk .avatar { width:28px; height:28px; border-radius:50%; background:var(--brand-c); color:var(--on-brand-c); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:12px; }
+  .sk .dot { width:14px; height:14px; border-radius:50%; background: radial-gradient(circle, #b87a1e 30%, var(--brand) 32%); }
+  .sk .menu { position:absolute; right:16px; top:44px; background:var(--card); border:1px solid var(--border); border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,.12); font-size:13px; min-width:200px; }
+  .sk .menu div { padding:8px 14px; }
+  .sk .menu .who { color:var(--muted); font-size:11px; border-bottom:1px solid var(--border); }
+  .sk .body { padding:20px 16px; max-width:760px; margin:0 auto; }
+  .sk h4 { margin:0; font-size:18px; font-weight:600; }
+  .sk .head { display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+  .sk .head .sp { flex:1; }
+  .sk .sec { background:var(--card); border:1px solid var(--border); border-radius:12px; margin-bottom:14px; }
+  .sk .sec-h { display:flex; align-items:center; gap:8px; padding:12px 16px 6px; }
+  .sk .sec-h b { font-size:14px; flex:1; }
+  .sk .sec-d { padding:0 16px 10px; font-size:12px; color:var(--muted); }
+  .sk .row { display:flex; align-items:center; gap:12px; padding:9px 16px; border-top:1px solid var(--border); font-size:13px; flex-wrap:wrap; }
+  .sk .row .main { flex:1; min-width:160px; }
+  .sk .row .main small { display:block; color:var(--muted); font-size:11px; }
+  .sk .meta { color:var(--muted); font-size:12px; }
+  .sk .badge { font-size:11px; padding:2px 8px; border-radius:10px; background:var(--brand-c); color:var(--on-brand-c); font-weight:600; }
+  .sk .badge.owner { background:#3d3a35; color:#fff; }
+  .sk .badge.exp { background:var(--danger-c); color:var(--on-danger-c); }
+  .sk .ic { color:var(--muted); font-size:15px; padding:2px 4px; }
+  .sk .btn { display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 14px; border-radius:6px; font-size:13px; font-weight:600; border:none; }
+  .sk .filled { background: var(--brand); color: var(--on-brand); }
+  .sk .tonal { background: var(--brand-c); color: var(--on-brand-c); }
+  .sk .outlined { background: transparent; color: var(--brand); border:1px solid var(--strong); }
+  .sk .textb { background: transparent; color: var(--brand); padding:0 6px; }
+  .sk .dangerb { background: transparent; color: var(--danger); padding:0 6px; }
+  .sk .note { margin:0 16px 12px; background:var(--warn-c); color:var(--on-warn-c); border-radius:6px; padding:8px 10px; font-size:12px; }
+  .sk .snack { display:inline-block; background:#3d3a35; color:#fff; border-radius:6px; padding:10px 14px; font-size:13px; margin:12px 16px; }
+  .sk .dlg { background:var(--card); border-radius:14px; padding:20px; max-width:360px; margin:20px auto; box-shadow:0 6px 24px rgba(0,0,0,.18); }
+  .sk .dlg h5 { margin:0 0 4px; font-size:16px; }
+  .sk .dlg p { margin:0 0 14px; font-size:12px; color:var(--muted); }
+  .sk .field { margin: 0 0 10px; }
+  .sk .field label { display:block; font-size:11px; color:var(--muted); margin-bottom:3px; }
+  .sk .field div { height:32px; border:1px solid var(--strong); border-radius:6px; padding:0 10px; display:flex; align-items:center; font-size:13px; }
+  .sk .acts { display:flex; justify-content:flex-end; gap:8px; margin-top:14px; }
+  .sk .steps { display:flex; gap:12px; flex-wrap:wrap; }
+  .sk .steps .dlg { margin:0; flex:1; min-width:220px; }
+  .sk .qr { width:110px; height:110px; margin:0 auto 10px; background:repeating-conic-gradient(#1f1b16 0 25%, #fff 0 50%) 0 0/14px 14px; border:6px solid #fff; outline:1px solid var(--border); }
+  .sk .secret { font-family:monospace; font-size:12px; background:var(--paper); padding:6px 8px; border-radius:6px; text-align:center; margin-bottom:10px; }
+  .sk .code { display:flex; gap:6px; margin-bottom:6px; }
+  .sk .code span { flex:1; height:34px; border:1px solid var(--strong); border-radius:6px; }
+  .sk .codes { display:grid; grid-template-columns:1fr 1fr; gap:4px 12px; font-family:monospace; font-size:12px; background:var(--paper); padding:10px; border-radius:6px; margin-bottom:10px; }
+</style>
+
+<h2>6b: экраны участников и безопасности</h2>
+<p class="subtitle">Цвета и размеры из наших токенов (светлая тема, compact). Это один вариант, а не выбор: напиши в терминале, что поменять.</p>
+
+<div class="sk">
+
+<h3>1. Шапка и меню пользователя (на всех экранах после входа)</h3>
+<div class="page" style="position:relative; padding-bottom:130px">
+  <div class="bar"><span class="logo"><span class="dot"></span>Swarm Keeper</span><span class="sp"></span><span class="avatar">Д</span></div>
+  <div class="menu">
+    <div class="who">Дмитрий · owner@example.test</div>
+    <div>🛡 Безопасность</div>
+    <div>👥 Участники</div>
+    <div style="border-top:1px solid var(--border)">↪ Выйти</div>
+  </div>
+</div>
+<p class="subtitle" style="margin-top:6px">«Участники» показываем только владельцу и админу. Переключатель семьи и навигацию по архиву добавим позже.</p>
+
+<h3>2. /family/members</h3>
+<div class="page">
+  <div class="bar"><span class="logo"><span class="dot"></span>Swarm Keeper</span><span class="sp"></span><span class="avatar">Д</span></div>
+  <div class="body">
+    <div class="head"><h4>Участники семьи «Ивановы»</h4><span class="sp"></span><button class="btn filled">＋ Пригласить</button></div>
+    <div class="sec">
+      <div class="sec-h"><b>Участники · 3</b></div>
+      <div class="row"><div class="main">Дмитрий (вы)<small>owner@example.test</small></div><span class="badge owner">Владелец</span><span class="meta">с 23.11.2026</span><span class="ic" style="visibility:hidden">⋮</span></div>
+      <div class="row"><div class="main">Анна<small>anna@example.test</small></div><span class="badge">Участник</span><span class="meta">с 24.11.2026</span><span class="ic">⋮</span></div>
+      <div class="row"><div class="main">Бабушка Валя<small>valya@example.test</small></div><span class="badge">Зритель</span><span class="meta">с 24.11.2026</span><span class="ic">⋮</span></div>
+    </div>
+    <div class="sec">
+      <div class="sec-h"><b>Приглашения · 2</b></div>
+      <div class="row"><div class="main">bob@example.test<small>письмо на английском</small></div><span class="badge">Участник</span><span class="meta">до 01.12.2026</span><button class="btn textb">Отправить ещё раз</button><button class="btn dangerb">Отменить</button></div>
+      <div class="row"><div class="main">late@example.test<small>письмо на русском</small></div><span class="badge exp">Истекло</span><span class="meta">23.11.2026</span><button class="btn textb">Отправить ещё раз</button><button class="btn dangerb">Отменить</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="split" style="margin-top:12px">
+  <div class="mockup"><div class="mockup-header">Меню ⋮ у участника → snack-bar</div><div class="mockup-body">
+    <div class="page" style="padding:12px">
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:8px; width:200px; font-size:13px; margin-left:auto">
+        <div style="padding:8px 14px">Изменить роль</div><div style="padding:8px 14px; color:var(--danger)">Удалить из семьи</div>
+      </div>
+      <div class="snack">Пока не реализовано</div>
+    </div>
+  </div></div>
+  <div class="mockup"><div class="mockup-header">Без 2FA: вместо кнопки «Пригласить»</div><div class="mockup-body">
+    <div class="page" style="padding:12px"><div class="sec" style="margin:0">
+      <div class="note" style="margin:12px">Чтобы приглашать и управлять участниками, включите двухфакторную аутентификацию. <b style="color:var(--brand)">Перейти к настройкам →</b></div>
+    </div></div>
+  </div></div>
+</div>
+
+<h3>3. Окно «Пригласить»</h3>
+<div class="page" style="padding:4px 0">
+  <div class="dlg">
+    <h5>Пригласить в семью</h5>
+    <p>Человек получит письмо со ссылкой. Ссылка действует 7 дней.</p>
+    <div class="field"><label>Email</label><div>petr@example.test</div></div>
+    <div class="field"><label>Роль</label><div>Участник ▾</div></div>
+    <div class="field"><label>Язык письма</label><div>Русский ▾</div></div>
+    <div class="acts"><button class="btn textb">Отмена</button><button class="btn filled">Отправить</button></div>
+  </div>
+</div>
+<p class="subtitle" style="margin-top:6px">Роли: Владелец (только если приглашает владелец), Админ, Участник, Зритель. Под каждой ролью строка подсказки, что ей можно.</p>
+
+<h3>4. /settings/security</h3>
+<div class="page">
+  <div class="bar"><span class="logo"><span class="dot"></span>Swarm Keeper</span><span class="sp"></span><span class="avatar">Д</span></div>
+  <div class="body">
+    <div class="head"><h4>Безопасность</h4></div>
+    <div class="sec">
+      <div class="sec-h"><b>Passkeys</b><button class="btn tonal">＋ Добавить passkey</button></div>
+      <div class="sec-d">Вход по отпечатку, Face ID или PIN, без пароля.</div>
+      <div class="row"><div class="main">MacBook Touch ID<small>добавлен 23.11.2026</small></div><button class="btn textb">Переименовать</button><button class="btn dangerb">Удалить</button></div>
+      <div class="row"><div class="main">iPhone<small>добавлен 24.11.2026</small></div><button class="btn textb">Переименовать</button><button class="btn dangerb">Удалить</button></div>
+    </div>
+    <div class="sec">
+      <div class="sec-h"><b>Двухфакторная аутентификация</b><button class="btn filled">Включить</button></div>
+      <div class="sec-d">При входе по паролю попросим ещё код из приложения-аутентификатора.</div>
+      <div class="note">Владельцам и админам с паролем 2FA обязательна: без неё нельзя приглашать и управлять участниками.</div>
+    </div>
+    <div class="sec">
+      <div class="sec-h"><b>Сессии</b><button class="btn outlined">Завершить все остальные</button></div>
+      <div class="row"><div class="main">Chrome · Windows<small>192.168.1.5 · сейчас</small></div><span class="badge">Это устройство</span></div>
+      <div class="row"><div class="main">Safari · iPhone<small>10.0.0.7 · вчера</small></div><button class="btn dangerb">Завершить</button></div>
+      <div class="row"><div class="main">Firefox · Linux<small>10.0.0.12 · 20.11.2026</small></div><button class="btn dangerb">Завершить</button></div>
+    </div>
+  </div>
+</div>
+
+<h3>5. Включение 2FA — три шага в одном окне</h3>
+<div class="page" style="padding:16px">
+  <div class="steps">
+    <div class="dlg">
+      <h5>1. Подтвердите пароль</h5>
+      <p>Чтобы включить 2FA, введите пароль от аккаунта.</p>
+      <div class="field"><label>Пароль</label><div>••••••••••••</div></div>
+      <div class="acts"><button class="btn textb">Отмена</button><button class="btn filled">Далее</button></div>
+    </div>
+    <div class="dlg">
+      <h5>2. Отсканируйте код</h5>
+      <p>В приложении-аутентификаторе, например Google Authenticator или 1Password.</p>
+      <div class="qr"></div>
+      <div class="secret">JBSW Y3DP EHPK 3PXP</div>
+      <div class="code"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="acts"><button class="btn filled">Подтвердить</button></div>
+    </div>
+    <div class="dlg">
+      <h5>3. Сохраните резервные коды</h5>
+      <p>Если потеряете телефон, войдёте с одним из них. Каждый код работает один раз, больше мы их не покажем.</p>
+      <div class="codes"><span>a1b2-c3d4</span><span>e5f6-g7h8</span><span>j9k0-l1m2</span><span>n3p4-q5r6</span><span>s7t8-u9v0</span><span>w1x2-y3z4</span><span>b5c6-d7e8</span><span>f9g0-h1j2</span></div>
+      <div class="acts"><button class="btn outlined">Скопировать</button><button class="btn outlined">Скачать</button><button class="btn filled">Готово</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="split" style="margin-top:12px">
+  <div class="mockup"><div class="mockup-header">2FA включена</div><div class="mockup-body"><div class="page" style="padding:12px"><div class="sec" style="margin:0">
+    <div class="sec-h"><b>Двухфакторная аутентификация</b><span class="badge">Включена</span></div>
+    <div class="sec-d">Резервных кодов осталось: 8</div>
+    <div class="row"><span class="sp" style="flex:1"></span><button class="btn outlined">Новые резервные коды</button><button class="btn dangerb">Отключить</button></div>
+  </div></div></div></div>
+  <div class="mockup"><div class="mockup-header">Добавить passkey из старой сессии</div><div class="mockup-body"><div class="page" style="padding:12px"><div class="dlg" style="margin:0">
+    <h5>Войдите заново</h5>
+    <p>Добавить ключ можно только сразу после входа. Это защищает аккаунт, если кто-то получил доступ к вашей старой сессии.</p>
+    <div class="acts"><button class="btn textb">Отмена</button><button class="btn filled">Войти заново</button></div>
+  </div></div></div></div>
+</div>
+
+<div class="split" style="margin-top:12px">
+  <div class="mockup"><div class="mockup-header">Удалить последний ключ (нет пароля)</div><div class="mockup-body"><div class="page" style="padding:12px">
+    <div class="snack" style="margin:0">Это последний способ входа, его нельзя удалить. Сначала добавьте другой passkey.</div>
+  </div></div></div>
+  <div class="mockup"><div class="mockup-header">Отключить 2FA (владелец или админ)</div><div class="mockup-body"><div class="page" style="padding:12px"><div class="dlg" style="margin:0">
+    <h5>Отключить 2FA?</h5>
+    <p>Без 2FA вы не сможете приглашать и управлять участниками, пока не включите её снова.</p>
+    <div class="field"><label>Пароль</label><div>••••••••••••</div></div>
+    <div class="acts"><button class="btn textb">Отмена</button><button class="btn filled" style="background:var(--danger)">Отключить</button></div>
+  </div></div></div></div>
+</div>
+
+</div>
