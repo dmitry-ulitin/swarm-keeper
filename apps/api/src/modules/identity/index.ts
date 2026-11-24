@@ -4,3 +4,13 @@ export { type Auth, createAuth } from './create-auth.js';
 export { IdentityModule } from './identity.module.js';
 export { LoggingMailer } from './mailer.js';
 export { seedOwner } from './seed-owner.js';
+export {
+  type FamilySummary,
+  type OperatorDeps,
+  OperatorError,
+  type OperatorErrorCode,
+  createFamilyForOwner,
+  listFamilies,
+  reinviteFamilyOwner,
+} from './family-operator.js';
+export { SmtpMailer } from './smtp-mailer.js';
