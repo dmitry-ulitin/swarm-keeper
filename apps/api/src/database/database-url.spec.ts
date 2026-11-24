@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   DEV_DATABASE_URL,
+  databaseAdminUrl,
   databaseOwnerUrl,
   databaseUrl,
   testDatabaseUrl,
@@ -33,6 +34,13 @@ describe('databaseOwnerUrl', () => {
 
   it('requires DATABASE_OWNER_URL in production', () => {
     expect(() => databaseOwnerUrl({ NODE_ENV: 'production' })).toThrow(/DATABASE_OWNER_URL/);
+  });
+});
+
+describe('databaseAdminUrl', () => {
+  it('uses DATABASE_ADMIN_URL, or the owner URL without it', () => {
+    expect(databaseAdminUrl({ DATABASE_ADMIN_URL: 'postgres://a/b' })).toBe('postgres://a/b');
+    expect(databaseAdminUrl({ DATABASE_OWNER_URL: 'postgres://o/b' })).toBe('postgres://o/b');
   });
 });
 

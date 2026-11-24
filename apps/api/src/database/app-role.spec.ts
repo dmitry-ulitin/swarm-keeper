@@ -1,6 +1,6 @@
 import { type Kysely, sql } from 'kysely';
 import { afterAll, describe, expect, it } from 'vitest';
-import { assertAppRoleExists, ensureAppRoles } from './app-role.js';
+import { assertAppRoleExists, assertDevLoginAllowed, ensureAppRoles } from './app-role.js';
 import { createDatabase } from './create-database.js';
 import { databaseOwnerUrl, databaseUrl } from './database-url.js';
 
@@ -33,5 +33,26 @@ describe('application role', () => {
 
   it('names pnpm db:roles when the role is missing', async () => {
     await expect(assertAppRoleExists(ownerDb, 'no_such_role')).rejects.toThrow(/pnpm db:roles/);
+  });
+
+  describe('assertDevLoginAllowed', () => {
+    const local = 'postgres://swarm:swarm@127.0.0.1:5432/swarm_keeper';
+
+    it('allows the dev login on a local cluster outside production', () => {
+      expect(() => assertDevLoginAllowed(local, {})).not.toThrow();
+      expect(() =>
+        assertDevLoginAllowed(local.replace('127.0.0.1', 'localhost'), {}),
+      ).not.toThrow();
+    });
+
+    it('refuses it in production', () => {
+      expect(() => assertDevLoginAllowed(local, { NODE_ENV: 'production' })).toThrow(/dev login/);
+    });
+
+    it('refuses it on a remote cluster', () => {
+      expect(() => assertDevLoginAllowed('postgres://admin:x@db.example.com/sk', {})).toThrow(
+        /dev login/,
+      );
+    });
   });
 });

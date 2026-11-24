@@ -25,7 +25,7 @@
     "family:create": "pnpm --filter @swarm-keeper/api family create",
     "family:invite-owner": "pnpm --filter @swarm-keeper/api family invite-owner",
     "family:list": "pnpm --filter @swarm-keeper/api family list",
-    "infra:up": "docker compose up -d --wait --wait-timeout 60 && sh infra/dev/garage-init.sh && pnpm db:roles",
+    "infra:up": "docker compose up -d --wait --wait-timeout 60 && sh infra/dev/garage-init.sh && pnpm db:roles --dev-login",
     "infra:down": "docker compose down",
     "infra:reset": "docker compose down -v",
     "infra:logs": "docker compose logs -f",

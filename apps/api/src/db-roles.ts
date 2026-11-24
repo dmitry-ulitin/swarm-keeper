@@ -1,18 +1,24 @@
-// pnpm db:roles — creates the application role (and in development its dev login) if missing.
-// Run once per Postgres cluster as an admin, before `pnpm db:migrate`; idempotent.
+// pnpm db:roles [--dev-login] — creates the application role if missing; with --dev-login also
+// the dev login swarm_app (local clusters outside production only). Run once per Postgres cluster
+// as an admin (DATABASE_ADMIN_URL, else DATABASE_OWNER_URL), before `pnpm db:migrate`; idempotent.
 import { Logger } from '@nestjs/common';
 import {
   APP_ROLE,
   DEV_APP_LOGIN,
+  assertDevLoginAllowed,
   createDatabase,
-  databaseOwnerUrl,
+  databaseAdminUrl,
   ensureAppRoles,
 } from './database/index.js';
 
 const logger = new Logger('DbRoles');
-const devLogin = process.env['NODE_ENV'] === 'development';
+const url = databaseAdminUrl();
+const devLogin = process.argv.includes('--dev-login');
+if (devLogin) {
+  assertDevLoginAllowed(url);
+}
 
-const db = createDatabase(databaseOwnerUrl());
+const db = createDatabase(url);
 try {
   await ensureAppRoles(db, { devLogin });
   logger.log(

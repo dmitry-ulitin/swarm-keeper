@@ -25,6 +25,14 @@ export function databaseOwnerUrl(env: NodeJS.ProcessEnv = process.env): string {
   return urlFrom(env, 'DATABASE_OWNER_URL', DEV_DATABASE_OWNER_URL);
 }
 
+/**
+ * `DATABASE_ADMIN_URL`, for `pnpm db:roles` only: creating roles needs CREATEROLE, which a managed
+ * Postgres schema owner usually lacks. Falls back to the owner URL (the dev superuser).
+ */
+export function databaseAdminUrl(env: NodeJS.ProcessEnv = process.env): string {
+  return env['DATABASE_ADMIN_URL'] || databaseOwnerUrl(env);
+}
+
 /** The same server and credentials, pointed at the test database. */
 export function testDatabaseUrl(url: string): string {
   const parsed = new URL(url);

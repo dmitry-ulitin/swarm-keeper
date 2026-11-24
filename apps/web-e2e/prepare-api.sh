@@ -13,7 +13,7 @@ export PORT=3100
 export HOST=127.0.0.1
 
 node apps/web-e2e/prepare-db.mjs reset
-pnpm --filter @swarm-keeper/api db:roles
+pnpm --filter @swarm-keeper/api db:roles --dev-login
 pnpm --filter @swarm-keeper/api db:migrate
 SEED_OWNER_EMAIL=owner@e2e.test SEED_OWNER_PASSWORD='e2e owner password 2026' SEED_FAMILY_NAME='Ивановы' \
   pnpm --filter @swarm-keeper/api db:seed

@@ -63,6 +63,7 @@ describe('DatabaseModule', () => {
   });
 
   it('refuses to start as a superuser outside development', async () => {
+    vi.stubEnv('NODE_ENV', 'test');
     vi.stubEnv('DATABASE_URL', String(process.env['DATABASE_OWNER_URL']));
     await expect(start()).rejects.toThrow(/bypasses RLS/);
   });

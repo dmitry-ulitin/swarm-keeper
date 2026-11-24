@@ -53,3 +53,17 @@ export async function assertAppRoleExists(
     throw new Error(`Database role ${role} is missing: run pnpm db:roles first (as an admin)`);
   }
 }
+
+const LOCAL_HOSTS = new Set(['127.0.0.1', 'localhost', '[::1]']);
+
+/**
+ * The dev login has a published password, so it is created only on request (`--dev-login`), never
+ * in production and only on a cluster on this machine.
+ */
+export function assertDevLoginAllowed(url: string, env: NodeJS.ProcessEnv = process.env): void {
+  if (env['NODE_ENV'] === 'production' || !LOCAL_HOSTS.has(new URL(url).hostname)) {
+    throw new Error(
+      `Refusing to create the dev login ${DEV_APP_LOGIN.user}: only on a local cluster outside production`,
+    );
+  }
+}

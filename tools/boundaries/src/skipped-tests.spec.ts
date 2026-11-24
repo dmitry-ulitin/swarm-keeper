@@ -8,7 +8,7 @@ const eslint = new ESLint({ cwd: repoRoot });
 
 async function restricted(filePath: string, code: string): Promise<number> {
   const [result] = await eslint.lintText(code, { filePath });
-  return (result?.messages ?? []).filter((m) => m.ruleId === 'no-restricted-properties').length;
+  return (result?.messages ?? []).filter((m) => m.ruleId === 'no-restricted-syntax').length;
 }
 
 describe('skipped tests', () => {
@@ -21,6 +21,13 @@ describe('skipped tests', () => {
     ['apps/web-e2e/tests/x.spec.ts', "test.fixme('x', async () => {});"],
     ['apps/web-e2e/tests/x.spec.ts', "test.skip(true, 'not here');"],
     ['libs/web/core/src/x.spec.ts', "test.only('x', () => {});"],
+    ['apps/web-e2e/tests/x.spec.ts', "test.describe.skip('x', () => {});"],
+    ['apps/web-e2e/tests/x.spec.ts', "test.describe.fixme('x', () => {});"],
+    ['apps/api/src/x.spec.ts', "it.concurrent.skip('x', () => {});"],
+    ['apps/api/src/x.spec.ts', "suite.skip('x', () => {});"],
+    ['apps/api/src/x.spec.ts', "import { it as t } from 'vitest'; t.skip('x', () => {});"],
+    ['apps/api/src/x.spec.ts', "it('x', (ctx) => { ctx.skip(); });"],
+    ['apps/web-e2e/tests/owner.setup.ts', "test.skip(true, 'no');"],
   ];
 
   it.each(cases)('rejects %s: %s', async (filePath, code) => {

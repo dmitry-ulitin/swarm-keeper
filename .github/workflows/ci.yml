@@ -15,9 +15,6 @@ concurrency:
 permissions:
   contents: read
 
-env:
-  NODE_ENV: development
-
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -48,8 +45,9 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm build
-      - run: pnpm db:roles
-      # Vitest sets NODE_ENV=test itself.
+      # The test setup creates the roles too; this checks the operator command on a fresh cluster.
+      - run: pnpm db:roles --dev-login
+      # NODE_ENV stays unset: Vitest then sets it to test.
       - run: pnpm test
 
   e2e:

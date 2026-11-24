@@ -47,17 +47,16 @@ export default defineConfig(
   },
   {
     // A skipped or focused test must not reach main: the security tests are never switched off.
-    files: ['**/*.spec.ts'],
+    // Any .skip/.only/.todo/.fixme/.skipIf/.runIf in a test file, whatever it hangs off
+    // (test.describe.skip, it.concurrent.skip, an aliased import, ctx.skip()).
+    files: ['**/*.spec.ts', '**/*.setup.ts'],
     rules: {
-      'no-restricted-properties': [
+      'no-restricted-syntax': [
         'error',
-        ...['it', 'test', 'describe'].flatMap((object) =>
-          ['skip', 'only', 'todo', 'skipIf', 'runIf', 'fixme'].map((property) => ({
-            object,
-            property,
-            message: 'Tests are never skipped or focused in the repository.',
-          })),
-        ),
+        {
+          selector: 'MemberExpression[property.name=/^(skip|only|todo|fixme|skipIf|runIf)$/]',
+          message: 'Tests are never skipped or focused in the repository.',
+        },
       ],
     },
   },
