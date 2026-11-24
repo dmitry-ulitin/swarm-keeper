@@ -37,3 +37,6 @@ blob-report/
 .DS_Store
 Thumbs.db
 .claude/
+
+# Brainstorm mockups and plan ledgers (superpowers skills)
+.superpowers/
