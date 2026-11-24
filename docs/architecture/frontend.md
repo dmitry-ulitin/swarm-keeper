@@ -91,9 +91,9 @@ Switching the active family resets every feature store and refetches `GET /me`. 
 
 The web app uses Better Auth's httpOnly cookie on the same domain as the API, and takes its UI permission list from `GET /me` — just like the native app.
 
-- **`AuthService` (core)** wraps `createAuthClient` from `better-auth/client` and holds the `session`, `activeFamily` and `permissions` signals.
-- **`canMatch` guards:** `authGuard` (has a session), `familyGuard` (a family is selected), `permissionGuard('member', 'create')` for admin pages.
-- **The `*appCan="['asset', 'delete']"` directive** hides buttons based on the permission list from `/me`. For "own" items (editing your own photo) it also takes an `ownerId`.
+- **`AuthService` (core)** wraps `createAuthClient` from `better-auth/client` (behind the `AUTH_CLIENT` port) and holds signals from `GET /me`: `signedIn`, `user`, `families`, `activeFamily`, `role`, `permissions`, `twoFactorRequired`. After sign-in it applies the member's `locale` and `uiSize`. `safeReturnUrl` keeps `returnUrl` on our own origin.
+- **`canMatch` guards:** `authGuard` (has a session), `guestGuard` (no session: `/login`, `/reset-password`), `familyGuard` (a family is selected), `permissionGuard('member', 'create')` for admin pages.
+- **The `*skCan="['asset', 'delete']"` directive** (`CanDirective`, `libs/web/core`; `sk` is the project prefix) hides buttons based on the permission list from `/me`. For "own" items (editing your own photo) it also takes `skCanOwnerId`, used once "own item" statements exist.
 - **HTTP interceptor:** on 401 it goes to `/login` and remembers where the user was heading; 403 shows a clear message rather than a "server error"; the `TWO_FACTOR_REQUIRED` code leads to `/settings/security` for 2FA setup.
 
 | Route | What's there | Access |
@@ -181,7 +181,8 @@ The native app uses its own translation system and the shared glossary from the 
 - **Accessibility from day one:** compact mode by default and large mode by each member's choice, contrast, keyboard navigation, labels on icons. People of all ages will use the interface.
 - **Languages:** English and Russian from day one; see "Interface languages".
 - **Unit tests — Vitest:** stores, the permission directive, the gallery layout, the upload queue.
-- **End-to-end tests — Playwright:** sign-in via invitation, upload with dedup and resume, a viewer doesn't see the Upload button, another family is inaccessible. They run against the real API in Docker Compose.
+- **End-to-end tests — Playwright** (`apps/web-e2e`, `pnpm e2e`): sign-in via invitation (passkey and password), password + TOTP sign-in, accepting a second family, an expired invitation; later upload with dedup and resume, a viewer doesn't see the Upload button, another family is inaccessible. They run against the real API and the web dev server on their own ports and database, in both languages.
+- **Auth screens** live in `libs/web/features/auth` (`/login`, `/invite/:token`, `/reset-password`, and a signed-in placeholder at `/` until the home exists); mockups in `docs/design/mockups/auth/`.
 
 ## Open questions
 

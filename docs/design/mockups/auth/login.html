@@ -1,0 +1,80 @@
+<style>
+  .sk { --paper:#f7f4ef; --card:#ffffff; --ink:#1f1b16; --muted:#5c544a; --brand:#2f5d8c; --on-brand:#fff;
+        --brand-c:#d9e6f4; --on-brand-c:#0f2c4a; --border:#d6cec2; --strong:#8f8577; --danger-c:#f9dedc; --on-danger-c:#5f1410;
+        font-family: Inter, system-ui, sans-serif; color: var(--ink); }
+  .sk .page { background: var(--paper); padding: 28px 16px; display:flex; justify-content:center; border-radius: 8px; }
+  .sk .box { background: var(--card); border:1px solid var(--border); border-radius: 12px; padding: 24px; width: 100%; max-width: 340px; }
+  .sk .logo { display:flex; align-items:center; gap:8px; font-weight:600; font-size:13px; color:var(--muted); margin-bottom:16px; }
+  .sk .dot { width:14px; height:14px; border-radius:50%; background: radial-gradient(circle, #b87a1e 30%, var(--brand) 32%); }
+  .sk h4 { margin:0 0 4px; font-size:18px; font-weight:600; }
+  .sk .sub { margin:0 0 16px; font-size:13px; color:var(--muted); }
+  .sk .btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; box-sizing:border-box; height:36px;
+             border-radius:6px; font-size:13px; font-weight:600; border:none; margin:0 0 8px; }
+  .sk .filled { background: var(--brand); color: var(--on-brand); }
+  .sk .tonal { background: var(--brand-c); color: var(--on-brand-c); }
+  .sk .outlined { background: transparent; color: var(--brand); border:1px solid var(--strong); }
+  .sk .text { background: transparent; color: var(--brand); height:auto; padding:4px 0; justify-content:flex-start; font-weight:500; }
+  .sk .field { margin: 0 0 10px; }
+  .sk .field label { display:block; font-size:11px; color:var(--muted); margin-bottom:3px; }
+  .sk .field div { height:32px; border:1px solid var(--strong); border-radius:6px; padding:0 10px; display:flex; align-items:center; font-size:13px; color:var(--muted); }
+  .sk .or { display:flex; align-items:center; gap:8px; color:var(--muted); font-size:11px; margin:12px 0; }
+  .sk .or::before, .sk .or::after { content:""; flex:1; height:1px; background: var(--border); }
+  .sk .hint { font-size:11px; color:var(--muted); text-align:center; margin:-2px 0 10px; }
+  .sk .lang { display:flex; justify-content:flex-end; font-size:11px; color:var(--muted); margin-top:12px; gap:8px; }
+  .sk .err { background: var(--danger-c); color: var(--on-danger-c); border-radius:6px; padding:8px 10px; font-size:12px; margin-bottom:12px; }
+  .sk .code { display:flex; gap:6px; margin-bottom:12px; }
+  .sk .code span { flex:1; height:36px; border:1px solid var(--strong); border-radius:6px; }
+</style>
+
+<h2>Экран входа /login: какая раскладка?</h2>
+<p class="subtitle">Цвета и размеры — из наших токенов (светлая тема, compact). Кликни вариант, который ближе; комментарии — в терминале.</p>
+
+<div class="cards sk">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="page"><div class="box">
+      <div class="logo"><span class="dot"></span>Swarm Keeper</div>
+      <h4>Вход</h4>
+      <p class="sub">Семейный архив фотографий и документов</p>
+      <button class="btn filled">🔑 Войти с passkey</button>
+      <p class="hint">отпечаток, Face ID или PIN</p>
+      <div class="or">или паролем</div>
+      <div class="field"><label>Email</label><div>anna@example.org</div></div>
+      <div class="field"><label>Пароль</label><div>••••••••••••</div></div>
+      <button class="btn outlined">Войти</button>
+      <button class="btn text">Забыли пароль?</button>
+      <div class="lang"><span>English</span><b>Русский</b></div>
+    </div></div></div>
+    <div class="card-body"><h3>A. Passkey сверху, пароль под ним</h3><p>Обе дороги видны сразу. Пожилой родственник жмёт одну большую кнопку; пароль — для устройств без passkey.</p></div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="page"><div class="box">
+      <div class="logo"><span class="dot"></span>Swarm Keeper</div>
+      <h4>Вход</h4>
+      <p class="sub">Семейный архив фотографий и документов</p>
+      <button class="btn filled">🔑 Войти с passkey</button>
+      <p class="hint">отпечаток, Face ID или PIN</p>
+      <button class="btn text">Войти по паролю →</button>
+      <div class="lang"><span>English</span><b>Русский</b></div>
+    </div></div></div>
+    <div class="card-body"><h3>B. Только passkey, пароль по ссылке</h3><p>Минимум на экране. Форма пароля раскрывается по клику — меньше путаницы, но на шаг дольше для тех, у кого пароль.</p></div>
+  </div>
+</div>
+
+<h3 style="margin-top:28px">Следующие шаги входа (одинаковые для A и B)</h3>
+<div class="split sk">
+  <div class="mockup"><div class="mockup-header">2FA после пароля (owner/admin)</div><div class="mockup-body"><div class="page"><div class="box">
+    <h4>Код из приложения</h4>
+    <p class="sub">Откройте приложение-аутентификатор и введите 6 цифр</p>
+    <div class="code"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <button class="btn filled">Подтвердить</button>
+    <button class="btn text">Использовать резервный код</button>
+  </div></div></div></div>
+  <div class="mockup"><div class="mockup-header">Ошибка</div><div class="mockup-body"><div class="page"><div class="box">
+    <h4>Вход</h4>
+    <div class="err">Неверный email или пароль</div>
+    <div class="field"><label>Email</label><div>anna@example.org</div></div>
+    <div class="field"><label>Пароль</label><div>•••••••</div></div>
+    <button class="btn outlined">Войти</button>
+  </div></div></div></div>
+</div>

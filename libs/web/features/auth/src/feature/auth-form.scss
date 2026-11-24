@@ -1,0 +1,59 @@
+// Shared by the auth screens. Tokens only; no fixed widths.
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.wide {
+  width: 100%;
+}
+
+.hint {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: var(--fa-fs-caption);
+  line-height: var(--fa-lh-caption);
+  text-align: center;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.note {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+}
+
+.danger {
+  background: var(--danger-container);
+  color: var(--on-danger-container);
+}
+
+.success {
+  background: var(--success-container);
+  color: var(--on-success-container);
+}
+
+.warning {
+  background: var(--warning-container);
+  color: var(--on-warning-container);
+}
+
+.badge {
+  align-self: flex-start;
+  padding: var(--space-0) var(--space-2);
+  border-radius: var(--radius-xs);
+  background: var(--brand-container);
+  color: var(--on-brand-container);
+  font-size: var(--fa-fs-caption);
+}

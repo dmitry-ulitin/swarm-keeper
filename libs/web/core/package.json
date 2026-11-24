@@ -10,19 +10,29 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "devDependencies": {
+    "@angular/cdk": "catalog:",
     "@angular/common": "catalog:",
     "@angular/core": "catalog:",
+    "@angular/material": "catalog:",
+    "@angular/router": "catalog:",
+    "@better-auth/passkey": "catalog:",
     "@jsverse/transloco": "8.4.0",
     "@jsverse/transloco-messageformat": "8.4.0",
+    "better-auth": "catalog:",
     "rxjs": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "@angular/core": "catalog:",
+    "@angular/cdk": "catalog:",
     "@angular/common": "catalog:",
+    "@angular/core": "catalog:",
+    "@angular/material": "catalog:",
+    "@angular/router": "catalog:",
+    "@better-auth/passkey": "catalog:",
     "@jsverse/transloco": "8.4.0",
     "@jsverse/transloco-messageformat": "8.4.0",
+    "better-auth": "catalog:",
     "rxjs": "catalog:"
   },
   "dependencies": {

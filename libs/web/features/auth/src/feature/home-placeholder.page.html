@@ -1,0 +1,16 @@
+<sk-auth-card
+  [heading]="'auth.appName' | transloco"
+  [lang]="appearance.lang()"
+  (langChange)="appearance.setLang($event)"
+>
+  <p data-test="family">
+    @if (auth.activeFamily(); as family) {
+      {{ 'auth.home.signedIn' | transloco: { family: family.name } }}
+    } @else {
+      {{ 'auth.home.noFamily' | transloco }}
+    }
+  </p>
+  <button matButton="outlined" type="button" data-test="sign-out" (click)="signOut()">
+    {{ 'auth.home.signOut' | transloco }}
+  </button>
+</sk-auth-card>

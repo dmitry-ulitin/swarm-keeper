@@ -1,0 +1,191 @@
+@let invite = view();
+@switch (state()) {
+  @case ('loading') {
+    <sk-auth-card
+      [heading]="'auth.appName' | transloco"
+      [lang]="appearance.lang()"
+      (langChange)="appearance.setLang($event)"
+    />
+  }
+  @case ('invalid') {
+    <sk-auth-card
+      [heading]="'auth.invite.invalidTitle' | transloco"
+      [lang]="appearance.lang()"
+      (langChange)="appearance.setLang($event)"
+    >
+      <p class="note warning" role="status" data-test="invalid">
+        {{ 'auth.invite.invalid' | transloco }}
+      </p>
+      @if (auth.signedIn()) {
+        <button matButton="outlined" type="button" data-test="to-archive" (click)="go('/')">
+          {{ 'auth.invite.toArchive' | transloco }}
+        </button>
+      } @else {
+        <button
+          matButton="outlined"
+          type="button"
+          data-test="sign-in-existing"
+          (click)="go('/login')"
+        >
+          {{ 'auth.invite.signInExisting' | transloco }}
+        </button>
+      }
+    </sk-auth-card>
+  }
+  @default {
+    <sk-auth-card
+      [heading]="'auth.invite.title' | transloco: { family: invite?.familyName }"
+      [subtitle]="'auth.invite.from' | transloco: { inviter: invite?.inviterName }"
+      [lang]="appearance.lang()"
+      (langChange)="appearance.setLang($event)"
+    >
+      @if (roleKey(); as key) {
+        <span class="badge" data-test="role">{{ key | transloco }}</span>
+      }
+      @if (errorKey(); as key) {
+        <p class="note danger" role="alert" data-test="error">{{ key | transloco }}</p>
+      }
+
+      @switch (state()) {
+        @case ('sign-up') {
+          <div class="fields">
+            <mat-form-field>
+              <mat-label>{{ 'auth.invite.email' | transloco }}</mat-label>
+              <input matInput readonly data-test="email" [value]="invite?.email" />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>{{ 'auth.invite.name' | transloco }}</mat-label>
+              <input matInput autocomplete="name" data-test="name" [formField]="fields.name" />
+            </mat-form-field>
+          </div>
+          <button
+            matButton="filled"
+            class="wide"
+            type="button"
+            data-test="passkey-sign-up"
+            [disabled]="busy()"
+            (click)="signUpPasskey()"
+          >
+            {{ 'auth.invite.passkey' | transloco }}
+          </button>
+          <p class="hint">{{ 'auth.invite.passkeyHint' | transloco }}</p>
+          <button
+            matButton="text"
+            type="button"
+            data-test="show-password"
+            (click)="usePassword(true)"
+          >
+            {{ 'auth.invite.showPassword' | transloco }}
+          </button>
+        }
+        @case ('sign-up-password') {
+          <form class="fields" novalidate (submit)="signUpPassword($event)">
+            <mat-form-field>
+              <mat-label>{{ 'auth.invite.email' | transloco }}</mat-label>
+              <input
+                matInput
+                readonly
+                autocomplete="username"
+                data-test="email"
+                [value]="invite?.email"
+              />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>{{ 'auth.invite.name' | transloco }}</mat-label>
+              <input matInput autocomplete="name" data-test="name" [formField]="fields.name" />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>{{ 'auth.invite.password' | transloco }}</mat-label>
+              <input
+                matInput
+                type="password"
+                autocomplete="new-password"
+                data-test="password"
+                [formField]="fields.password"
+              />
+            </mat-form-field>
+            <button
+              matButton="filled"
+              class="wide"
+              type="submit"
+              data-test="submit"
+              [disabled]="busy()"
+            >
+              {{ 'auth.invite.submit' | transloco }}
+            </button>
+          </form>
+          <button matButton="text" type="button" data-test="back" (click)="usePassword(false)">
+            {{ 'auth.invite.back' | transloco }}
+          </button>
+        }
+        @case ('add-passkey') {
+          <p class="note success" role="status">
+            {{ 'auth.invite.created' | transloco: { family: invite?.familyName } }}
+          </p>
+          <p>
+            <strong>{{ 'auth.invite.addPasskeyTitle' | transloco }}</strong>
+          </p>
+          <p class="hint">{{ 'auth.invite.addPasskeyHint' | transloco }}</p>
+          <button
+            matButton="filled"
+            class="wide"
+            type="button"
+            data-test="add-passkey"
+            [disabled]="busy()"
+            (click)="addPasskey()"
+          >
+            {{ 'auth.invite.addPasskey' | transloco }}
+          </button>
+          <button matButton="text" type="button" data-test="later" (click)="go('/')">
+            {{ 'auth.invite.later' | transloco }}
+          </button>
+        }
+        @case ('sign-in-to-accept') {
+          <p>{{ 'auth.invite.hasAccount' | transloco }}</p>
+          <button
+            matButton="filled"
+            class="wide"
+            type="button"
+            data-test="sign-in-to-accept"
+            (click)="go(signInUrl())"
+          >
+            {{ 'auth.invite.signIn' | transloco }}
+          </button>
+        }
+        @case ('accept') {
+          <p class="hint">
+            {{ 'auth.invite.acceptHint' | transloco: { email: auth.user()?.email } }}
+          </p>
+          <button
+            matButton="filled"
+            class="wide"
+            type="button"
+            data-test="accept"
+            [disabled]="busy()"
+            (click)="accept()"
+          >
+            {{ 'auth.invite.accept' | transloco }}
+          </button>
+        }
+        @case ('other-account') {
+          <p>
+            {{
+              'auth.invite.otherAccount'
+                | transloco: { email: auth.user()?.email, invited: invite?.email }
+            }}
+          </p>
+          <button
+            matButton="outlined"
+            class="wide"
+            type="button"
+            data-test="sign-out"
+            [disabled]="busy()"
+            (click)="signOut()"
+          >
+            {{ 'auth.invite.signOut' | transloco }}
+          </button>
+        }
+      }
+    </sk-auth-card>
+  }
+}

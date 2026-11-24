@@ -15,7 +15,7 @@ The spec targets Better Auth 1.6; the current release is 1.7.27. Every step chec
 | 3 | Auth core in the API (done: 3a, 3b) | 1, 2 | Seeded owner invites a person; they sign up via API; the four security tests pass |
 | 4 | Email (done) | 3 | Invitation, verification and reset emails in en/ru land in a dev mailbox |
 | 5 | Web foundations (done) | — | Transloco, Material theme and generated design tokens in the web app |
-| 6 | Web sign-in and invitation screens | 3, 4, 5 | `/login`, `/invite/:token`, `/settings/security` work end to end |
+| 6 | Web sign-in and invitation screens (6a done) | 3, 4, 5 | `/login`, `/invite/:token`, `/settings/security` work end to end |
 | 7 | Hardening (later) | 3, archive tables, deployment | RLS per request, Caddy rate-limit layer, CI gate on the security tests |
 
 Steps 1, 2 and 5 are independent and can be done in any order. The proposed order is 1 → 2 → 3 → 4 → 5 → 6.
@@ -74,6 +74,9 @@ Done: `docs/superpowers/specs/2026-11-24-web-foundations-design.md` (Style Dicti
 - **Open:** none beyond what `frontend.md` and `docs/design/` already fix.
 
 ### 6. Web sign-in and invitation screens
+
+6a done: `docs/superpowers/specs/2026-11-24-auth-web-design.md` (passkey-first sign-up, `/login`, `/invite/:token`, `/reset-password`, Playwright in en/ru). 6b: `/settings/security`, resending invitations, the icon font subset.
+
 
 - `AuthService` in `libs/web/core` wrapping `createAuthClient`, with `session`, `activeFamily` and `permissions` signals from `GET /me`.
 - `authGuard`, `familyGuard`, `permissionGuard`, the `*appCan` directive, and the HTTP interceptor (401 → `/login`, 403 message, `TWO_FACTOR_REQUIRED` → `/settings/security`).

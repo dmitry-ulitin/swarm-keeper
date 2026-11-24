@@ -11,6 +11,7 @@
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
+    "e2e": "pnpm --filter @swarm-keeper/web-e2e e2e",
     "lint": "eslint . && pnpm i18n:check",
     "i18n:check": "pnpm --filter @swarm-keeper/i18n-check check ../../apps/web/src/i18n && pnpm --filter @swarm-keeper/web i18n:find",
     "format": "prettier --write .",

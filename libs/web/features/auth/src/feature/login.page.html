@@ -1,0 +1,156 @@
+<sk-auth-card
+  [heading]="titleKey() | transloco"
+  [subtitle]="step() === 'passkey' ? ('auth.tagline' | transloco) : ''"
+  [lang]="appearance.lang()"
+  (langChange)="appearance.setLang($event)"
+>
+  @if (reset() && step() === 'passkey') {
+    <p class="note success" role="status">{{ 'auth.login.resetDone' | transloco }}</p>
+  }
+  @if (errorKey(); as key) {
+    <p class="note danger" role="alert" data-test="error">{{ key | transloco }}</p>
+  }
+
+  @switch (step()) {
+    @case ('passkey') {
+      <button
+        matButton="filled"
+        class="wide"
+        type="button"
+        data-test="passkey"
+        [disabled]="busy()"
+        (click)="passkey()"
+      >
+        {{ 'auth.login.passkey' | transloco }}
+      </button>
+      <p class="hint">{{ 'auth.login.passkeyHint' | transloco }}</p>
+      <button matButton="text" type="button" data-test="show-password" (click)="go('password')">
+        {{ 'auth.login.showPassword' | transloco }}
+      </button>
+    }
+    @case ('password') {
+      <form class="fields" novalidate (submit)="password($event)">
+        <mat-form-field>
+          <mat-label>{{ 'auth.login.email' | transloco }}</mat-label>
+          <input
+            matInput
+            type="email"
+            autocomplete="username"
+            data-test="email"
+            [formField]="credentialsForm.email"
+          />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'auth.login.password' | transloco }}</mat-label>
+          <input
+            matInput
+            type="password"
+            autocomplete="current-password"
+            data-test="password"
+            [formField]="credentialsForm.password"
+          />
+        </mat-form-field>
+        <button
+          matButton="outlined"
+          class="wide"
+          type="submit"
+          data-test="submit"
+          [disabled]="busy()"
+        >
+          {{ 'auth.login.submit' | transloco }}
+        </button>
+      </form>
+      <div class="links">
+        <button matButton="text" type="button" data-test="forgot" (click)="go('forgot')">
+          {{ 'auth.login.forgot' | transloco }}
+        </button>
+        <button matButton="text" type="button" data-test="back" (click)="go('passkey')">
+          {{ 'auth.login.back' | transloco }}
+        </button>
+      </div>
+    }
+    @case ('two-factor') {
+      <p class="hint">{{ 'auth.twoFactor.hint' | transloco }}</p>
+      <form class="fields" novalidate (submit)="totp($event)">
+        <mat-form-field>
+          <mat-label>{{ 'auth.twoFactor.code' | transloco }}</mat-label>
+          <input
+            matInput
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            data-test="code"
+            [formField]="codeForm.code"
+          />
+        </mat-form-field>
+        <button
+          matButton="filled"
+          class="wide"
+          type="submit"
+          data-test="submit"
+          [disabled]="busy()"
+        >
+          {{ 'auth.twoFactor.submit' | transloco }}
+        </button>
+      </form>
+      <button matButton="text" type="button" data-test="use-backup" (click)="go('backup-code')">
+        {{ 'auth.twoFactor.useBackup' | transloco }}
+      </button>
+    }
+    @case ('backup-code') {
+      <p class="hint">{{ 'auth.twoFactor.backupHint' | transloco }}</p>
+      <form class="fields" novalidate (submit)="backupCode($event)">
+        <mat-form-field>
+          <mat-label>{{ 'auth.twoFactor.backupCode' | transloco }}</mat-label>
+          <input matInput autocomplete="off" data-test="code" [formField]="backupForm.code" />
+        </mat-form-field>
+        <button
+          matButton="filled"
+          class="wide"
+          type="submit"
+          data-test="submit"
+          [disabled]="busy()"
+        >
+          {{ 'auth.twoFactor.submit' | transloco }}
+        </button>
+      </form>
+      <button matButton="text" type="button" data-test="use-app" (click)="go('two-factor')">
+        {{ 'auth.twoFactor.useApp' | transloco }}
+      </button>
+    }
+    @case ('forgot') {
+      <p class="hint">{{ 'auth.forgot.hint' | transloco }}</p>
+      <form class="fields" novalidate (submit)="forgot($event)">
+        <mat-form-field>
+          <mat-label>{{ 'auth.login.email' | transloco }}</mat-label>
+          <input
+            matInput
+            type="email"
+            autocomplete="username"
+            data-test="email"
+            [formField]="forgotForm.email"
+          />
+        </mat-form-field>
+        <button
+          matButton="outlined"
+          class="wide"
+          type="submit"
+          data-test="submit"
+          [disabled]="busy()"
+        >
+          {{ 'auth.forgot.submit' | transloco }}
+        </button>
+      </form>
+      <button matButton="text" type="button" data-test="back" (click)="go('password')">
+        {{ 'auth.forgot.back' | transloco }}
+      </button>
+    }
+    @case ('forgot-sent') {
+      <p class="note success" role="status" data-test="forgot-sent">
+        {{ 'auth.forgot.sent' | transloco }}
+      </p>
+      <button matButton="text" type="button" data-test="back" (click)="go('passkey')">
+        {{ 'auth.forgot.back' | transloco }}
+      </button>
+    }
+  }
+</sk-auth-card>

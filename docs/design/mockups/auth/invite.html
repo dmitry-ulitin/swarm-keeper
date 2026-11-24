@@ -1,0 +1,86 @@
+<style>
+  .sk { --paper:#f7f4ef; --card:#ffffff; --ink:#1f1b16; --muted:#5c544a; --brand:#2f5d8c; --on-brand:#fff;
+        --brand-c:#d9e6f4; --on-brand-c:#0f2c4a; --border:#d6cec2; --strong:#8f8577; --warn-c:#fbebd0; --on-warn-c:#5c3700;
+        --ok-c:#dcefe2; --on-ok-c:#0f3d22;
+        font-family: Inter, system-ui, sans-serif; color: var(--ink); }
+  .sk .page { background: var(--paper); padding: 24px 12px; display:flex; justify-content:center; border-radius: 8px; }
+  .sk .box { background: var(--card); border:1px solid var(--border); border-radius: 12px; padding: 20px; width: 100%; max-width: 320px; }
+  .sk .logo { display:flex; align-items:center; gap:8px; font-weight:600; font-size:13px; color:var(--muted); margin-bottom:14px; }
+  .sk .dot { width:14px; height:14px; border-radius:50%; background: radial-gradient(circle, #b87a1e 30%, var(--brand) 32%); }
+  .sk h4 { margin:0 0 4px; font-size:18px; font-weight:600; }
+  .sk .sub { margin:0 0 14px; font-size:13px; color:var(--muted); }
+  .sk .btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; box-sizing:border-box; height:36px;
+             border-radius:6px; font-size:13px; font-weight:600; border:none; margin:0 0 8px; }
+  .sk .filled { background: var(--brand); color: var(--on-brand); }
+  .sk .outlined { background: transparent; color: var(--brand); border:1px solid var(--strong); }
+  .sk .text { background: transparent; color: var(--brand); height:auto; padding:4px 0; justify-content:flex-start; font-weight:500; }
+  .sk .field { margin: 0 0 10px; }
+  .sk .field label { display:block; font-size:11px; color:var(--muted); margin-bottom:3px; }
+  .sk .field div { height:32px; border:1px solid var(--strong); border-radius:6px; padding:0 10px; display:flex; align-items:center; font-size:13px; }
+  .sk .field div.ro { background: #efeae2; border-color: var(--border); color: var(--muted); }
+  .sk .hint { font-size:11px; color:var(--muted); text-align:center; margin:-2px 0 10px; }
+  .sk .badge { display:inline-block; font-size:11px; padding:2px 8px; border-radius:4px; background: var(--brand-c); color: var(--on-brand-c); margin-bottom:12px; }
+  .sk .note { border-radius:6px; padding:8px 10px; font-size:12px; margin-bottom:12px; }
+  .sk .warn { background: var(--warn-c); color: var(--on-warn-c); }
+  .sk .ok { background: var(--ok-c); color: var(--on-ok-c); }
+  .sk .lang { display:flex; justify-content:flex-end; font-size:11px; color:var(--muted); margin-top:10px; gap:8px; }
+  .sk .step { font-size:11px; color:var(--muted); margin-bottom:6px; }
+</style>
+
+<h2>Приглашение /invite/:token</h2>
+<p class="subtitle">Страница открывается на языке приглашения. Email берётся из приглашения и не редактируется — иначе ссылка не подтвердит адрес.</p>
+
+<div class="split sk">
+  <div class="mockup"><div class="mockup-header">1. Основной путь — passkey</div><div class="mockup-body"><div class="page"><div class="box">
+    <div class="logo"><span class="dot"></span>Swarm Keeper</div>
+    <h4>Приглашение в семью «Ивановы»</h4>
+    <p class="sub">Анна приглашает вас в общий архив семейных фотографий и документов</p>
+    <span class="badge">Роль: Участник</span>
+    <div class="field"><label>Email</label><div class="ro">valya@example.org</div></div>
+    <div class="field"><label>Как вас зовут</label><div>Бабушка Валя</div></div>
+    <button class="btn filled">🔑 Создать аккаунт с passkey</button>
+    <p class="hint">отпечаток, Face ID или PIN — пароль не нужен</p>
+    <button class="btn text">Создать с паролем →</button>
+    <div class="lang"><span>English</span><b>Русский</b></div>
+  </div></div></div></div>
+
+  <div class="mockup"><div class="mockup-header">2. Запасной путь — пароль</div><div class="mockup-body"><div class="page"><div class="box">
+    <div class="logo"><span class="dot"></span>Swarm Keeper</div>
+    <h4>Приглашение в семью «Ивановы»</h4>
+    <p class="sub">Анна приглашает вас</p>
+    <div class="field"><label>Email</label><div class="ro">valya@example.org</div></div>
+    <div class="field"><label>Как вас зовут</label><div>Бабушка Валя</div></div>
+    <div class="field"><label>Пароль (не меньше 12 символов)</label><div>••••••••••••••</div></div>
+    <button class="btn filled">Создать аккаунт</button>
+    <button class="btn text">← Создать с passkey</button>
+  </div></div></div></div>
+</div>
+
+<div class="split sk" style="margin-top:16px">
+  <div class="mockup"><div class="mockup-header">3. После пароля — предложить passkey</div><div class="mockup-body"><div class="page"><div class="box">
+    <div class="note ok">Аккаунт создан, вы в семье «Ивановы»</div>
+    <h4>Входить без пароля?</h4>
+    <p class="sub">Добавьте passkey — в следующий раз хватит отпечатка или Face ID</p>
+    <button class="btn filled">🔑 Добавить passkey</button>
+    <button class="btn text">Позже</button>
+  </div></div></div></div>
+
+  <div class="mockup"><div class="mockup-header">4. Приглашение истекло или уже принято</div><div class="mockup-body"><div class="page"><div class="box">
+    <div class="logo"><span class="dot"></span>Swarm Keeper</div>
+    <div class="note warn">Ссылка больше не действует</div>
+    <p class="sub">Приглашение истекло или уже использовано. Попросите того, кто вас пригласил, отправить новое.</p>
+    <button class="btn outlined">Войти, если у вас есть аккаунт</button>
+  </div></div></div></div>
+</div>
+
+<h3 style="margin-top:24px">Что важнее решить</h3>
+<div class="options">
+  <div class="option" data-choice="name-required" onclick="toggleSelect(this)">
+    <div class="letter">1</div>
+    <div class="content"><h3>Имя спрашиваем при регистрации</h3><p>Как на макете: «Как вас зовут». Имя видно в семье (кто загрузил, кто пригласил).</p></div>
+  </div>
+  <div class="option" data-choice="name-later" onclick="toggleSelect(this)">
+    <div class="letter">2</div>
+    <div class="content"><h3>Имя не спрашиваем, берём часть email</h3><p>На шаг проще, имя можно поменять позже в настройках.</p></div>
+  </div>
+</div>

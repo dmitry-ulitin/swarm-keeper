@@ -28,7 +28,8 @@
       "@swarm-keeper/feature-people": ["./libs/web/features/people/src/index.ts"],
       "@swarm-keeper/feature-search": ["./libs/web/features/search/src/index.ts"],
       "@swarm-keeper/feature-trash": ["./libs/web/features/trash/src/index.ts"],
-      "@swarm-keeper/feature-settings": ["./libs/web/features/settings/src/index.ts"]
+      "@swarm-keeper/feature-settings": ["./libs/web/features/settings/src/index.ts"],
+      "@swarm-keeper/feature-auth": ["./libs/web/features/auth/src/index.ts"]
     }
   }
 }
