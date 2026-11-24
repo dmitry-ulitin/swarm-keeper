@@ -3,7 +3,13 @@ import 'reflect-metadata';
 import type { INestApplication, Type } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AuthService } from '@thallesp/nestjs-better-auth';
-import { DATABASE, type Database, DatabaseModule } from '../../database/index.js';
+import {
+  DATABASE,
+  type Database,
+  DatabaseModule,
+  createDatabase,
+  databaseOwnerUrl,
+} from '../../database/index.js';
 import type { Auth } from './create-auth.js';
 import { IdentityModule } from './identity.module.js';
 import { MAILER, type Mailer } from './mailer.js';
@@ -23,6 +29,14 @@ export function clientIp(): string {
 export function uniqueEmail(label: string): string {
   counter += 1;
   return `${label}-${Date.now()}-${counter}@example.test`;
+}
+
+/**
+ * A connection as the schema owner (DATABASE_OWNER_URL, the test database), for tests that change
+ * the schema; the application role has no DDL rights. Destroy it when done.
+ */
+export function ownerDatabase(): Database {
+  return createDatabase(databaseOwnerUrl());
 }
 
 export async function startAuthApp(

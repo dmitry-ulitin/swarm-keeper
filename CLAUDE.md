@@ -85,14 +85,16 @@ pnpm infra:check   smoke test; CHECK_PROXY=1 also checks the web dev proxy
 ```
 
 ```
-pnpm db:migrate        apply pending migrations (apps/api/migrations) to DATABASE_URL, the dev database by default
+pnpm db:roles          create the application role swarm_keeper_app (and in development the login swarm_app); once per cluster, as an admin
+pnpm db:migrate        apply pending migrations (apps/api/migrations) as the schema owner (DATABASE_OWNER_URL), the dev database by default
 pnpm db:migrate:down   undo the last migration
 pnpm db:new <name>     create a migration file
-pnpm db:types          regenerate apps/api/src/database/schema.ts from the dev database
+pnpm db:types          regenerate apps/api/src/database/schema.ts from the dev database (as the owner)
 pnpm db:seed           create the first owner and family (SEED_OWNER_EMAIL, SEED_OWNER_PASSWORD, SEED_FAMILY_NAME)
 ```
 
 - Run `pnpm db:types` after every migration and commit `schema.ts`; never edit it by hand.
+- Two database roles: migrations, codegen and test resets run as the schema owner (`DATABASE_OWNER_URL`, the compose superuser `swarm` in dev); the API, worker, `db:seed` and `family:*` connect as `swarm_app`, a login in `swarm_keeper_app`, which is not a superuser and does not bypass RLS (`DATABASE_URL`). `pnpm infra:up` creates the roles. Migrations never create roles, and import nothing from `src` (Node loads them as plain `.ts`). Tests that run DDL use `ownerDatabase()` from the identity testing helpers.
 - Better Auth runs inside the API at `/api/auth/*`; every other route needs a session unless marked `@AllowAnonymous()`. Its settings (`BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `PASSKEY_RP_ID`) have dev defaults only when `NODE_ENV` is `development` or `test` (Vitest sets `test`); run the API and `pnpm db:seed` locally with `NODE_ENV=development`. The API listens on `127.0.0.1` unless `HOST` is set.
 - API tests drop and recreate `swarm_keeper_test` and migrate it, and the email tests read Mailpit, so the infrastructure must be up (`pnpm infra:up`).
 - Auth emails go over SMTP (`SMTP_URL`, `MAIL_FROM`); in development they land in Mailpit at http://127.0.0.1:8025.

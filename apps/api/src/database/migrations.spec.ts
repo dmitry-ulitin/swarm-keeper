@@ -2,12 +2,13 @@ import { sql } from 'kysely';
 import { NO_MIGRATIONS } from 'kysely/migration';
 import { afterAll, describe, expect, it } from 'vitest';
 import { createDatabase } from './create-database.js';
-import { databaseUrl } from './database-url.js';
+import { databaseOwnerUrl } from './database-url.js';
 import { createMigrator } from './migrator.js';
 
 // Runs against swarm_keeper_test, migrated to latest by test/global-setup.ts.
 describe('migrations', () => {
-  const db = createDatabase(databaseUrl());
+  // Migrations are DDL: the schema owner runs them, as `pnpm db:migrate` does.
+  const db = createDatabase(databaseOwnerUrl());
   const migrator = createMigrator(db);
 
   afterAll(() => db.destroy());
