@@ -92,20 +92,22 @@ pnpm db:types          regenerate apps/api/src/database/schema.ts from the dev d
 pnpm db:seed           create the first owner and family (SEED_OWNER_EMAIL, SEED_OWNER_PASSWORD, SEED_FAMILY_NAME)
 ```
 
-```
-pnpm family:create --name <name> --owner-email <email> [--locale en|ru]   new family, owner invitation mailed
-pnpm family:invite-owner --family <slug> [--owner-email <email>]          new owner invitation for a family without an owner
-pnpm family:list                                                          families, owners, members, pending owner invitations
-```
-
-- The `family:*` commands are the operator's tools. The inviter is the operator's own verified account (`OPERATOR_EMAIL` or `--inviter`), and the invitation goes out over SMTP for real.
-
 - Run `pnpm db:types` after every migration and commit `schema.ts`; never edit it by hand.
 - Better Auth runs inside the API at `/api/auth/*`; every other route needs a session unless marked `@AllowAnonymous()`. Its settings (`BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `PASSKEY_RP_ID`) have dev defaults only when `NODE_ENV` is `development` or `test` (Vitest sets `test`); run the API and `pnpm db:seed` locally with `NODE_ENV=development`. The API listens on `127.0.0.1` unless `HOST` is set.
 - API tests drop and recreate `swarm_keeper_test` and migrate it, and the email tests read Mailpit, so the infrastructure must be up (`pnpm infra:up`).
 - Auth emails go over SMTP (`SMTP_URL`, `MAIL_FROM`); in development they land in Mailpit at http://127.0.0.1:8025.
 - Every setting has a dev default (`compose.yaml`, `infra/dev/env.sh`). Copy `.env.example` to `.env` only to override one.
 - `pnpm --filter @swarm-keeper/web start` serves the web app on 4200 and proxies `/api` to the API on 3000, so both share one origin.
+
+Operator commands:
+
+```
+pnpm family:create --name <name> --owner-email <email> [--locale en|ru]   new family, owner invitation mailed
+pnpm family:invite-owner --family <slug> [--owner-email <email>]          new owner invitation for a family without an owner
+pnpm family:list                                                          families, owners, members, pending owner invitations
+```
+
+- The `family:*` commands are the operator's tools. The inviter is the operator's own verified account (`OPERATOR_EMAIL` or `--inviter`), and the invitation goes out over SMTP for real. Locally run them with `NODE_ENV=development`, like `pnpm db:seed`.
 
 ## Invariants (do not break without updating the docs)
 
