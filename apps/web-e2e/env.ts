@@ -2,7 +2,8 @@
 export const API_PORT = 3100;
 export const WEB_PORT = 4300;
 export const BASE_URL = `http://localhost:${WEB_PORT}`;
-export const DATABASE_URL = 'postgres://swarm:swarm@127.0.0.1:5432/swarm_keeper_e2e';
+/** The schema owner, for test support queries; the API itself runs as swarm_app (prepare-api.sh). */
+export const DATABASE_OWNER_URL = 'postgres://swarm:swarm@127.0.0.1:5432/swarm_keeper_e2e';
 
 export const OWNER = {
   email: 'owner@e2e.test',
