@@ -6,6 +6,7 @@ import { AuthService } from '@thallesp/nestjs-better-auth';
 import { DATABASE, type Database, DatabaseModule } from '../../database/index.js';
 import type { Auth } from './create-auth.js';
 import { IdentityModule } from './identity.module.js';
+import { MAILER, type Mailer } from './mailer.js';
 
 let counter = 0;
 
@@ -26,11 +27,16 @@ export function uniqueEmail(label: string): string {
 
 export async function startAuthApp(
   controllers: Type[] = [],
+  options: { mailer?: Mailer } = {},
 ): Promise<{ app: INestApplication; db: Database; auth: Auth }> {
-  const moduleRef = await Test.createTestingModule({
+  let builder = Test.createTestingModule({
     imports: [DatabaseModule, IdentityModule],
     controllers,
-  }).compile();
+  });
+  if (options.mailer) {
+    builder = builder.overrideProvider(MAILER).useValue(options.mailer);
+  }
+  const moduleRef = await builder.compile();
   const app = moduleRef.createNestApplication({ bodyParser: false, logger: false });
   await app.init();
   return {
