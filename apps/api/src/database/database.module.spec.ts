@@ -61,4 +61,9 @@ describe('DatabaseModule', () => {
     await expect(sql`select 1`.execute(db)).rejects.toThrow();
     await app.close();
   });
+
+  it('refuses to start as a superuser outside development', async () => {
+    vi.stubEnv('DATABASE_URL', String(process.env['DATABASE_OWNER_URL']));
+    await expect(start()).rejects.toThrow(/bypasses RLS/);
+  });
 });
