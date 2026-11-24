@@ -91,9 +91,9 @@ Switching the active family resets every feature store and refetches `GET /me`. 
 
 The web app uses Better Auth's httpOnly cookie on the same domain as the API, and takes its UI permission list from `GET /me` — just like the native app.
 
-- **`AuthService` (core)** wraps `createAuthClient` from `better-auth/client` and holds the `session`, `activeFamily` and `permissions` signals.
-- **`canMatch` guards:** `authGuard` (has a session), `familyGuard` (a family is selected), `permissionGuard('member', 'create')` for admin pages.
-- **The `*appCan="['asset', 'delete']"` directive** hides buttons based on the permission list from `/me`. For "own" items (editing your own photo) it also takes an `ownerId`.
+- **`AuthService` (core)** wraps `createAuthClient` from `better-auth/client` (behind the `AUTH_CLIENT` port) and holds signals from `GET /me`: `signedIn`, `user`, `families`, `activeFamily`, `role`, `permissions`, `twoFactorRequired`. After sign-in it applies the member's `locale` and `uiSize`. `safeReturnUrl` keeps `returnUrl` on our own origin.
+- **`canMatch` guards:** `authGuard` (has a session), `guestGuard` (no session: `/login`, `/reset-password`), `familyGuard` (a family is selected), `permissionGuard('member', 'create')` for admin pages.
+- **The `*skCan="['asset', 'delete']"` directive** (`CanDirective`, `libs/web/core`; `sk` is the project prefix) hides buttons based on the permission list from `/me`. For "own" items (editing your own photo) it also takes `skCanOwnerId`, used once "own item" statements exist.
 - **HTTP interceptor:** on 401 it goes to `/login` and remembers where the user was heading; 403 shows a clear message rather than a "server error"; the `TWO_FACTOR_REQUIRED` code leads to `/settings/security` for 2FA setup.
 
 | Route | What's there | Access |
