@@ -14,6 +14,11 @@ const DAY = 60 * 60 * 24;
 
 type Mapping = Record<string, ModelMapping | undefined>;
 
+/** `locale` is our additional field on users and invitations; Better Auth's types omit it. */
+function localeOf(record: object): string {
+  return String((record as { locale?: unknown }).locale ?? 'en');
+}
+
 /** The options as `authentication.md` specifies them, with an optional snake_case mapping. */
 function buildOptions(env: AuthEnv, mailer: Mailer, map: Mapping) {
   return {
@@ -38,12 +43,14 @@ function buildOptions(env: AuthEnv, mailer: Mailer, map: Mapping) {
       enabled: true,
       requireEmailVerification: true,
       minPasswordLength: 12,
-      sendResetPassword: ({ user, url }) => mailer.resetPassword({ email: user.email, url }),
+      sendResetPassword: ({ user, url }) =>
+        mailer.resetPassword({ email: user.email, url, locale: localeOf(user) }),
     },
     emailVerification: {
       sendOnSignUp: false, // the invitation link verifies the email on sign-up
       autoSignInAfterVerification: true,
-      sendVerificationEmail: ({ user, url }) => mailer.verifyEmail({ email: user.email, url }),
+      sendVerificationEmail: ({ user, url }) =>
+        mailer.verifyEmail({ email: user.email, url, locale: localeOf(user) }),
     },
 
     rateLimit: { ...map['rateLimit'], enabled: true, storage: 'database' },
@@ -65,7 +72,10 @@ function buildOptions(env: AuthEnv, mailer: Mailer, map: Mapping) {
           await mailer.invitation({
             email: data.email,
             url: `${env.baseURL}/invite/${data.id}`,
-            locale: String((data.invitation as { locale?: string }).locale ?? 'en'),
+            locale: localeOf(data.invitation),
+            inviterName: data.inviter.user.name,
+            familyName: data.organization.name,
+            expiresAt: new Date(data.invitation.expiresAt),
           });
         },
         schema: {

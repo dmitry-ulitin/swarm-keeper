@@ -3,12 +3,15 @@ import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { DATABASE, type Database } from '../../database/index.js';
 import { authEnv } from './auth-env.js';
 import { createAuth } from './create-auth.js';
-import { LoggingMailer, MAILER, type Mailer } from './mailer.js';
+import { MailModule } from '../mail/index.js';
+import { MAILER, type Mailer } from './mailer.js';
 import { MeController } from './me.controller.js';
+import { SmtpMailer } from './smtp-mailer.js';
 
-/** Mailer for auth emails; step 4 replaces the logging one with SMTP. */
+/** Auth emails over SMTP (Mailpit in development). */
 @Module({
-  providers: [{ provide: MAILER, useClass: LoggingMailer }],
+  imports: [MailModule],
+  providers: [{ provide: MAILER, useClass: SmtpMailer }],
   exports: [MAILER],
 })
 class MailerModule {}

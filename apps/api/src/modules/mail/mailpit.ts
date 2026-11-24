@@ -20,7 +20,7 @@ async function getJson<T>(path: string): Promise<T> {
 }
 
 /** The newest message addressed to `address`; polls until it arrives or the timeout passes. */
-export async function latestMailTo(address: string, timeoutMs = 5000): Promise<ReceivedMail> {
+export async function latestMailTo(address: string, timeoutMs = 3000): Promise<ReceivedMail> {
   const deadline = Date.now() + timeoutMs;
   const query = encodeURIComponent(`to:"${address}"`);
   for (;;) {
