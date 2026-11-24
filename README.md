@@ -2,7 +2,7 @@
 
 # Swarm Keeper
 
-A self-hosted family archive: photos, videos and documents in one place, with access for the whole family.
+A family archive you run yourself: photos, videos and documents in one place, with access for the whole family. One installation serves several families, on your own server or in the cloud.
 
 - **Families and roles.** Invite-only sign-up and passkeys. Roles are owner, admin, member and viewer; one person can belong to several families.
 - **Photo timeline.** A justified timeline with albums, people and personal favorites.
@@ -30,7 +30,7 @@ A self-hosted family archive: photos, videos and documents in one place, with ac
 | Media processing | sharp, ffmpeg, exiftool, ocrmypdf |
 | Authentication | Better Auth (passkeys, 2FA, organizations) |
 | Web | Angular 22, Angular Material (M3), NgRx SignalStore, Transloco |
-| Deployment | Docker Compose, Caddy |
+| Deployment | Undecided: the apps run anywhere Node, PostgreSQL and S3-compatible storage do |
 | Monorepo | pnpm workspaces |
 
 ## License

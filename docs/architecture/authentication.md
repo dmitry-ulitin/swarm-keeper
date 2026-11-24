@@ -76,7 +76,7 @@ Sign-up is by invitation only. The primary sign-in method is a passkey; a passwo
 
 **How a new member joins:**
 
-1. The first owner and family are created once by a seed script at deployment.
+1. `pnpm db:seed` creates the first owner and family once per installation. Every other family is created by the operator with `pnpm family:create`, which creates the family without members and mails an owner invitation; the owner then joins through the steps below like any invitee (see "Operator").
 2. An owner or admin invites a person by email with a role; the email contains a link.
 3. The invitee opens the link (`/invite/:token`, which reads `GET /api/v1/invitations/:id` without a session) and creates an account for the invited email address, with a passkey (primary) or a password (fallback). Following the link counts as email verification: the account is created with `emailVerified: true` only for a pending invitation whose email matches. There is no second email.
    - **Passkey, no password.** The passkey plugin runs with `registration.requireSession: false`. The client sends `context` = `{ invitation, name, locale }`. `resolveUser` checks that the invitation is pending and that its email has no account. `afterVerification` runs inside Better Auth's registration transaction (`createSession: true`; transactions are on: `database.transaction: true`): it creates the user through the internal adapter, so the user hooks run, inserts the membership and marks the invitation accepted. If storing the passkey or the session fails, all of it rolls back. A signed-in user may add a passkey only from a fresh session (younger than `freshAge`, 1 day): `requireSession: false` drops the plugin's own fresh-session check, so `afterVerification` keeps it (`SESSION_NOT_FRESH`). Then the plugin signs in. No `credential` account exists, so the 2FA rule for owners and admins does not apply. Code: `apps/api/src/modules/identity/passkey-sign-up.ts`.
@@ -101,6 +101,18 @@ Sign-up without an invitation is rejected by the `user.create.before` hook: if t
 **Email delivery.** The API sends over SMTP (`SMTP_URL`, `MAIL_FROM`; module `apps/api/src/modules/mail`), so any provider with SMTP fits; which one runs in production is still open. In development every email lands in Mailpit (`compose.yaml`, web UI at http://127.0.0.1:8025). Verification and reset emails are sent without awaiting SMTP, so the response time does not reveal whether an account exists. Better Auth 1.7.27 catches a failed invitation send and only logs it: the invitation is still created and `invite-member` answers 200, so the admin UI (step 6) must offer "resend".
 
 **Account recovery.** Forgot the password — reset by email. Owners and admins with 2FA who lost their phone sign in with backup codes. With access to neither the passkey nor the mailbox, an admin or owner sends a recovery link to a new address: the account's email changes, old passkeys and sessions are revoked, files and role are kept, and the event goes to the activity log. If the only owner loses access, recovery is done with a server-side script, like the initial setup.
+
+## Operator
+
+The operator is the person who runs the installation; one installation serves several families. The operator works from the command line (`apps/api/src/family.ts`, logic in `apps/api/src/modules/identity/family-operator.ts`):
+
+- `pnpm family:create` creates a family and a pending invitation with role `owner` (7 days, the operator's chosen language), and mails it. The rows are committed before the email goes out; if sending fails, the command reports `INVITATION_NOT_SENT` and the family stays.
+- `pnpm family:invite-owner` cancels the family's pending owner invitations and mails a new one. It refuses once the family has an owner: from then on the family's owners and admins invite people themselves.
+- `pnpm family:list` shows every family with its owners, member count and pending owner invitation.
+
+The inviter on these invitations is the operator's own account (`OPERATOR_EMAIL` or `--inviter`), which must exist with a verified email. The operator never sets anyone's password, and the owner's email is verified only by the invitation link. Regular users still cannot create families (`allowUserToCreateOrganization: false`).
+
+Encryption is server-side (SSE), not end to end, so the operator has technical access to every family's data; the families have to trust them. Operator actions will be written to `audit_event` once that table exists.
 
 ## Roles and permissions
 
@@ -132,7 +144,7 @@ The web app uses an httpOnly cookie, the mobile app a bearer token. Both lead to
 
 **Angular (web).**
 
-- The API and the frontend are served from the same domain via Caddy, so cookies work without CORS and with `SameSite=Lax`.
+- The API and the frontend are served from the same domain via the reverse proxy, so cookies work without CORS and with `SameSite=Lax`.
 - `createAuthClient` from `better-auth/client` (framework-agnostic) is wrapped in an `AuthService` with signals for the session and the active family.
 - The token never reaches JavaScript and is never stored in localStorage.
 
@@ -290,7 +302,7 @@ In 2026 vulnerabilities were found in Better Auth regularly and fixed quickly. N
 | [CVE-2026-53514](https://advisories.gitlab.com/npm/better-auth/CVE-2026-53514/) | An organization invitation could be accepted from an unverified address by pre-registering someone else's email | `requireEmailVerification: true`; invitations can be accepted only from a verified address, and following the link from the invitation email counts as verification when the emails match |
 | [CVE-2026-53516](https://advisories.gitlab.com/npm/better-auth/CVE-2026-53516/) | A victim's OAuth account could be linked to a record pre-created by the attacker | Google/Apple sign-in stays off |
 | [CVE-2026-67337](https://www.rapid7.com/db/vulnerabilities/cve-2026-67337/) | Before 1.4.9, with `cookieCache` enabled, the second factor could be bypassed | `cookieCache` stays off unless needed |
-| [CVE-2026-45364](https://advisories.gitlab.com/npm/better-auth/CVE-2026-45364/) | Rate limiting could be bypassed by rotating IPv6 addresses within a /64 | A second rate-limit layer in Caddy for `/api/auth/*` |
+| [CVE-2026-45364](https://advisories.gitlab.com/npm/better-auth/CVE-2026-45364/) | Rate limiting could be bypassed by rotating IPv6 addresses within a /64 | A second rate-limit layer in the reverse proxy for `/api/auth/*` |
 | [CVE-2025-61928](https://advisories.gitlab.com/npm/better-auth/CVE-2025-61928/) | The api-key plugin allowed creating a key for any user without authentication | No plugins enabled "for the future" |
 
 **Process:**

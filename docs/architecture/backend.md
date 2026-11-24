@@ -69,7 +69,7 @@ Columns are snake_case in the database; code sees them as camelCase through Kyse
 | `user`, `session`, `account`, `organization`, `member`, `invitation` | Better Auth tables; `session.activeOrganizationId`, `member.role`; our fields `user.locale`, `user.uiSize`, `invitation.locale`, `invitation.uiSize` | Users, sessions, families (organizations), roles owner / admin / member / viewer, interface language and size |
 | `person` | name, optional link to `user` | A family member, not necessarily a user (grandma, great-grandfather, a child); also useful for a future family tree |
 | `blob` | `sha256`, `size`, `mime`, `width`, `height`, `duration` | File bytes, stored once per family; width and height drive the timeline layout |
-| `blob_derivative` | type (`thumb_256`, `thumb_512`, `preview_1440`, `video_720`), storage key, dimensions | Previews and transcodes |
+| `blob_derivative` | type (`thumb_256`, `thumb_512`, `preview_1440`, `video_720`), storage key, `size`, dimensions | Previews and transcodes |
 | `asset` | `owner_id`, `blob_id`, `kind` (photo / video / document), `original_name`, `taken_at_local`, `taken_at_offset`, `status`, `visibility` (private / family), `updated_at`, `deleted_at` | One owner's record of a file |
 | `photo_meta` | camera, GPS, orientation | Photo metadata |
 | `document_meta` | `type` (code from a fixed list: `passport`, `birth_certificate`…), number, issued by, expiry date, extracted text | Document metadata and OCR search; clients translate the type name |
@@ -79,6 +79,8 @@ Columns are snake_case in the database; code sees them as camelCase through Kyse
 | `tombstone` | `family_id`, `entity`, `entity_id`, `deleted_at` | Permanent deletions, for native client sync |
 
 Synced tables (`asset`, `album`, `album_asset`, `person`, `favorite`…) carry `updated_at`, and a permanent deletion leaves a row in `tombstone`. `taken_at_local` and `taken_at_offset` are stored separately because EXIF often has no time zone (section 7).
+
+**Storage usage.** A family's usage is `sum(blob.size)` plus `sum(blob_derivative.size)` over its rows. Each stored object is counted once, so the figure matches what the bucket holds: deduplicated bytes, and items in the trash until they are purged. Derivatives are reported as a separate figure, since they can be regenerated. Both tables are indexed on `family_id`. A `SUM` query is enough for a few families; when quotas arrive, a per-family counter is kept in the same transaction as blob inserts and deletes.
 
 ## 6. Access and security
 
@@ -92,7 +94,7 @@ Synced tables (`asset`, `album`, `album_asset`, `person`, `favorite`…) carry `
 ## 7. Decide now (expensive to change later)
 
 1. **Encryption: server-side now, E2E later.** This is the main fork. With E2E the server can't build previews, run OCR or search; everything moves to the client and the architecture is completely different. Decided November 21, 2026: server-side encryption (SSE) plus encrypted backups; E2E later only for a separate "vault" category (passports and similar).
-2. **Multi-tenancy via `family_id`** from day one, even while there is only one family.
+2. **Multi-tenancy via `family_id`** from day one: one installation serves several families, created by the operator (see [authentication.md](authentication.md), "Operator").
 3. **UUIDv7** IDs: time-sortable and generated on the client for offline uploads.
 4. **Capture time.** EXIF often lacks a time zone, so store local time and offset separately, not just a `timestamptz`.
 5. **Open export format:** originals plus JSON or XMP sidecars with metadata. The archive must outlive the app.
@@ -111,7 +113,7 @@ Not needed at the start: microservices, Kubernetes, Elasticsearch (PostgreSQL fu
 | Files | S3-compatible storage |
 | Processing | sharp, ffmpeg, exiftool, ocrmypdf |
 | Authentication | Better Auth (passkeys, 2FA, organizations) |
-| Proxy and deployment | Caddy, Docker Compose |
+| Proxy and deployment | Undecided (any reverse proxy that overwrites `x-forwarded-for`) |
 | Client | Angular with a typed client generated from OpenAPI |
 | Monorepo | pnpm workspaces |
 
@@ -124,7 +126,7 @@ There are two clients: the Angular web app and a separate native app with auto-u
 3. **`GET /me`.** Returns the user (with `locale` and `uiSize`), their families, the active family, and their role and effective permissions in it. Both clients show buttons based on this list; the server still checks against the matrix in `libs/shared/permissions`.
 4. **Upload protocol** (section 3) is defined in the API and identical for both clients. Each multipart part uploads independently so the native app can hand it to a system background task (background `URLSession`, WorkManager).
 5. **Sync.** `GET /sync?cursor=…` returns changes after the cursor and a new cursor. Synced tables therefore have `updated_at` (or a monotonic change counter), and deletions leave tombstones. This goes into the schema from the start.
-6. **Authentication.** Web — cookie, native — bearer token. For passkeys in the native app, Caddy serves `/.well-known/apple-app-site-association` and `/.well-known/assetlinks.json`.
+6. **Authentication.** Web — cookie, native — bearer token. For passkeys in the native app, the reverse proxy serves `/.well-known/apple-app-site-association` and `/.well-known/assetlinks.json`.
 7. **Previews via stable URLs.** `GET /assets/:id/thumb?size=256|512` and `/preview` check permissions and respond with a 302 redirect to a short-lived presigned URL, so clients don't depend on URL expiry.
 8. **Timeline summary.** `GET /timeline/summary` returns photo and video counts per month, so the year scrubber in the timeline is accurate before all pages load.
 
