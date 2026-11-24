@@ -1,3 +1,4 @@
+import { getCurrentAdapter } from 'better-auth';
 import { isFamilyRole } from '@swarm-keeper/permissions';
 import type { BetterAuthOptions } from 'better-auth';
 import { APIError, createAuthMiddleware } from 'better-auth/api';
@@ -77,26 +78,53 @@ export function organizationHooks(db: Database, lookupSession: SessionLookup) {
   });
 }
 
+/**
+ * The user's first family by join date. Inside a Better Auth request it reads through the
+ * current adapter, so it sees a membership written earlier in the same transaction (passkey
+ * sign-up); elsewhere it uses our pool.
+ */
+async function firstFamilyId(
+  db: Database,
+  userId: string,
+  ctx: unknown,
+): Promise<string | undefined> {
+  const adapter = (
+    ctx as { context?: { adapter?: Parameters<typeof getCurrentAdapter>[0] } } | null
+  )?.context?.adapter;
+  if (adapter) {
+    const current = await getCurrentAdapter(adapter);
+    const [first] = await current.findMany<{ organizationId: string }>({
+      model: 'member',
+      where: [{ field: 'userId', value: userId }],
+      sortBy: { field: 'createdAt', direction: 'asc' },
+      limit: 1,
+    });
+    return first?.organizationId;
+  }
+  const first = await db
+    .selectFrom('member')
+    .select('organizationId')
+    .where('userId', '=', userId)
+    .orderBy('createdAt')
+    .limit(1)
+    .executeTakeFirst();
+  return first?.organizationId;
+}
+
 /** A new session starts in the user's first family (by join date) when none is chosen. */
 export function activeFamilyHooks(db: Database): NonNullable<BetterAuthOptions['databaseHooks']> {
   return {
     session: {
       create: {
-        before: async (session) => {
+        before: async (session, ctx) => {
           if (session['activeOrganizationId']) {
             return;
           }
-          const first = await db
-            .selectFrom('member')
-            .select('organizationId')
-            .where('userId', '=', session.userId)
-            .orderBy('createdAt')
-            .limit(1)
-            .executeTakeFirst();
-          if (!first) {
+          const familyId = await firstFamilyId(db, session.userId, ctx);
+          if (!familyId) {
             return;
           }
-          return { data: { ...session, activeOrganizationId: first.organizationId } };
+          return { data: { ...session, activeOrganizationId: familyId } };
         },
       },
     },

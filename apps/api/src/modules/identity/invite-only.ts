@@ -93,7 +93,7 @@ export function inviteOnlyHooks(db: Database): NonNullable<BetterAuthOptions['da
           };
         },
         after: async (user, ctx) => {
-          // A passkey sign-up writes the membership in its own transaction.
+          // A passkey sign-up writes the membership itself, in the registration transaction.
           if (passkeySignUpOf(ctx)) {
             return;
           }

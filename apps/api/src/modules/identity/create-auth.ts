@@ -132,7 +132,8 @@ export function createAuth(db: Database, env: AuthEnv, mailer: Mailer) {
   let lookupSession: SessionLookup = async () => null;
   const auth = betterAuth({
     ...authOptions(env, mailer, db),
-    database: { db: db.withoutPlugins(), type: 'postgres' },
+    // Transactions on: a passkey sign-up writes the user, membership and passkey atomically.
+    database: { db: db.withoutPlugins(), type: 'postgres', transaction: true },
     databaseHooks: { ...inviteOnlyHooks(db), ...activeFamilyHooks(db) },
     hooks: { before: organizationHooks(db, (headers) => lookupSession(headers)) },
   });

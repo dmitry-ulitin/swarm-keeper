@@ -6,6 +6,7 @@ import { normalizeLocale } from './invitations.controller.js';
 import { INVITE_REQUIRED, findPendingInvitationById } from './invite-only.js';
 
 export const NAME_REQUIRED = 'NAME_REQUIRED';
+export const SESSION_NOT_FRESH = 'SESSION_NOT_FRESH';
 
 type Registration = NonNullable<PasskeyOptions['registration']>;
 
@@ -68,7 +69,17 @@ export function passkeySignUp(db: Database): Registration {
       return { id: invitation.id, name: invitation.email, displayName: name };
     },
     afterVerification: async ({ ctx, context }) => {
-      if (ctx.context.session?.user?.id) return;
+      const session = ctx.context.session;
+      if (session?.user?.id) {
+        // requireSession: false also drops the plugin's fresh-session middleware; keep the rule:
+        // only a recent sign-in may add a passkey, so a stolen old session cannot plant one.
+        const freshAge = ctx.context.sessionConfig.freshAge;
+        const createdAt = new Date(session.session.createdAt).getTime();
+        if (freshAge > 0 && Date.now() - createdAt > freshAge * 1000) {
+          throw new APIError('FORBIDDEN', { code: SESSION_NOT_FRESH, message: SESSION_NOT_FRESH });
+        }
+        return;
+      }
       // createSession makes Better Auth run this inside its registration transaction.
       if ((ctx.body as { createSession?: unknown } | undefined)?.createSession !== true) {
         throw rejected(INVITE_REQUIRED);

@@ -1,4 +1,5 @@
 import { Controller, type INestApplication, Post } from '@nestjs/common';
+import { sql } from 'kysely';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { Database } from '../../database/index.js';
@@ -189,6 +190,60 @@ describe('passkey-first sign-up from an invitation', () => {
       .where('userId', '=', users[0]!.id)
       .execute();
     expect(members).toHaveLength(1);
+  });
+
+  it('leaves nothing behind when the passkey cannot be stored', async () => {
+    // A trigger makes the passkey insert fail after the user and membership are written.
+    await sql`create or replace function fail_test_passkey() returns trigger language plpgsql as $$
+      begin if new.name = 'fail-on-insert' then raise exception 'test failure'; end if; return new; end $$`.execute(
+      db,
+    );
+    await sql`create trigger fail_test_passkey before insert on passkey for each row execute function fail_test_passkey()`.execute(
+      db,
+    );
+    try {
+      const email = uniqueEmail('atomic');
+      const invitation = await invite({ email });
+      const { verified } = await registerWithPasskey(
+        app,
+        { invitation: invitation.id, name: 'Атомарно' },
+        { passkeyName: 'fail-on-insert' },
+      );
+      expect(verified?.status).toBeGreaterThanOrEqual(400);
+      expect(await userByEmail(email)).toEqual([]);
+      const row = await db
+        .selectFrom('invitation')
+        .select('status')
+        .where('id', '=', invitation.id)
+        .executeTakeFirst();
+      expect(row?.status).toBe('pending');
+    } finally {
+      await sql`drop trigger if exists fail_test_passkey on passkey`.execute(db);
+      await sql`drop function if exists fail_test_passkey()`.execute(db);
+    }
+  });
+
+  it('refuses a passkey from a session that is not fresh', async () => {
+    const user = await createUser(db, uniqueEmail('stale'));
+    const bearer = await sessionFor(auth, db, user.id, null);
+    await db
+      .updateTable('session')
+      .set({ createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) })
+      .where('userId', '=', user.id)
+      .execute();
+    const { generated, verified } = await registerWithPasskey(app, undefined, {
+      bearer,
+      createSession: false,
+    });
+    const status = verified?.status ?? generated.status;
+    expect(status).toBe(403);
+    expect((verified ?? generated).body.code).toBe('SESSION_NOT_FRESH');
+    const passkeys = await db
+      .selectFrom('passkey')
+      .select('id')
+      .where('userId', '=', user.id)
+      .execute();
+    expect(passkeys).toEqual([]);
   });
 
   it('lets a signed-in user add a passkey for themselves', async () => {

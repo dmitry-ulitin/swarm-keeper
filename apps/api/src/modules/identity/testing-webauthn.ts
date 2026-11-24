@@ -91,7 +91,7 @@ export function createCredential(
 export async function registerWithPasskey(
   app: INestApplication,
   context: unknown,
-  options: { bearer?: string; createSession?: boolean } = {},
+  options: { bearer?: string; createSession?: boolean; passkeyName?: string } = {},
 ) {
   const agent = request.agent(app.getHttpServer());
   const ip = clientIp();
@@ -108,7 +108,11 @@ export async function registerWithPasskey(
     .post('/api/auth/passkey/verify-registration')
     .set('x-forwarded-for', ip)
     .set('origin', new URL(authEnv().baseURL).origin)
-    .send({ response, createSession: options.createSession ?? true });
+    .send({
+      response,
+      createSession: options.createSession ?? true,
+      ...(options.passkeyName ? { name: options.passkeyName } : {}),
+    });
   if (options.bearer) verify = verify.set('Authorization', options.bearer);
   const verified = await verify;
   const token = verified.headers['set-auth-token'] as string | undefined;
