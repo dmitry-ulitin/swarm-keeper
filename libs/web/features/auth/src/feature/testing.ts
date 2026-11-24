@@ -76,6 +76,7 @@ export const ME: MeResponse = {
     locale: 'ru',
     uiSize: 'compact',
     twoFactorEnabled: false,
+    hasPassword: true,
   },
   families: [{ id: 'f1', name: 'Ивановы', role: 'admin' }],
   activeFamilyId: 'f1',

@@ -1,5 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, UrlTree, provideRouter } from '@angular/router';
 import { describe, expect, it } from 'vitest';
@@ -51,5 +52,40 @@ describe('guards', () => {
   it('sends a signed-in user away from /login', async () => {
     const result = await run(guestGuard, '/login', ME);
     expect(TestBed.inject(Router).serializeUrl(result as UrlTree)).toBe('/');
+  });
+
+  describe('guestGuard with a return url', () => {
+    @Component({ template: '' })
+    class Blank {}
+
+    async function navigate(url: string) {
+      TestBed.configureTestingModule({
+        providers: [
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          provideRouter([
+            { path: 'login', canMatch: [guestGuard], component: Blank },
+            { path: 'settings/security', component: Blank },
+            { path: '', component: Blank },
+          ]),
+          { provide: AUTH_CLIENT, useValue: fakeClient() },
+        ],
+      });
+      const http = TestBed.inject(HttpTestingController);
+      const router = TestBed.inject(Router);
+      const done = router.navigateByUrl(url);
+      await new Promise((resolve) => setTimeout(resolve));
+      http.expectOne('/api/v1/me').flush(ME);
+      await done;
+      return router.url;
+    }
+
+    it('sends a signed-in user to the safe return url', async () => {
+      expect(await navigate('/login?returnUrl=%2Fsettings%2Fsecurity')).toBe('/settings/security');
+    });
+
+    it('ignores an off-site return url', async () => {
+      expect(await navigate('/login?returnUrl=%2F%2Fevil.example')).toBe('/');
+    });
   });
 });

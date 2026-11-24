@@ -10,6 +10,7 @@ export const ME: MeResponse = {
     locale: 'ru',
     uiSize: 'large',
     twoFactorEnabled: false,
+    hasPassword: true,
   },
   families: [{ id: 'f1', name: 'Ивановы', role: 'admin' }],
   activeFamilyId: 'f1',
@@ -25,12 +26,42 @@ export function fakeClient(overrides: Partial<Record<string, unknown>> = {}): Au
   return {
     signIn: { passkey: () => ok({}), email: () => ok({}) },
     signUp: { email: () => ok({}) },
-    twoFactor: { verifyTotp: () => ok({}), verifyBackupCode: () => ok({}) },
-    passkey: { addPasskey: () => ok({}) },
-    organization: { acceptInvitation: () => ok({}), setActive: () => ok({}) },
+    twoFactor: twoFactor(),
+    passkey: {
+      addPasskey: () => ok({}),
+      listUserPasskeys: () => ok([]),
+      updatePasskey: () => ok({}),
+      deletePasskey: () => ok({}),
+    },
+    organization: organization(),
     requestPasswordReset: () => ok({}),
     resetPassword: () => ok({}),
     signOut: () => ok({}),
     ...overrides,
   } as AuthClientPort;
+}
+
+/** The organization part of the fake client, with overrides. */
+export function organization(overrides: Record<string, unknown> = {}) {
+  return {
+    acceptInvitation: () => ok({}),
+    setActive: () => ok({}),
+    listMembers: () => ok({ members: [], total: 0 }),
+    listInvitations: () => ok([]),
+    inviteMember: () => ok({}),
+    cancelInvitation: () => ok({}),
+    ...overrides,
+  };
+}
+
+/** The twoFactor part of the fake client, with overrides. */
+export function twoFactor(overrides: Record<string, unknown> = {}) {
+  return {
+    verifyTotp: () => ok({}),
+    verifyBackupCode: () => ok({}),
+    enable: () => ok({ totpURI: 'otpauth://totp/x?secret=JBSWY3DPEHPK3PXP', backupCodes: [] }),
+    generateBackupCodes: () => ok({ backupCodes: [] }),
+    disable: () => ok({}),
+    ...overrides,
+  };
 }
