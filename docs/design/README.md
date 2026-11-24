@@ -63,7 +63,9 @@ The palette is warm and "papery": background `surface-100`, cards `surface-000`,
 
 ## Typography
 
-One typeface — **Inter** (Google Fonts, weights 400/500/600, with Cyrillic) for the whole interface; **JetBrains Mono** only for hashes and recovery codes (the `code` style). Compact-mode scale: `display` 24, `title-lg` 18, `title` 15, `body` 13, `body-strong` 13/600, `label` 12/500, `caption` 11. In large mode these map to the `large-` styles (32, 24, 19, 17, 17, 16, 15).
+One typeface — **Inter** (weights 400/500/600, with Cyrillic) for the whole interface; **JetBrains Mono** only for hashes and recovery codes (the `code` style). Compact-mode scale: `display` 24, `title-lg` 18, `title` 15, `body` 13, `body-strong` 13/600, `label` 12/500, `caption` 11. In large mode these map to the `large-` styles (32, 24, 19, 17, 17, 16, 15).
+
+Fonts are bundled with the app (`@fontsource/inter`, `@fontsource/jetbrains-mono`), never loaded from Google Fonts or another CDN: a family archive makes no requests to third parties.
 
 - `caption` is only for metadata (date, size, duration) and only in `ink-muted` or darker.
 - Headings use sentence case: "Family documents", not "Family Documents".
@@ -96,7 +98,7 @@ Interface size is a personal member setting ("Settings → Appearance"). It is s
 
 html {
   @include mat.theme((
-    color: (theme-type: light dark),
+    color: (theme-type: color-scheme),
     typography: (plain-family: 'Inter', brand-family: 'Inter'),
     density: -3,
   ));
@@ -104,6 +106,7 @@ html {
 
 html[data-size='large'] {
   @include mat.theme((density: 0));
+  @include mat.theme-overrides($overrides); // mat.theme re-emits the shape tokens
   font-size: 17px;
 }
 ```
@@ -136,7 +139,7 @@ The "Swarm family" mark: six dots of different sizes around an amber center. The
 
 ## Icons
 
-Material Symbols Rounded (outline, weight 400, no fill) via `mat-icon` with `fontSet`. Size — `icon-size` or `icon-size-large` depending on the mode; color inherits from text. Icon buttons always have an `aria-label`. Fill is allowed only for "favorite" (the `accent` star) and the selection check mark. The previews draw icons as simplified strokes in the same style.
+Material Symbols Rounded (outline, weight 400, no fill) via `mat-icon` with `fontSet`, bundled from the `material-symbols` package (no CDN). Size — `icon-size` or `icon-size-large` depending on the mode; color inherits from text. Icon buttons always have an `aria-label`. Fill is allowed only for "favorite" (the `accent` star) and the selection check mark. The previews draw icons as simplified strokes in the same style.
 
 ## Accessibility
 
@@ -148,7 +151,7 @@ Material Symbols Rounded (outline, weight 400, no fill) via `mat-icon` with `fon
 
 ## Mapping to Angular Material
 
-The tokens are fed into the M3 system variables (`--mat-sys-*`) via `mat.theme-overrides`:
+The tokens are fed into the M3 system variables (`--mat-sys-*`) via `mat.theme-overrides` (`apps/web/src/styles.scss`). Every M3 color role is overridden, not only the rows below: the `secondary` family maps to `brand` / `brand-container` (M3 tonal buttons use `secondary-container`), the `*-fixed` roles to the matching containers, and the remaining surfaces to the nearest `surface-*`. `apps/web/scripts/check-styles.mjs` fails the build check if a role is left on Material's palette:
 
 | Material | Token |
 | --- | --- |

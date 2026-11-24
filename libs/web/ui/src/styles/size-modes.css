@@ -1,0 +1,38 @@
+/* Size-mode variables for our own components, as in docs/design/components/bundle.css.
+   Compact is the default; html[data-size="large"] (or a container) switches to large.
+   Values come only from tokens. */
+
+:root,
+[data-size='compact'] {
+  --fa-control-h: var(--control-height);
+  --fa-row-h: var(--row-height);
+  --fa-icon: var(--icon-size);
+  --fa-tile: var(--tile-size);
+  --fa-pad-x: var(--space-3);
+  --fa-gap: var(--space-2);
+  --fa-fs-title: var(--type-title-size);
+  --fa-lh-title: var(--type-title-line-height);
+  --fa-fs-body: var(--type-body-size);
+  --fa-lh-body: var(--type-body-line-height);
+  --fa-fs-label: var(--type-label-size);
+  --fa-lh-label: var(--type-label-line-height);
+  --fa-fs-caption: var(--type-caption-size);
+  --fa-lh-caption: var(--type-caption-line-height);
+}
+
+[data-size='large'] {
+  --fa-control-h: var(--control-height-large);
+  --fa-row-h: var(--row-height-large);
+  --fa-icon: var(--icon-size-large);
+  --fa-tile: var(--tile-size-large);
+  --fa-pad-x: var(--space-5);
+  --fa-gap: var(--space-3);
+  --fa-fs-title: var(--type-large-title-size);
+  --fa-lh-title: var(--type-large-title-line-height);
+  --fa-fs-body: var(--type-large-body-size);
+  --fa-lh-body: var(--type-large-body-line-height);
+  --fa-fs-label: var(--type-large-label-size);
+  --fa-lh-label: var(--type-large-label-line-height);
+  --fa-fs-caption: var(--type-large-caption-size);
+  --fa-lh-caption: var(--type-large-caption-line-height);
+}
