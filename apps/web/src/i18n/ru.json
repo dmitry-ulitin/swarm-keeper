@@ -18,5 +18,12 @@
       "PASSKEY_CANCELLED": "Passkey не использован. Попробуйте ещё раз или войдите по паролю",
       "UNKNOWN": "Что-то пошло не так. Попробуйте ещё раз"
     }
+  },
+  "shell": {
+    "appName": "Swarm Keeper",
+    "userMenu": "Меню аккаунта",
+    "security": "Безопасность",
+    "members": "Участники",
+    "signOut": "Выйти"
   }
 }

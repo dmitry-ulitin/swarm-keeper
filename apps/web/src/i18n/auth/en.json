@@ -44,8 +44,7 @@
   },
   "home": {
     "signedIn": "You are in the family “{family}”",
-    "noFamily": "You are signed in",
-    "signOut": "Sign out"
+    "noFamily": "You are signed in"
   },
   "invite": {
     "title": "Invitation to the family “{family}”",

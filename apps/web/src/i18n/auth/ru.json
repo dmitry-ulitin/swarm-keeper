@@ -44,8 +44,7 @@
   },
   "home": {
     "signedIn": "Вы в семье «{family}»",
-    "noFamily": "Вы вошли",
-    "signOut": "Выйти"
+    "noFamily": "Вы вошли"
   },
   "invite": {
     "title": "Приглашение в семью «{family}»",

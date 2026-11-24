@@ -1,0 +1,42 @@
+<header class="bar">
+  <a class="brand" routerLink="/">
+    <span class="mark" aria-hidden="true"></span>{{ 'shell.appName' | transloco }}
+  </a>
+  <button
+    class="avatar"
+    matIconButton
+    type="button"
+    data-test="user-menu"
+    [matMenuTriggerFor]="menu"
+    [attr.aria-label]="'shell.userMenu' | transloco"
+  >
+    {{ initial() }}
+  </button>
+</header>
+
+<mat-menu #menu="matMenu" xPosition="before">
+  @if (auth.user(); as user) {
+    <div class="who">
+      <span class="name">{{ user.name }}</span>
+      <span class="email">{{ user.email }}</span>
+    </div>
+  }
+  <a mat-menu-item routerLink="/settings/security" data-test="menu-security">
+    <mat-icon svgIcon="shield" />{{ 'shell.security' | transloco }}
+  </a>
+  <a
+    *skCan="['member', 'create']"
+    mat-menu-item
+    routerLink="/family/members"
+    data-test="menu-members"
+  >
+    <mat-icon svgIcon="group" />{{ 'shell.members' | transloco }}
+  </a>
+  <button mat-menu-item type="button" data-test="sign-out" (click)="signOut()">
+    <mat-icon svgIcon="logout" />{{ 'shell.signOut' | transloco }}
+  </button>
+</mat-menu>
+
+<main class="content">
+  <router-outlet />
+</main>

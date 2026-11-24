@@ -1,0 +1,60 @@
+// Tokens only; the content column has a readable maximum, never a fixed width.
+:host {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+  background: var(--surface-100);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface-000);
+  border-block-end: thin solid var(--border);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink-muted);
+  font-size: var(--fa-fs-label);
+  font-weight: var(--type-body-strong-weight);
+  text-decoration: none;
+}
+
+.mark {
+  inline-size: var(--fa-icon);
+  block-size: var(--fa-icon);
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle, var(--accent) 30%, var(--brand) 32%);
+}
+
+.avatar {
+  background: var(--brand-container);
+  color: var(--on-brand-container);
+  font-weight: var(--type-body-strong-weight);
+}
+
+.who {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2) var(--space-4);
+  border-block-end: thin solid var(--border);
+}
+
+.email {
+  color: var(--ink-muted);
+  font-size: var(--fa-fs-caption);
+}
+
+.content {
+  inline-size: 100%;
+  max-inline-size: 48rem;
+  margin-inline: auto;
+  padding: var(--space-5) var(--space-4);
+  box-sizing: border-box;
+}

@@ -1,1 +1,1 @@
-export { AUTH_ROUTES } from './feature';
+export { AUTH_ROUTES, HOME_ROUTES } from './feature';

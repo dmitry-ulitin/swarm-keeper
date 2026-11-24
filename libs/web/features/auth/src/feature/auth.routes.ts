@@ -1,10 +1,10 @@
 import type { Routes } from '@angular/router';
 import { provideTranslocoScope } from '@jsverse/transloco';
-import { authGuard, guestGuard } from '@swarm-keeper/web-core';
+import { guestGuard } from '@swarm-keeper/web-core';
 
 const scope = [provideTranslocoScope('auth')];
 
-/** Sign-in, invitation and password reset, plus the signed-in placeholder at `/`. */
+/** Sign-in, invitation and password reset: the screens outside the signed-in shell. */
 export const AUTH_ROUTES: Routes = [
   {
     path: 'login',
@@ -24,10 +24,13 @@ export const AUTH_ROUTES: Routes = [
     providers: scope,
     loadComponent: () => import('./invite.page').then((m) => m.InvitePage),
   },
+];
+
+/** The signed-in placeholder at `/`, until the real home exists; a child of the shell. */
+export const HOME_ROUTES: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    canMatch: [authGuard],
     providers: scope,
     loadComponent: () => import('./home-placeholder.page').then((m) => m.HomePlaceholderPage),
   },
