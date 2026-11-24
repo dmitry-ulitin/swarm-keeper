@@ -7,6 +7,7 @@ import { bearer, organization, twoFactor } from 'better-auth/plugins';
 import type { Database } from '../../database/index.js';
 import type { AuthEnv } from './auth-env.js';
 import { inviteOnlyHooks } from './invite-only.js';
+import { passkeySignUp } from './passkey-sign-up.js';
 import { type SessionLookup, activeFamilyHooks, organizationHooks } from './organization-hooks.js';
 import type { Mailer } from './mailer.js';
 import { type ModelMapping, snakeCaseSchema } from './snake-case-schema.js';
@@ -28,7 +29,7 @@ function localeOf(record: object): string {
 }
 
 /** The options as `authentication.md` specifies them, with an optional snake_case mapping. */
-function buildOptions(env: AuthEnv, mailer: Mailer, map: Mapping) {
+function buildOptions(env: AuthEnv, mailer: Mailer, map: Mapping, db?: Database) {
   return {
     appName: 'Swarm Keeper',
     baseURL: env.baseURL,
@@ -105,6 +106,10 @@ function buildOptions(env: AuthEnv, mailer: Mailer, map: Mapping) {
         rpName: 'Swarm Keeper',
         origin: env.baseURL,
         schema: { passkey: map['passkey'] },
+        // Discoverable credentials, so "Sign in with passkey" needs no email.
+        authenticatorSelection: { residentKey: 'required', userVerification: 'preferred' },
+        // Passkey-first sign-up from an invitation; without a database (schema only) it is off.
+        ...(db ? { registration: passkeySignUp(db) } : {}),
       }),
       twoFactor({
         issuer: 'Swarm Keeper',
@@ -116,9 +121,9 @@ function buildOptions(env: AuthEnv, mailer: Mailer, map: Mapping) {
 }
 
 /** The final options: built once to learn the tables, then again with every name in snake_case. */
-export function authOptions(env: AuthEnv, mailer: Mailer) {
+export function authOptions(env: AuthEnv, mailer: Mailer, db?: Database) {
   const tables = getAuthTables(buildOptions(env, mailer, {}));
-  return buildOptions(env, mailer, snakeCaseSchema(tables));
+  return buildOptions(env, mailer, snakeCaseSchema(tables), db);
 }
 
 /** Better Auth over our pool. Without plugins: Better Auth maps column names itself. */
@@ -126,7 +131,7 @@ export function createAuth(db: Database, env: AuthEnv, mailer: Mailer) {
   // Hooks need the finished instance to resolve sessions; bound right after creation.
   let lookupSession: SessionLookup = async () => null;
   const auth = betterAuth({
-    ...authOptions(env, mailer),
+    ...authOptions(env, mailer, db),
     database: { db: db.withoutPlugins(), type: 'postgres' },
     databaseHooks: { ...inviteOnlyHooks(db), ...activeFamilyHooks(db) },
     hooks: { before: organizationHooks(db, (headers) => lookupSession(headers)) },
