@@ -1,5 +1,6 @@
 // Global styles. Values come only from tokens (libs/shared/design-tokens/src/tokens.css,
 // loaded before this file); see docs/design/README.md, "Mapping to Angular Material".
+@use 'sass:map';
 @use '@angular/material' as mat;
 
 // Every key must be a known system token: theme-overrides silently drops unknown names.
@@ -59,7 +60,38 @@ $overrides: (
   corner-medium: var(--radius-md),
   corner-large: var(--radius-lg),
   corner-full: var(--radius-full),
+  corner-extra-large: var(--radius-lg),
+  corner-extra-large-top: var(--radius-lg) var(--radius-lg) 0 0,
+  corner-large-top: var(--radius-lg) var(--radius-lg) 0 0,
+  corner-large-start: var(--radius-lg) 0 0 var(--radius-lg),
+  corner-large-end: 0 var(--radius-lg) var(--radius-lg) 0,
+  corner-extra-small-top: var(--radius-xs) var(--radius-xs) 0 0,
 );
+
+// Material's body, label and title roles follow our type scale and switch with the size mode
+// through the --fa-* variables (libs/web/ui/src/styles/size-modes.css).
+$type-roles: (
+  body: body,
+  label: label,
+  title: title,
+);
+@each $role, $style in $type-roles {
+  @each $scale in large, medium, small {
+    $overrides: map.merge(
+      $overrides,
+      (
+        '#{$role}-#{$scale}-size': var(--fa-fs-#{$style}),
+        '#{$role}-#{$scale}-line-height': var(--fa-lh-#{$style}),
+        '#{$role}-#{$scale}-weight': var(--type-#{$style}-weight),
+        '#{$role}-#{$scale}-font': var(--font-sans),
+        '#{$role}-#{$scale}': var(--type-#{$style}-weight)
+          var(--fa-fs-#{$style}) /
+          var(--fa-lh-#{$style})
+          var(--font-sans),
+      )
+    );
+  }
+}
 
 html {
   @include mat.theme(
@@ -75,17 +107,19 @@ html {
         plain-family: Inter,
         brand-family: Inter,
       ),
-      density: -3,
+      density: 0,
     )
   );
 
   @include mat.theme-overrides($overrides);
 }
 
-html[data-size='large'] {
+// Compact (the default) is density -3. Large mode keeps the base density 0: a density-0 theme
+// emits no height tokens, so it could not undo -3 if compact were the base.
+html:not([data-size='large']) {
   @include mat.theme(
     (
-      density: 0,
+      density: -3,
     )
   );
   // mat.theme re-emits the shape tokens with Material's values; restore ours.

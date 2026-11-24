@@ -44,6 +44,33 @@ check(
 );
 check('small corner from --radius-sm', last.get('corner-small') === 'var(--radius-sm)');
 check('large size mode', /\[data-size=(large|"large"|'large')\]/.test(flat));
+// Compact density (-3) applies only outside large mode, so large mode keeps Material's default
+// (0) heights: a density-0 theme emits no height tokens and could not undo a base -3.
+const compactBlock =
+  flat.match(/html:not\(\[data-size=(?:large|"large"|'large')\]\)\{([^}]*)\}/)?.[1] ?? '';
+check(
+  'compact density only outside large mode',
+  /--mat-button-filled-container-height:28px/.test(compactBlock),
+);
+check(
+  'no compact heights in the base theme',
+  !/html\{[^}]*--mat-button-filled-container-height:28px/.test(flat),
+);
+for (const [role, token] of [
+  ['corner-extra-large', 'var(--radius-lg)'],
+  ['corner-extra-large-top', 'var(--radius-lg) var(--radius-lg) 0 0'],
+  ['corner-large-top', 'var(--radius-lg) var(--radius-lg) 0 0'],
+  ['corner-large-start', 'var(--radius-lg) 0 0 var(--radius-lg)'],
+  ['corner-large-end', '0 var(--radius-lg) var(--radius-lg) 0'],
+  ['corner-extra-small-top', 'var(--radius-xs) var(--radius-xs) 0 0'],
+  ['label-large-size', 'var(--fa-fs-label)'],
+  ['label-large-line-height', 'var(--fa-lh-label)'],
+  ['body-medium-size', 'var(--fa-fs-body)'],
+  ['body-large-size', 'var(--fa-fs-body)'],
+  ['title-medium-size', 'var(--fa-fs-title)'],
+]) {
+  check(`${role} from ${token}`, last.get(role) === token);
+}
 check('Cyrillic Inter', /font-family:"?Inter"?[^}]*unicode-range:U\+0?301/.test(flat));
 check('Material Symbols Rounded', flat.includes('MaterialSymbolsRounded'));
 check('no external URLs', !/https?:\/\//.test(css));

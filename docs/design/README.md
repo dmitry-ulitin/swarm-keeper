@@ -91,7 +91,7 @@ Interface size is a personal member setting ("Settings → Appearance"). It is s
 
 **In any mode:** on touch screens (`pointer: coarse`) the hit area is at least `hit-target-touch` (40px) — the compact look stays and the invisible touch area grows. Browser zoom and the system font size work on top of the mode; layouts hold up to 200% zoom.
 
-**In Angular** the mode is two Material themes on the same `<html>`:
+**In Angular** the mode is two Material themes on the same `<html>` (`apps/web/src/styles.scss`). The base is density 0 and compact adds -3, because a density-0 theme emits no height tokens and could not undo a base -3:
 
 ```scss
 @use '@angular/material' as mat;
@@ -100,16 +100,18 @@ html {
   @include mat.theme((
     color: (theme-type: color-scheme),
     typography: (plain-family: 'Inter', brand-family: 'Inter'),
-    density: -3,
+    density: 0,
   ));
+  @include mat.theme-overrides($overrides); // colors, shapes and type roles from tokens
 }
 
-html[data-size='large'] {
-  @include mat.theme((density: 0));
+html:not([data-size='large']) {
+  @include mat.theme((density: -3));
   @include mat.theme-overrides($overrides); // mat.theme re-emits the shape tokens
-  font-size: 17px;
 }
 ```
+
+Material's `body-*`, `label-*` and `title-*` type roles point at the `--fa-fs-*` / `--fa-lh-*` variables, so Material text switches size with the mode too; there is no raw `font-size` on `<html>`.
 
 Our own components read the same CSS variables as `bundle.css` (`--fa-control-h`, `--fa-row-h`, `--fa-fs-body`…), so they switch together with Material.
 
