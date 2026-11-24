@@ -57,6 +57,7 @@ pnpm install                                  install everything
 pnpm build                                    build all apps
 pnpm typecheck                                type-check every package
 pnpm test                                     unit tests (Vitest) in every package
+pnpm e2e                                      Playwright end to end (needs pnpm infra:up; first run: pnpm --filter @swarm-keeper/web-e2e exec playwright install chromium)
 pnpm lint                                     ESLint + Sheriff boundary rules + pnpm i18n:check (en/ru keys)
 pnpm format                                   Prettier
 pnpm --filter @swarm-keeper/<pkg> <script>    run one package's script, e.g. start or test
@@ -145,7 +146,7 @@ pnpm db:seed           create the first owner and family (SEED_OWNER_EMAIL, SEED
 ## Tests
 
 - Vitest for unit tests: stores, the permission directive, the gallery layout, the upload queue.
-- Playwright for end-to-end tests against the real API in Docker Compose. Run key screens in both languages.
+- Playwright for end-to-end tests (`apps/web-e2e`, `pnpm e2e`): it starts the real API on 3100 against a fresh `swarm_keeper_e2e` database and the web dev server on 4300, with Postgres and Mailpit from `pnpm infra:up`. Every scenario runs in `chromium-en` and `chromium-ru`; passkeys use Chromium's virtual authenticator. `pnpm test` does not run it.
 - Never skip these auth integration tests:
   - sign-up without an invitation is rejected;
   - an unverified email can't accept an invitation;

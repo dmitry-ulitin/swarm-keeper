@@ -181,7 +181,8 @@ The native app uses its own translation system and the shared glossary from the 
 - **Accessibility from day one:** compact mode by default and large mode by each member's choice, contrast, keyboard navigation, labels on icons. People of all ages will use the interface.
 - **Languages:** English and Russian from day one; see "Interface languages".
 - **Unit tests — Vitest:** stores, the permission directive, the gallery layout, the upload queue.
-- **End-to-end tests — Playwright:** sign-in via invitation, upload with dedup and resume, a viewer doesn't see the Upload button, another family is inaccessible. They run against the real API in Docker Compose.
+- **End-to-end tests — Playwright** (`apps/web-e2e`, `pnpm e2e`): sign-in via invitation (passkey and password), password + TOTP sign-in, accepting a second family, an expired invitation; later upload with dedup and resume, a viewer doesn't see the Upload button, another family is inaccessible. They run against the real API and the web dev server on their own ports and database, in both languages.
+- **Auth screens** live in `libs/web/features/auth` (`/login`, `/invite/:token`, `/reset-password`, and a signed-in placeholder at `/` until the home exists); mockups in `docs/design/mockups/auth/`.
 
 ## Open questions
 
