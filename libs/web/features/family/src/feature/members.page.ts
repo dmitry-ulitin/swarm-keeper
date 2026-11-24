@@ -39,9 +39,12 @@ export class MembersPage {
   private readonly transloco = inject(TranslocoService);
 
   protected readonly members = resource({ loader: () => this.auth.listMembers() });
-  private readonly allInvitations = resource({ loader: () => this.auth.listInvitations() });
+  protected readonly allInvitations = resource({ loader: () => this.auth.listInvitations() });
   protected readonly invitations = computed(() =>
-    (this.allInvitations.value() ?? []).filter((row) => row.status === 'pending'),
+    // value() throws in the error state: read it only when there is one.
+    (this.allInvitations.hasValue() ? this.allInvitations.value() : []).filter(
+      (row) => row.status === 'pending',
+    ),
   );
 
   /** Without the required 2FA the server refuses every change: hide them, show the way. */

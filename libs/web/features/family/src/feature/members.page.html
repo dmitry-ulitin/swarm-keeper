@@ -18,8 +18,16 @@
 
 <section class="section">
   <h2 class="section-title">{{ 'family.members.title' | transloco }}</h2>
+  @if (members.error()) {
+    <p class="note danger load-error" role="alert" data-test="members-error">
+      {{ 'family.loadError' | transloco }}
+      <button matButton="text" type="button" (click)="members.reload()">
+        {{ 'family.retry' | transloco }}
+      </button>
+    </p>
+  }
   <ul class="rows">
-    @for (member of members.value() ?? []; track member.id) {
+    @for (member of members.hasValue() ? members.value() : []; track member.id) {
       <li class="row" data-test="member">
         <span class="main">
           <span class="name">
@@ -68,6 +76,14 @@
 
 <section class="section">
   <h2 class="section-title">{{ 'family.invitations.title' | transloco }}</h2>
+  @if (allInvitations.error()) {
+    <p class="note danger load-error" role="alert" data-test="invitations-error">
+      {{ 'family.loadError' | transloco }}
+      <button matButton="text" type="button" (click)="allInvitations.reload()">
+        {{ 'family.retry' | transloco }}
+      </button>
+    </p>
+  }
   <ul class="rows">
     @for (row of invitations(); track row.id) {
       <li class="row" data-test="invitation">
@@ -105,7 +121,9 @@
         }
       </li>
     } @empty {
-      <li class="row empty">{{ 'family.invitations.empty' | transloco }}</li>
+      @if (!allInvitations.error() && !allInvitations.isLoading()) {
+        <li class="row empty">{{ 'family.invitations.empty' | transloco }}</li>
+      }
     }
   </ul>
 </section>

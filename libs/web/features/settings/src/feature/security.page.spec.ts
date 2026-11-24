@@ -33,7 +33,7 @@ const SESSIONS = [
   },
 ];
 
-async function render(auth = fakeAuth(), confirm = true) {
+async function render(auth = fakeAuth(), confirm = true, sessions: object | 500 = SESSIONS) {
   const open = vi.fn(() => ({ afterClosed: () => of(confirm) }));
   const snack = vi.fn();
   TestBed.configureTestingModule({
@@ -54,7 +54,9 @@ async function render(auth = fakeAuth(), confirm = true) {
   const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
   const fixture = TestBed.createComponent(SecurityPage);
   TestBed.tick();
-  TestBed.inject(HttpTestingController).expectOne('/api/v1/me/sessions').flush(SESSIONS);
+  const req = TestBed.inject(HttpTestingController).expectOne('/api/v1/me/sessions');
+  if (sessions === 500) req.flush({}, { status: 500, statusText: 'Server Error' });
+  else req.flush(sessions);
   await fixture.whenStable();
   const el = fixture.nativeElement as HTMLElement;
   const click = async (selector: string) => {
@@ -121,6 +123,16 @@ describe('SecurityPage', () => {
       undefined,
       expect.anything(),
     );
+  });
+
+  it('shows an error with a retry when the lists fail to load', async () => {
+    const auth = fakeAuth();
+    auth.listPasskeys.mockImplementation(rejectWith('TOO_MANY_REQUESTS'));
+    const { el } = await render(auth, true, 500);
+    await new Promise((resolve) => setTimeout(resolve));
+    expect(el.querySelector('[data-test="passkeys-error"]')).not.toBeNull();
+    expect(el.querySelector('[data-test="sessions-error"]')).not.toBeNull();
+    expect(el.querySelector('[data-test="session"]')).toBeNull();
   });
 
   it('has no literal text in its template', () => {

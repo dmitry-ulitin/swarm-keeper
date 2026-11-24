@@ -8,8 +8,16 @@
     </button>
   </header>
   <p class="hint">{{ 'settings.passkeys.hint' | transloco }}</p>
+  @if (passkeys.error()) {
+    <p class="note danger load-error" role="alert" data-test="passkeys-error">
+      {{ 'settings.loadError' | transloco }}
+      <button matButton="text" type="button" (click)="passkeys.reload()">
+        {{ 'settings.retry' | transloco }}
+      </button>
+    </p>
+  }
   <ul class="rows">
-    @for (passkey of passkeys.value() ?? []; track passkey.id) {
+    @for (passkey of passkeys.hasValue() ? passkeys.value() : []; track passkey.id) {
       <li class="row" data-test="passkey">
         <span class="main">
           <span>{{ passkey.name || ('settings.passkeys.unnamed' | transloco) }}</span>
@@ -31,7 +39,9 @@
         </button>
       </li>
     } @empty {
-      <li class="row empty">{{ 'settings.passkeys.empty' | transloco }}</li>
+      @if (!passkeys.error() && !passkeys.isLoading()) {
+        <li class="row empty">{{ 'settings.passkeys.empty' | transloco }}</li>
+      }
     }
   </ul>
 </section>
@@ -83,8 +93,16 @@
       {{ 'settings.sessions.endOthers' | transloco }}
     </button>
   </header>
+  @if (sessions.error()) {
+    <p class="note danger load-error" role="alert" data-test="sessions-error">
+      {{ 'settings.loadError' | transloco }}
+      <button matButton="text" type="button" (click)="sessions.reload()">
+        {{ 'settings.retry' | transloco }}
+      </button>
+    </p>
+  }
   <ul class="rows">
-    @for (session of sessions.value(); track session.id) {
+    @for (session of sessions.hasValue() ? sessions.value() : []; track session.id) {
       @let active = lastActive(session);
       <li class="row" data-test="session">
         <span class="main">

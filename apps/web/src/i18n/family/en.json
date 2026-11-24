@@ -55,5 +55,7 @@
   "languages": {
     "en": "English",
     "ru": "Русский"
-  }
+  },
+  "loadError": "Could not load the list.",
+  "retry": "Try again"
 }

@@ -110,6 +110,18 @@ describe('MembersPage', () => {
     expect(auth.cancelInvitation).toHaveBeenCalledWith('i-valid');
   });
 
+  it('shows an error with a retry when the lists fail to load', async () => {
+    const auth = fakeAuth();
+    auth.listMembers.mockImplementation(() => Promise.reject(new Error('down')));
+    auth.listInvitations.mockImplementation(() => Promise.reject(new Error('down')));
+    const { el, click } = await render(auth);
+    expect(el.querySelector('[data-test="members-error"]')).not.toBeNull();
+    expect(el.querySelector('[data-test="invitations-error"]')).not.toBeNull();
+    auth.listMembers.mockClear();
+    await click(el.querySelector('[data-test="members-error"] button'));
+    expect(auth.listMembers).toHaveBeenCalled();
+  });
+
   it('has no literal text in its template', () => {
     expect(literalText(`${FEATURE}/members.page.html`)).toBe('');
   });
