@@ -1,0 +1,36 @@
+{
+  "title": "Foundations",
+  "lang": { "en": "English", "ru": "Русский" },
+  "size": { "compact": "Compact", "large": "Large" },
+  "theme": { "system": "System", "light": "Light", "dark": "Dark" },
+  "sections": {
+    "buttons": "Buttons",
+    "form": "Form",
+    "type": "Type scale",
+    "colors": "Colors",
+    "formats": "Plurals, dates and sizes"
+  },
+  "buttons": {
+    "upload": "Upload photos",
+    "album": "Create album",
+    "cancel": "Cancel",
+    "more": "Show more",
+    "delete": "Delete forever",
+    "menu": "Menu"
+  },
+  "menu": { "rename": "Rename", "move": "Move to album" },
+  "form": {
+    "album": "Album title",
+    "placeholder": "Summer 2019, Pärnu",
+    "private": "Only me"
+  },
+  "type": {
+    "display": "Summer 2019, Pärnu",
+    "title-lg": "Family documents",
+    "title": "Saturday, July 12",
+    "body": "214 photos uploaded, 3 duplicates skipped.",
+    "label": "Upload",
+    "caption": "IMG_4021.HEIC · 3.4 MB"
+  },
+  "files": "{count, plural, one {# file uploaded} other {# files uploaded}}"
+}

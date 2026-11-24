@@ -43,7 +43,8 @@
               "material-symbols/rounded.css",
               "../../libs/web/ui/src/styles/size-modes.css",
               "src/styles.scss"
-            ]
+            ],
+            "allowedCommonJsDependencies": ["@messageformat/core"]
           },
           "configurations": {
             "production": {
@@ -59,7 +60,25 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/app/dev/dev-routes.ts",
+                  "with": "src/app/dev/dev-routes.prod.ts"
+                }
+              ],
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "public"
+                },
+                {
+                  "glob": "**/*.json",
+                  "input": "src/i18n",
+                  "output": "i18n",
+                  "ignore": ["dev/**"]
+                }
+              ]
             },
             "development": {
               "optimization": false,

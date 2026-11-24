@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+    // src/cli.ts runs directly under Node, which needs the .ts suffix; never emitted.
+    "allowImportingTsExtensions": true
+  },
+  "include": ["src/**/*.ts", "vitest.config.ts"]
+}
