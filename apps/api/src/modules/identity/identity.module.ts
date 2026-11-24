@@ -5,6 +5,7 @@ import { authEnv } from './auth-env.js';
 import { createAuth } from './create-auth.js';
 import { MailModule } from '../mail/index.js';
 import { MAILER, type Mailer } from './mailer.js';
+import { InvitationsController } from './invitations.controller.js';
 import { MeController } from './me.controller.js';
 import { SmtpMailer } from './smtp-mailer.js';
 
@@ -28,6 +29,6 @@ class MailerModule {}
       useFactory: (db: Database, mailer: Mailer) => ({ auth: createAuth(db, authEnv(), mailer) }),
     }),
   ],
-  controllers: [MeController],
+  controllers: [MeController, InvitationsController],
 })
 export class IdentityModule {}

@@ -17,6 +17,20 @@ function inviteToken(ctx: HookContext): string | undefined {
   return typeof token === 'string' && UUID.test(token) ? token : undefined;
 }
 
+/** A pending, unexpired invitation with this id, whatever its email. */
+export async function findPendingInvitationById(db: Database, id: string) {
+  if (!UUID.test(id)) {
+    return undefined;
+  }
+  return db
+    .selectFrom('invitation')
+    .select(['id', 'organizationId', 'inviterId', 'email', 'role', 'locale', 'uiSize', 'expiresAt'])
+    .where('id', '=', id)
+    .where('status', '=', 'pending')
+    .where('expiresAt', '>', new Date())
+    .executeTakeFirst();
+}
+
 /** A pending, unexpired invitation with this id for this email (case-insensitive). */
 export async function findPendingInvitation(
   db: Database,
