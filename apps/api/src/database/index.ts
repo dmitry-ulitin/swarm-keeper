@@ -12,3 +12,4 @@ export { APP_ROLE, DEV_APP_LOGIN, assertAppRoleExists, ensureAppRoles } from './
 export { createMigrator } from './migrator.js';
 export type { DB } from './schema.js';
 export { checkDatabaseRole, watchDatabaseRole } from './check-database-role.js';
+export { type FamilyContext, FamilyDb } from './family-db.js';

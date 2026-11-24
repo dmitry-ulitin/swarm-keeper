@@ -5,16 +5,13 @@ import {
   type OnApplicationBootstrap,
   type OnApplicationShutdown,
 } from '@nestjs/common';
-import type { Kysely } from 'kysely';
 import { watchDatabaseRole } from './check-database-role.js';
+import { FamilyDb } from './family-db.js';
 import { createDatabase } from './create-database.js';
 import { databaseUrl } from './database-url.js';
-import type { DB } from './schema.js';
+import { DATABASE, type Database } from './database.token.js';
 
-/** Injection token for the Kysely instance: `@Inject(DATABASE) db: Database`. */
-export const DATABASE = Symbol('DATABASE');
-
-export type Database = Kysely<DB>;
+export { DATABASE, type Database } from './database.token.js';
 
 /**
  * One connection pool per process, for the API and the worker.
@@ -23,8 +20,11 @@ export type Database = Kysely<DB>;
  */
 @Global()
 @Module({
-  providers: [{ provide: DATABASE, useFactory: (): Database => createDatabase(databaseUrl()) }],
-  exports: [DATABASE],
+  providers: [
+    { provide: DATABASE, useFactory: (): Database => createDatabase(databaseUrl()) },
+    FamilyDb,
+  ],
+  exports: [DATABASE, FamilyDb],
 })
 export class DatabaseModule implements OnApplicationBootstrap, OnApplicationShutdown {
   constructor(@Inject(DATABASE) private readonly db: Database) {}

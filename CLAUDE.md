@@ -114,8 +114,8 @@ pnpm family:list                                                          famili
 ## Invariants (do not break without updating the docs)
 
 **Tenancy and access**
-- Every archive table has `family_id` (= Better Auth `organization.id`) and a PostgreSQL RLS policy.
-- The API sets `SET LOCAL app.family_id` and `app.user_id` per request transaction.
+- Every archive table has `family_id` (= Better Auth `organization.id`) and a PostgreSQL RLS policy: its migration calls `select enable_family_rls('<table>')` right after `create table` (policy `family_isolation`, forced RLS, grants to `swarm_keeper_app`).
+- Family work runs in `FamilyDb.run(ctx, trx => …)` (`apps/api/src/database`), which sets `app.family_id` and `app.user_id` with `set_config(…, true)` for that transaction. `ctx` comes from `@Family()` on a `@RequirePermission` route (the verified `member` row) or, in the worker, from the job. Outside `run` an archive table shows no rows.
 - Authorization lives in the service layer and uses `libs/shared/permissions`. The UI hides actions using the permission list from `GET /me`, but the server always checks again.
 - Private assets (`visibility = private`) are visible only to their owner, whatever the role.
 - IDs are UUIDv7.

@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { sql } from 'kysely';
 import { APP_ROLE } from './app-role.js';
-import type { Database } from './database.module.js';
+import type { Database } from './database.token.js';
 
 /** The connected role is a superuser or bypasses RLS. */
 export class UnsafeDatabaseRoleError extends Error {}

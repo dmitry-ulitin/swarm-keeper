@@ -45,7 +45,7 @@ The superuser finding holds for any approach: without a separate role, RLS check
 ### Database roles
 
 - **Group role** `swarm_keeper_app` (`NOLOGIN NOSUPERUSER NOBYPASSRLS`). Creating roles needs `CREATEROLE`, which a schema owner on managed Postgres usually lacks, so **migrations never create roles** (builder's call). The role and its dev login come from `pnpm db:roles` (idempotent `DO` blocks, run as an admin; changed from an `infra/db/roles.sql` file during planning so dev, tests, e2e and CI need neither `psql` nor `docker compose exec`): `pnpm infra:up` runs it in dev, the API test global setup and the e2e database preparation run it, and in production the operator runs it once; `docs/architecture/backend.md` says how.
-- **Grants live in migrations.** A migration grants the group role `USAGE` on the schema, `SELECT, INSERT, UPDATE, DELETE` on all current tables and usage on sequences; it fails with a clear message if the role does not exist. No `ALTER DEFAULT PRIVILEGES` (it only covers tables created later by the same role, a silent trap if another owner runs a later migration): instead `familyRls(table)` also grants the group role on that table, and any non-archive table migration grants explicitly (builder's call). The group role gets no DDL rights and owns nothing. `kysely_migration*` tables are not granted.
+- **Grants live in migrations.** A migration grants the group role `USAGE` on the schema, `SELECT, INSERT, UPDATE, DELETE` on all current tables and usage on sequences; it fails with a clear message if the role does not exist. No `ALTER DEFAULT PRIVILEGES` (it only covers tables created later by the same role, a silent trap if another owner runs a later migration): instead `enable_family_rls(table)` also grants the group role on that table, and any non-archive table migration grants explicitly (builder's call). The group role gets no DDL rights and owns nothing. `kysely_migration*` tables are not granted.
 - **Login role** for development: `swarm_app` / password `swarm_app`, `LOGIN`, member of `swarm_keeper_app`, created by the same bootstrap script. In production the operator creates their own login role in the group.
 - **URLs:** `DATABASE_URL` is the application role (dev default `postgres://swarm_app:swarm_app@127.0.0.1:5432/swarm_keeper`). New `DATABASE_OWNER_URL` is the schema owner (dev default the current `swarm` URL), used by `db:migrate`, `db:migrate:down`, `db:types` and the test/e2e database reset + migration. Both are required in production. `.env.example`, `infra/dev/env.sh` and `CLAUDE.md` get the new variable.
 - **Who uses which:** API, worker, `db:seed` and `family:*` use `DATABASE_URL` (they only touch Better Auth tables, which the group role can write). Migrations and codegen use the owner.
@@ -67,12 +67,12 @@ The superuser finding holds for any approach: without a separate role, RLS check
 
 ### RLS helper
 
-- `familyRls(table)` in `apps/api/src/database`, for migrations: returns the SQL to `enable` and `force row level security` on the table and create policy `family_isolation` `using (family_id = nullif(current_setting('app.family_id', true), '')::uuid)` with the same `with check`. An unset setting yields `null`, which matches no row and fails every insert.
-- `CLAUDE.md` gains the rule: every archive table migration calls `familyRls`.
+- `enable_family_rls(table regclass)`, a SQL function created by a migration (changed from a TS helper during implementation: Node loads migrations as plain `.ts` and they cannot import from `src`). It `enable`s and `force`s row level security on the table, creates policy `family_isolation` `using (family_id = nullif(current_setting('app.family_id', true), '')::uuid)` with the same `with check`, and grants the group role data access to the table. An unset setting yields `null`, which matches no row and fails every insert. `execute` is revoked from `public`.
+- `CLAUDE.md` gains the rule: every archive table migration calls `select enable_family_rls('<table>')`.
 
 ### Tests (integration, against the test database, never skipped)
 
-On a probe table (`rls_probe(id, family_id, note)`) created by the test through the owner connection with `familyRls`, then used through the application role:
+On a probe table (`rls_probe(id, family_id, note)`) created by the test through the owner connection with `enable_family_rls`, then used through the application role:
 - outside `run`, the app role sees zero rows and cannot insert;
 - inside `run` for family A it sees only A's rows, and inserting a row with B's `family_id` fails;
 - after `run` for A finishes, the same pooled connection (pool size 1) sees nothing outside `run`, and `run` for B sees only B;
@@ -99,7 +99,7 @@ Through HTTP with a test controller using `@RequirePermission` + `@Family()`:
 
 ### Docs to update in the same change
 
-- `docs/architecture/backend.md`: the two roles, `DATABASE_OWNER_URL`, `FamilyDb.run`, `familyRls`, the startup check.
+- `docs/architecture/backend.md`: the two roles, `DATABASE_OWNER_URL`, `FamilyDb.run`, `enable_family_rls`, the startup check.
 - `CLAUDE.md`: the new variable, the migration rule, CI.
 - The roadmap: step 7 split, with what remains (Caddy, `/.well-known/*`) waiting for the deployment stack.
 
